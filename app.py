@@ -73,40 +73,46 @@ with tabs[1]:
 
     # ❓ Chọn loại câu hỏi
     if st.session_state.attempts < 10:  # Chỉ hiển thị phần hỏi khi còn lượt hỏi
-        question_type = st.radio("❓ **Bạn muốn hỏi gì về số bí mật?**",
-                                 ("Số đó có lớn hơn...", "Số đó có bé hơn..."),
+        question_type = st.radio("❓ **Bạn muốn hỏi về số bí mật thế nào?**",
+                                 ("Số đó có lớn hơn một con số?", "Số đó có bé hơn một con số?"),
                                  index=0, horizontal=True)
 
         number = st.slider("🔍 Chọn số bạn muốn hỏi", 0, max_num)
 
         # 👇 Hỏi số
         if st.button("🕵️‍♂️ **Hỏi ngay!**"):
-            st.session_state.attempts += 1
-            st.session_state.question_count += 1  
+            # Kiểm tra manh mối đã có
+            if question_type == "Số đó có lớn hơn một con số?" and f"Số đó lớn hơn {number}." in st.session_state.clues:
+                st.warning("🚨 **Bạn đã hỏi câu này rồi. Vui lòng hỏi câu khác!**")
+            elif question_type == "Số đó có bé hơn một con số?" and f"Số đó bé hơn {number}." in st.session_state.clues:
+                st.warning("🚨 **Bạn đã hỏi câu này rồi. Vui lòng hỏi câu khác!**")
+            else:
+                st.session_state.attempts += 1
+                st.session_state.question_count += 1  # Tăng số câu hỏi đã hỏi
 
-            response = ""
-            clue = ""
-            
-            if question_type == "Số đó có lớn hơn...":
-                if st.session_state.secret_number > number:
-                    response = random.choice(correct_responses)
-                    clue = f"Số đó lớn hơn {number}."
-                else:
-                    response = random.choice(incorrect_responses)
-                    clue = f"Số đó bé hơn hoặc bằng {number}."
-            elif question_type == "Số đó có bé hơn...":
-                if st.session_state.secret_number < number:
-                    response = random.choice(correct_responses)
-                    clue = f"Số đó bé hơn {number}."
-                else:
-                    response = random.choice(incorrect_responses)
-                    clue = f"Số đó lớn hơn hoặc bằng {number}."
+                response = ""
+                clue = ""
+                
+                if question_type == "Số đó có lớn hơn một con số?":
+                    if st.session_state.secret_number > number:
+                        response = random.choice(correct_responses)
+                        clue = f"Số đó lớn hơn {number}."
+                    else:
+                        response = random.choice(incorrect_responses)
+                        clue = f"Số đó bé hơn hoặc bằng {number}."
+                elif question_type == "Số đó có bé hơn một con số?":
+                    if st.session_state.secret_number < number:
+                        response = random.choice(correct_responses)
+                        clue = f"Số đó bé hơn {number}."
+                    else:
+                        response = random.choice(incorrect_responses)
+                        clue = f"Số đó lớn hơn hoặc bằng {number}."
 
-            st.write(f"**Câu hỏi:** {question_type} {number}?")
-            st.write(f"**Trả lời:** {response}")
-            st.write(f"**Manh mối:** {clue}")
-            if clue not in st.session_state.clues:
-                st.session_state.clues.append(clue)
+                st.write(f"**Câu hỏi:** {question_type} {number}?")
+                st.write(f"**Trả lời:** {response}")
+                st.write(f"**Manh mối:** {clue}")
+                if clue not in st.session_state.clues:
+                    st.session_state.clues.append(clue)
 
         # 📜 Hiển thị manh mối đã thu thập
         if st.session_state.clues:
@@ -119,28 +125,28 @@ with tabs[1]:
 
     # 🔒 Chốt số với nút bấm
     if 0 < st.session_state.attempts <= 10:
-        st.subheader(f"🔒 **Chốt số** (Số câu đã hỏi {st.session_state.question_count}/10)")
+        st.subheader(f"🔒 **Chốt số** (Câu hỏi {st.session_state.question_count}/10)")
         user_guess = st.number_input(f"Bạn nghĩ số bí mật là (0 - {max_num}):", min_value=0, max_value=max_num, step=1)
 
         # Xác nhận khi chọn "Chốt số"
-        if st.button("🎯 **Chốt số ngay!**"):
-            confirm = st.radio(
-                "Bạn chắc chắn số bí mật là này không?",
-                ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
-            )
+        confirm = st.radio(
+            "Bạn chắc chắn số bí mật là này không?",
+            ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
+        )
 
-            if confirm == "✔️ Chắc chắn":
-                if user_guess == st.session_state.secret_number:
-                    st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {st.session_state.secret_number}! Quá đỉnh luôn!")
-                else:
-                    st.error(f"😞 **Rất tiếc!** Số bí mật là {st.session_state.secret_number}. Bạn đã thua! 😭")
-                # Reset sau khi chốt
-                st.session_state.secret_number = random.randint(0, max_num)
-                st.session_state.attempts = 0
-                st.session_state.clues = []
-                st.session_state.question_count = 0  # Reset số câu hỏi
-            elif confirm == "❌ Tôi cần suy nghĩ thêm":
-                st.info("Bạn có thể tiếp tục trò chơi và thử lại!")
+        if confirm == "✔️ Chắc chắn":
+            if user_guess == st.session_state.secret_number:
+                st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {st.session_state.secret_number}! Quá đỉnh luôn!")
+            else:
+                st.error(f"😞 **Rất tiếc!** Số bí mật là {st.session_state.secret_number}. Bạn đã thua! 😭")
+            # Reset sau khi chốt
+            st.session_state.secret_number = random.randint(0, max_num)
+            st.session_state.attempts = 0
+            st.session_state.clues = []
+            st.session_state.question_count = 0  # Reset số câu hỏi
+
+        elif confirm == "❌ Tôi cần suy nghĩ thêm":
+            st.info("Bạn có thể tiếp tục trò chơi và thử lại!")
             
 # 🖐 Búa Kéo Bao
 with tabs[2]:
