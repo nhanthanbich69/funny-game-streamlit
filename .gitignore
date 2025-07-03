@@ -1,0 +1,9 @@
+# Ignore tất cả tài nguyên nhị phân (hình ảnh, âm thanh)
+assets/
+
+# Ignore các tệp Python bytecode
+__pycache__/
+*.pyc
+
+# Ignore môi trường ảo (nếu có)
+venv/
