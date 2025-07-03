@@ -63,8 +63,8 @@ with tabs[1]:
         st.session_state.question_count = 0  # Biến đếm số câu hỏi đã hỏi
 
     # 🎮 Chọn độ khó
-    level = st.selectbox("⚡️ Chọn chế độ chơi", ["Dễ (0~30)", "Trung Bình (0~100)", "Khó (0~500)"])
-    max_num = {"Dễ (0~30)": 30, "Trung Bình (0~100)": 100, "Khó (0~500)": 500}[level]
+    level = st.selectbox("⚡️ Chọn chế độ chơi", ["Thường (0~99)", "Khó (0~300)", "Bậc thầy (0~1000)"])
+    max_num = {"Thường (0~99)": 99, "Khó (0~300)": 300, "Bậc thầy (0~1000)": 1000}[level]
 
     # 🎰 Random số bí mật khi bắt đầu hoặc sau khi đổi độ khó
     if st.session_state.secret_number is None or st.session_state.get('last_max_num') != max_num:
@@ -122,25 +122,17 @@ with tabs[1]:
         st.subheader(f"🔒 **Chốt số** (Câu hỏi {st.session_state.question_count}/10)")
         user_guess = st.number_input(f"Bạn nghĩ số bí mật là (0 - {max_num}):", min_value=0, max_value=max_num, step=1)
 
-        # Xác nhận khi chọn "Chốt số"
+        # Chốt kết quả
         if st.button("🎯 **Chốt số ngay!**"):
-            confirm = st.radio(
-                "Bạn chắc chắn số bí mật là này không?",
-                ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
-            )
-
-            if confirm == "✔️ Chắc chắn":
-                if user_guess == st.session_state.secret_number:
-                    st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {st.session_state.secret_number}! Quá đỉnh luôn!")
-                else:
-                    st.error(f"😞 **Rất tiếc!** Số bí mật là {st.session_state.secret_number}. Bạn đã thua! 😭")
-                # Reset sau khi chốt
-                st.session_state.secret_number = random.randint(0, max_num)
-                st.session_state.attempts = 0
-                st.session_state.clues = []
-                st.session_state.question_count = 0  # Reset số câu hỏi
-            elif confirm == "❌ Tôi cần suy nghĩ thêm":
-                st.info("Bạn có thể tiếp tục trò chơi và thử lại!")
+            if user_guess == st.session_state.secret_number:
+                st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {st.session_state.secret_number}! Quá đỉnh luôn!")
+            else:
+                st.error(f"😞 **Rất tiếc!** Số bí mật là {st.session_state.secret_number}. Bạn đã thua! 😭")
+            # Reset sau khi chốt
+            st.session_state.secret_number = random.randint(0, max_num)
+            st.session_state.attempts = 0
+            st.session_state.clues = []
+            st.session_state.question_count = 0  # Reset số câu hỏi
             
 # 🖐 Búa Kéo Bao
 with tabs[2]:
