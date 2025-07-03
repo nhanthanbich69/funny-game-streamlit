@@ -8,6 +8,27 @@ st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc X�
 # Tạo các tab
 tabs = st.tabs(["🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "🪙 Tung Đồng Xu", "📝 Hướng Dẫn", "📊 Kết Quả"])
 
+# Khởi tạo các danh sách câu trả lời đúng và sai
+correct_responses = [
+    "🎯 Đúng rồi! Bạn đích thị là thám tử tài ba đấy! 🔥", 
+    "🔥 Wow! Bạn đã nhìn ra manh mối rồi! 🎉", 
+    "🚀 Chuẩn òi! Bạn quá đẹp trai! 💪", 
+    "🧠 Chính nó đó! Sắp win đến nơi rồi! 😎", 
+    "💥 Đúng thế! You like siêu nhân giải đố! 💣", 
+    "🎉 Chính xác! Bạn đúng là cao thủ! 🌟", 
+    "🎯 Bạn khôn đấy -)) Đúng hướng rồi! 🔥"
+]
+
+incorrect_responses = [
+    "😅 Sai rồi! Câu trả lời không đúng đâu, thử lại nhé!",
+    "😢 Sai rồi! Bạn chắc chắn chưa biết số bí mật đâu! 🤷‍♂️",
+    "💔 Câu trả lời sai rồi! Đừng lo, thử lại lần sau!",
+    "🤔 Sai rồi! Có vẻ bạn đang đi sai hướng, thử lần nữa nhé!",
+    "😜 Ôi không, không phải rồi! Số bí mật đâu có thế!",
+    "🙃 Sai rồi! Bạn có chắc chưa? Hãy thử thêm lần nữa!",
+    "😞 Sai rồi! Đoán lại xem nào, bạn gần hơn rồi đấy!"
+]
+
 # Tab Đoán Số
 with tabs[0]:
     st.header("🎯 **Đoán Số Bí Mật (10 lượt đoán)**", anchor="top")
