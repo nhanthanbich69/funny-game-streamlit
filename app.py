@@ -8,6 +8,9 @@ st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc X�
 # Tạo các tab
 tabs = st.tabs(["🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "🪙 Tung Đồng Xu", "📝 Hướng Dẫn", "📊 Kết Quả"])
 
+import random
+import streamlit as st
+
 # Khởi tạo các danh sách câu trả lời đúng và sai
 correct_responses = [
     "🎯 Đúng rồi! Bạn đích thị là thám tử tài ba đấy! 🔥", 
@@ -95,19 +98,28 @@ with tabs[0]:
                         response = random.choice(incorrect_responses)
                         clue = f"Số đó lớn hơn {number}."
                 elif "nằm trong khoảng" in question:
+                    # Tách giá trị start và end từ câu hỏi
                     parts = question.split("nằm trong khoảng")[1].strip()
-                    start, end = map(int, filter(str.isdigit, parts.replace('đến', ' ').split()))
-                    if start <= secret_number <= end:
-                        response = random.choice(correct_responses)
-                        clue = f"Số đó nằm trong khoảng từ {start} đến {end}."
-                    else:
-                        response = random.choice(incorrect_responses)
-                        clue = f"Số đó không nằm trong khoảng từ {start} đến {end}."
+                    try:
+                        start, end = map(int, filter(str.isdigit, parts.replace('đến', ' ').split()))
+                        if start <= secret_number <= end:
+                            response = random.choice(correct_responses)
+                            clue = f"Số đó nằm trong khoảng từ {start} đến {end}."
+                        else:
+                            response = random.choice(incorrect_responses)
+                            clue = f"Số đó không nằm trong khoảng từ {start} đến {end}."
+                    except ValueError:
+                        st.error("⚠️ Lỗi trong việc phân tích khoảng số. Vui lòng kiểm tra lại định dạng câu hỏi.")
+                        response = None
+                        clue = None
+
             except (IndexError, ValueError) as e:
                 st.error(f"⚠️ Lỗi trong việc xử lý câu hỏi: {e}")
 
             if response:
-                st.session_state.clues.append(clue)  # Lưu manh mối
+                # Kiểm tra manh mối trùng lặp trước khi lưu
+                if clue not in st.session_state.clues:
+                    st.session_state.clues.append(clue)  # Lưu manh mối
                 st.write(f"**Câu hỏi:** {question}")
                 st.write(f"**Trả lời:** {response}")
                 st.write(f"**Manh mối:** {clue}")  # Hiển thị manh mối
@@ -118,30 +130,29 @@ with tabs[0]:
         for clue in st.session_state.clues:
             st.write(f"- {clue}")
 
-    # Chốt lại số
-    if st.button("🔒 **Chốt**"): 
-        try:
-            user_guess = st.number_input(f"Bạn chắc số bí mật là (1-{max_num}) chưa? Nghĩ kỹ đi -))", min_value=1, max_value=max_num, step=1)
-            # Popup confirmation before confirming guess
-            confirm = st.radio(
-                f"Bạn chắc chắn số bí mật là {user_guess} chưa?",
-                ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
-            )
+    # Hiển thị phần nhập số
+    st.subheader("🔒 **Chốt số**")
 
-            if confirm == "✔️ Chắc chắn":
-                if user_guess == secret_number:
-                    st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {secret_number}! Quá đỉnh luôn!")
-                else:
-                    st.error(f"😞 **Rất tiếc!** Số bí mật là {secret_number}. Bạn đã thua! 😭")
-            elif confirm == "❌ Tôi cần suy nghĩ thêm":
-                st.info("Bạn có thể tiếp tục trò chơi và thử lại!")
+    user_guess = st.number_input(f"Bạn chắc số bí mật là (1-{max_num}) chưa? Nghĩ kỹ đi -))", min_value=1, max_value=max_num, step=1)
 
-        except Exception as e:
-            st.error(f"⚠️ Lỗi khi chốt số: {e}")
-        
-        # Reset lại sau khi kết thúc trò chơi
+    # Popup xác nhận khi nhập kết quả
+    confirm = st.radio(
+        f"Bạn chắc chắn số bí mật là {user_guess} chưa?",
+        ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
+    )
+
+    if confirm == "✔️ Chắc chắn":
+        if user_guess == secret_number:
+            st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {secret_number}! Quá đỉnh luôn!")
+        else:
+            st.error(f"😞 **Rất tiếc!** Số bí mật là {secret_number}. Bạn đã thua! 😭")
+    elif confirm == "❌ Tôi cần suy nghĩ thêm":
+        st.info("Bạn có thể tiếp tục trò chơi và thử lại!")
+
+    # Reset lại sau khi kết thúc trò chơi
+    if confirm == "✔️ Chắc chắn":
         st.session_state.attempts = 0
-        st.session_state.clues = []  
+        st.session_state.clues = []
         
 # Tab Búa Kéo Bao
 with tabs[1]:
