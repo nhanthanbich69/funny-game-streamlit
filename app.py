@@ -55,13 +55,17 @@ with tabs[0]:
             response = ""
             try:
                 if "lớn hơn" in question:
-                    number = int(question.split("lớn hơn")[1].strip())
+                    # Lấy số từ câu hỏi và loại bỏ phần không phải là số
+                    number = int(''.join(filter(str.isdigit, question.split("lớn hơn")[1].strip())))
                     response = random.choice(correct_responses) if secret_number > number else random.choice(incorrect_responses)
                 elif "bé hơn" in question:
-                    number = int(question.split("bé hơn")[1].strip())
+                    # Lấy số từ câu hỏi và loại bỏ phần không phải là số
+                    number = int(''.join(filter(str.isdigit, question.split("bé hơn")[1].strip())))
                     response = random.choice(correct_responses) if secret_number < number else random.choice(incorrect_responses)
                 elif "nằm trong khoảng" in question:
-                    start, end = map(int, question.split("nằm trong khoảng")[1].strip().split("đến"))
+                    # Lấy các số bắt đầu và kết thúc từ câu hỏi
+                    parts = question.split("nằm trong khoảng")[1].strip()
+                    start, end = map(int, filter(str.isdigit, parts.replace('đến', ' ').split()))
                     response = random.choice(correct_responses) if start <= secret_number <= end else random.choice(incorrect_responses)
             except (IndexError, ValueError) as e:
                 st.error(f"⚠️ Lỗi trong việc xử lý câu hỏi: {e}")
@@ -114,6 +118,7 @@ with tabs[1]:
     except Exception as e:
         st.error(f"⚠️ Lỗi khi chọn Búa, Bao, Kéo: {e}")
 
+    # Máy tính chọn ngẫu nhiên Búa, Bao hoặc Kéo
     computer_choice = random.choice(["Búa", "Bao", "Kéo"])
 
     if st.button("💥 **Kết quả**"):
@@ -122,11 +127,12 @@ with tabs[1]:
                 time.sleep(3)
                 
             if st.session_state.player_choice:
+                # Kiểm tra kết quả
                 if st.session_state.player_choice == computer_choice:
                     st.write(f"Máy chọn {computer_choice}. **Hòa rồi!** 😎 Thử lại xem!")
-                elif (st.session_state.player_choice == "Bao" and computer_choice == "Kéo") or \
-                     (st.session_state.player_choice == "Búa" and computer_choice == "Bao") or \
-                     (st.session_state.player_choice == "Kéo" and computer_choice == "Búa"):
+                elif (st.session_state.player_choice == "Búa" and computer_choice == "Kéo") or \
+                     (st.session_state.player_choice == "Kéo" and computer_choice == "Bao") or \
+                     (st.session_state.player_choice == "Bao" and computer_choice == "Búa"):
                     st.write(f"Máy chọn {computer_choice}. **Bạn thắng rồi!** 🎉 Chúc mừng bạn!")
                 else:
                     st.write(f"Máy chọn {computer_choice}. **Bạn thua rồi!** 😭 Cố lên lần sau!")
