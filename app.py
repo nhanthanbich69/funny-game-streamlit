@@ -205,7 +205,7 @@ with tabs[2]:
     if st.button("💥 **Kết quả**"):
         try:
             with st.spinner("Kết quả chính là... 🕹️"):
-                time.sleep(2)
+                time.sleep(1)
 
             if st.session_state.player_choice:
                 if st.session_state.player_choice == computer_choice:
