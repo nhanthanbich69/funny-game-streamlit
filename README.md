@@ -16,7 +16,7 @@ streamlit run app.py
 ## Mô Tả Các Trò Chơi
 
 - **Đoán Số**: Đoán số bí mật trong một phạm vi cho trước.
-- **Oẳn Tù Tì**: Chọn giữa "Ba", "Búa", và "Kéo" và so kết quả với máy.
+- **Oẳn Tù Tì**: Chọn giữa "Bao", "Búa", và "Kéo" và so kết quả với máy.
 - **Tung Xúc Xắc**: Chọn số lượng xúc xắc và loại xúc xắc, rồi tung để xem kết quả.
 - **Tung Đồng Xu**: Chọn số lượng đồng xu và tung để xem kết quả.
 
