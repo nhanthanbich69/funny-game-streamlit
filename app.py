@@ -3,7 +3,7 @@ import time
 import streamlit as st
 
 # Tiêu đề ứng dụng
-st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu)")
+st.title("🎮 **Game Tùy Chọn** (🎯 Đoán Số - 🖐 Búa Kéo Bao - 🎲 Tung Xúc Xắc - 💰 Tung Đồng Xu)")
 
 # Thêm CSS để tạo hiệu ứng hover cho các nút
 st.markdown("""
@@ -17,7 +17,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Tạo các tab
-tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "🪙 Tung Đồng Xu"])
+tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "💰 Tung Đồng Xu"])
 
 # 🎯 Các câu trả lời đúng & sai
 correct_responses = [
@@ -199,9 +199,14 @@ with tabs[3]:
             with st.spinner("Đang tung xúc xắc... 🎰"):
                 time.sleep(3)
 
+            # Tung xúc xắc và lấy kết quả
             results = [random.randint(1, sides) for _ in range(num_dice)]
-            st.write(f"Kết quả tung {num_dice} xúc xắc {sides} mặt: {results}")
             
+            # Hiển thị kết quả với mô tả chi tiết
+            st.subheader("🎲 **Kết quả tung xúc xắc**:")
+            for i, result in enumerate(results, 1):
+                st.write(f"🎲 **Lượt {i}:** Xúc xắc {i} tung ra {result} mặt")
+
             # Tính điểm: tổng điểm và điểm trung bình
             total_score = sum(results)
             avg_score = total_score / num_dice
@@ -210,24 +215,34 @@ with tabs[3]:
         except Exception as e:
             st.error(f"⚠️ Lỗi khi tung xúc xắc: {e}")
 
-# 🪙 Tung Đồng Xu
+# 💰 Tung Đồng Xu
 with tabs[4]:
-    st.header("**Tung Đồng Xu**")
+    st.header("💰 **Tung Đồng Xu**")
 
     num_coins = st.selectbox("🍀 **Chọn số lượng đồng xu**", [1, 2, 4])
 
-    if st.button("**Tung Đồng Xu**"):
+    if st.button("💰 **Tung Đồng Xu**"):
         try:
             with st.spinner("Đang tung đồng xu... "):
                 time.sleep(3)
 
+            # Tung đồng xu và tạo kết quả
             results = ["Mặt Sấp" if random.choice([True, False]) else "Mặt Ngửa" for _ in range(num_coins)]
-            st.write(f"Kết quả tung {num_coins} đồng xu: {results}")
+            
+            # Hiển thị kết quả với mô tả chi tiết
+            st.subheader("🪙 **Kết quả tung đồng xu**:")
+            for i, result in enumerate(results, 1):
+                st.write(f"🪙 **Lượt {i}:** {result}")
 
             # Lưu lịch sử tung
             if 'coin_history' not in st.session_state:
                 st.session_state.coin_history = []
             st.session_state.coin_history.append(results)
-            st.write(f"📝 **Lịch sử tung đồng xu**: {st.session_state.coin_history}")
+
+            # Hiển thị lịch sử tung đồng xu
+            st.subheader("📜 **Lịch sử tung đồng xu**:")
+            for i, history in enumerate(st.session_state.coin_history, 1):
+                st.write(f"🔹 **Lượt {i}:** {history}")
+
         except Exception as e:
             st.error(f"⚠️ Lỗi khi tung đồng xu: {e}")
