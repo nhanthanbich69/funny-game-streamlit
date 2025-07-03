@@ -205,7 +205,7 @@ with tabs[3]:
             # Hiển thị kết quả với mô tả chi tiết
             st.subheader("🎲 **Kết quả tung xúc xắc**:")
             for i, result in enumerate(results, 1):
-                st.write(f"🎲 **Lượt {i}:** Tung xúc xắc {i} được {result}")
+                st.write(f"🎲 **Xúc xắc {i}:** Tung được {result} điểm")
 
             # Tính điểm: tổng điểm và điểm trung bình
             total_score = sum(results)
