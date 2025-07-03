@@ -127,11 +127,19 @@ with tabs[1]:
             st.write(f"**Câu hỏi:** {question_type} {number}?")
             st.write(f"**Trả lời:** {response}")
             
-            # Thêm manh mối mới vào danh sách nếu chưa có
+            # Loại bỏ manh mối không hữu ích
             if clue not in st.session_state.clues:
-                # Loại bỏ manh mối không hữu ích
-                st.session_state.clues = [clue for clue in st.session_state.clues if clue != f"Số đó bé hơn {number}." and clue != f"Số đó lớn hơn {number}."]
-                st.session_state.clues.append(clue)
+                # Lọc những manh mối đã có mâu thuẫn trực tiếp
+                new_clues = []
+                for existing_clue in st.session_state.clues:
+                    # Nếu manh mối hiện tại mâu thuẫn với manh mối mới thì loại bỏ
+                    if "lớn hơn" in existing_clue and "bé hơn" in clue:
+                        continue
+                    elif "bé hơn" in existing_clue and "lớn hơn" in clue:
+                        continue
+                    new_clues.append(existing_clue)
+                new_clues.append(clue)
+                st.session_state.clues = new_clues
 
         # 📜 Hiển thị manh mối đã thu thập
         if st.session_state.clues:
@@ -163,8 +171,8 @@ with tabs[1]:
             st.session_state.secret_number = random.randint(0, max_num)
             st.session_state.attempts = 0
             st.session_state.clues = []
-            st.session_state.question_count = 0
-
+            st.session_state.question_count = 0 
+            
 # 🖐 Búa Kéo Bao
 with tabs[2]:
     st.header("🖐 **Búa Kéo Bao**")
