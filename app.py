@@ -155,13 +155,13 @@ with tabs[2]:
     try:
         # Add hover effect using CSS
         st.markdown("""
-        <style>
-            .button:hover {
-                background-color: #00bfae;
-                color: white;
-                transition: all 0.3s ease;
-            }
-        </style>
+            <style>
+                .stButton > button:hover {
+                    background-color: #FFD700;
+                    color: white;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+                }
+            </style>
         """, unsafe_allow_html=True)
 
         # Player choices
