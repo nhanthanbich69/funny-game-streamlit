@@ -101,10 +101,10 @@ with tabs[1]:
 
     # ❓ Nếu còn lượt hỏi
     if st.session_state.attempts < 10:
-        question_type = st.radio("❓ **Bạn muốn hỏi về số bí mật thế nào?**",
+        question_type = st.radio("❓ **Bạn muốn hỏi gì về số bí mật?**",
                                  ("Số đó lớn hơn hoặc bằng...", "Số đó bé hơn hoặc bằng..."),
                                  index=0, horizontal=True)
-        number = st.slider("🔍 Chọn số bạn muốn hỏi", 0, max_num)
+        number = st.slider("🔍 Hãy chọn khoảng bạn muốn hỏi", 0, max_num)
 
         if st.button("🕵️‍♂️ **Hỏi ngay!**"):
             st.session_state.attempts += 1
