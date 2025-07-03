@@ -3,7 +3,7 @@ import time
 import streamlit as st
 
 # Tiêu đề ứng dụng
-st.title("🎮 **Game Tùy Chọn** (🎯 Đoán Số - 🖐 Búa Kéo Bao - 🎲 Tung Xúc Xắc - 💰 Tung Đồng Xu)")
+st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu)")
 
 # Thêm CSS để tạo hiệu ứng hover cho các nút
 st.markdown("""
