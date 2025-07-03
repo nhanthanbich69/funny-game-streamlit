@@ -8,6 +8,9 @@ st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc X�
 # Tạo các tab
 tabs = st.tabs(["🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "🪙 Tung Đồng Xu", "📝 Hướng Dẫn", "📊 Kết Quả"])
 
+import random
+import streamlit as st
+
 # Khởi tạo các danh sách câu trả lời đúng và sai
 correct_responses = [
     "🎯 Đúng rồi! Bạn đích thị là thám tử tài ba đấy! 🔥", 
@@ -30,7 +33,7 @@ incorrect_responses = [
 ]
 
 # Tab Đoán Số
-with tabs[0]:
+with st.container():
     st.header("🎯 **Đoán Số Bí Mật (10 lượt đoán)**", anchor="top")
 
     # Các chế độ chơi (dễ, trung bình, khó)
@@ -113,12 +116,15 @@ with tabs[0]:
 
         user_guess = st.number_input(f"Bạn chắc số bí mật là (0-{max_num}) chưa? Nghĩ kỹ đi -))", min_value=0, max_value=max_num, step=1)
 
-        # Popup xác nhận khi nhập kết quả
-        confirm = st.radio(
-            f"Bạn chắc chắn số bí mật là {user_guess} chưa?",
-            ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
-        )
+        # Khởi tạo confirm nếu chưa có
+        confirm = None
+        if user_guess is not None:
+            confirm = st.radio(
+                f"Bạn chắc chắn số bí mật là {user_guess} chưa?",
+                ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
+            )
 
+        # Kiểm tra kết quả khi chọn "Chắc chắn"
         if confirm == "✔️ Chắc chắn":
             if user_guess == secret_number:
                 st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {secret_number}! Quá đỉnh luôn!")
