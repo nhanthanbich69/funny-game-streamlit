@@ -95,7 +95,7 @@ with tabs[1]:
     # ❓ Chọn loại câu hỏi
     if st.session_state.attempts < 10:  # Chỉ hiển thị phần hỏi khi còn lượt hỏi
         question_type = st.radio("❓ **Bạn muốn hỏi về số bí mật thế nào?**",
-                                 ("Số đó có lớn hơn...", "Số đó có bé hơn..."),
+                                 ("Số đó có lớn hơn hoặc bằng...", "Số đó có bé hơn hoặc bằng..."),
                                  index=0, horizontal=True)
 
         number = st.slider("🔍 Chọn số bạn muốn hỏi", 0, max_num)
@@ -108,24 +108,29 @@ with tabs[1]:
             response = ""
             clue = ""
             
-            if question_type == "Số đó có lớn hơn...":
-                if st.session_state.secret_number > number:
+            if question_type == "Số đó có lớn hơn hoặc bằng...":
+                if st.session_state.secret_number >= number:  
                     response = random.choice(correct_responses)
-                    clue = f"Số đó lớn hơn {number}."
-                else:
-                    response = random.choice(incorrect_responses)
-                    clue = f"Số đó bé hơn hoặc bằng {number}."
-            elif question_type == "Số đó có bé hơn...":
-                if st.session_state.secret_number < number:
-                    response = random.choice(correct_responses)
-                    clue = f"Số đó bé hơn {number}."
-                else:
-                    response = random.choice(incorrect_responses)
                     clue = f"Số đó lớn hơn hoặc bằng {number}."
+                else:
+                    response = random.choice(incorrect_responses)
+                    clue = f"Số đó bé hơn {number}."
+            
+            elif question_type == "Số đó có bé hơn hoặc bằng...":
+                if st.session_state.secret_number <= number: 
+                    response = random.choice(correct_responses)
+                    clue = f"Số đó bé hơn hoặc bằng {number}."
+                else:
+                    response = random.choice(incorrect_responses)
+                    clue = f"Số đó lớn hơn {number}."
 
             st.write(f"**Câu hỏi:** {question_type} {number}?")
             st.write(f"**Trả lời:** {response}")
+            
+            # Thêm manh mối mới vào danh sách nếu chưa có
             if clue not in st.session_state.clues:
+                # Loại bỏ manh mối không hữu ích
+                st.session_state.clues = [clue for clue in st.session_state.clues if clue != f"Số đó bé hơn {number}." and clue != f"Số đó lớn hơn {number}."]
                 st.session_state.clues.append(clue)
 
         # 📜 Hiển thị manh mối đã thu thập
@@ -158,7 +163,7 @@ with tabs[1]:
             st.session_state.secret_number = random.randint(0, max_num)
             st.session_state.attempts = 0
             st.session_state.clues = []
-            st.session_state.question_count = 0  # Reset số câu hỏi
+            st.session_state.question_count = 0
 
 # 🖐 Búa Kéo Bao
 with tabs[2]:
