@@ -113,13 +113,12 @@ with st.container():
 
         user_guess = st.number_input(f"Bạn chắc số bí mật là (0-{max_num}) chưa? Nghĩ kỹ đi -))", min_value=0, max_value=max_num, step=1)
 
-        # Khởi tạo confirm nếu chưa có
-        confirm = None
-        if user_guess is not None:
-            confirm = st.radio(
-                f"Bạn chắc chắn số bí mật là {user_guess} chưa?",
-                ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
-            )
+        # Khởi tạo confirm nếu chưa có và xử lý tránh lỗi
+        confirm = st.radio(
+            f"Bạn chắc chắn số bí mật là {user_guess} chưa?",
+            ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"],
+            key="confirm_radio"
+        )
 
         # Kiểm tra kết quả khi chọn "Chắc chắn"
         if confirm == "✔️ Chắc chắn":
@@ -131,7 +130,7 @@ with st.container():
             st.info("Bạn có thể tiếp tục trò chơi và thử lại!")
 
     # Reset lại sau khi kết thúc trò chơi
-    if st.session_state.attempts > 10 or confirm == "✔️ Chắc chắn":
+    if st.session_state.attempts > 10 or (confirm and confirm == "✔️ Chắc chắn"):
         st.session_state.attempts = 0
         st.session_state.clues = []
         
