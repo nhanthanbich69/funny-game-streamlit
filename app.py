@@ -37,7 +37,7 @@ with tabs[0]:
     level = st.selectbox("⚡️ Chọn chế độ chơi", ["Dễ (0~30)", "Trung Bình (0~100)", "Khó (0~500)"])
 
     max_num = {"Dễ (0~30)": 30, "Trung Bình (0~100)": 100, "Khó (0~500)": 500}[level]
-    secret_number = random.randint(1, max_num)
+    secret_number = random.randint(0, max_num)  # Cho phép chọn số 0
 
     # Biến lưu trữ số lần đoán
     if 'attempts' not in st.session_state:
@@ -53,10 +53,10 @@ with tabs[0]:
     # Xử lý câu hỏi
     try:
         if question_type == "Số đó có lớn hơn một con số?":
-            number = st.slider("🚀 Chọn một số bạn muốn hỏi", 1, max_num)
+            number = st.slider("🚀 Chọn một số bạn muốn hỏi", 0, max_num)  # Allow 0 as a valid number
             question = f"Số bí mật có phải lớn hơn {number} không?"
         elif question_type == "Số đó có bé hơn một con số?":
-            number = st.slider("🌟 Chọn một số bạn muốn hỏi", 1, max_num)
+            number = st.slider("🌟 Chọn một số bạn muốn hỏi", 0, max_num)  # Allow 0 as a valid number
             question = f"Số bí mật có phải bé hơn {number} không?"
     except Exception as e:
         st.error(f"⚠️ Lỗi khi tạo câu hỏi: {e}")
@@ -108,10 +108,10 @@ with tabs[0]:
             st.write(f"- {clue}")
 
     # Hiển thị phần nhập số
-    if st.session_state.attempts < 10:
+    if st.session_state.attempts > 0 and st.session_state.attempts <= 10:
         st.subheader("🔒 **Chốt số**")
 
-        user_guess = st.number_input(f"Bạn chắc số bí mật là (1-{max_num}) chưa? Nghĩ kỹ đi -))", min_value=1, max_value=max_num, step=1)
+        user_guess = st.number_input(f"Bạn chắc số bí mật là (0-{max_num}) chưa? Nghĩ kỹ đi -))", min_value=0, max_value=max_num, step=1)
 
         # Popup xác nhận khi nhập kết quả
         confirm = st.radio(
