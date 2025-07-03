@@ -42,23 +42,20 @@ tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao",
 
 # 🎯 Các câu trả lời đúng & sai
 correct_responses = [
-    "🎯 Đúng rồi! Đỉnh!",
-    "🔥 Wow, chuẩn rồi!",
-    "🚀 Đúng phết!",
-    "😎 Chính xác!",
-    "💥 Chính xác luôn!",
-    "🎉 Đỉnh cao!",
-    "🌟 Quá chuẩn!"
+    "🎉 Chính xác!",
+    "✅ Ừ đúng rồi đó!",
+    "🧠 Có vẻ bạn đang suy luận tốt!",
+    "📈 Thông tin này đáng giá đấy!",
+    "👌 Đúng thế!"
 ]
 
 incorrect_responses = [
     "😅 Ôi không, sai rồi!",
-    "🤔 Hơi sai rồi, thử lại đi!",
-    "💔 Không phải rồi, tiếp đi!",
-    "🙃 Cố lên, thử lại nhé!",
-    "😜 Lại sai rồi, nhưng đừng bỏ cuộc!",
-    "😞 Gần đúng rồi, thử lại lần nữa!",
-    "😢 Sai rồi, tiếp tục cố gắng!"
+    "😜 Không đúng, sai rồi liu liu",
+    "🛑 Bạn lạc hướng rồi, nghĩ lại đi!",
+    "🙃 Suýt nữa thì đoán đúng rồi, nhưng sai nhá!",
+    "🚫 Cẩn thận, thông tin này sai đấy!",
+    "💔 Không phải rồi, thử tiếp đi!"
 ]
 
 # Tab Hướng Dẫn
@@ -74,104 +71,122 @@ with tabs[0]:
 # 🎯 Đoán Số
 with tabs[1]:
     st.header("🎯 **Đoán Số Bí Mật (10 lượt hỏi)**")
+
+    # Khởi tạo trạng thái
     if 'attempts' not in st.session_state:
         st.session_state.attempts = 0
-    if 'clues' not in st.session_state:
-        st.session_state.clues = []
     if 'secret_number' not in st.session_state:
         st.session_state.secret_number = None
     if 'question_count' not in st.session_state:
-        st.session_state.question_count = 0  # Biến đếm số câu hỏi đã hỏi
+        st.session_state.question_count = 0
+    if 'min_bound' not in st.session_state:
+        st.session_state.min_bound = 0
+    if 'max_bound' not in st.session_state:
+        st.session_state.max_bound = 99
+    if 'last_max_num' not in st.session_state:
+        st.session_state.last_max_num = 99
 
     # 🎮 Chọn độ khó
     level = st.selectbox("⚡️ Chọn chế độ chơi", ["Thường (0~99)", "Khó (0~300)", "Bậc thầy (0~1000)"])
     max_num = {"Thường (0~99)": 99, "Khó (0~300)": 300, "Bậc thầy (0~1000)": 1000}[level]
 
-    # 🎰 Random số bí mật khi bắt đầu hoặc sau khi đổi độ khó
-    if st.session_state.secret_number is None or st.session_state.get('last_max_num') != max_num:
+    # 🎰 Reset khi đổi độ khó hoặc mới vào
+    if st.session_state.secret_number is None or st.session_state.last_max_num != max_num:
         st.session_state.secret_number = random.randint(0, max_num)
         st.session_state.last_max_num = max_num
+        st.session_state.min_bound = 0
+        st.session_state.max_bound = max_num
+        st.session_state.attempts = 0
+        st.session_state.question_count = 0
 
-    # ❓ Chọn loại câu hỏi
-    if st.session_state.attempts < 10:  # Chỉ hiển thị phần hỏi khi còn lượt hỏi
+    # ❓ Nếu còn lượt hỏi
+    if st.session_state.attempts < 10:
         question_type = st.radio("❓ **Bạn muốn hỏi về số bí mật thế nào?**",
                                  ("Số đó có lớn hơn hoặc bằng...", "Số đó có bé hơn hoặc bằng..."),
                                  index=0, horizontal=True)
-
         number = st.slider("🔍 Chọn số bạn muốn hỏi", 0, max_num)
 
-        # 👇 Hỏi số
         if st.button("🕵️‍♂️ **Hỏi ngay!**"):
             st.session_state.attempts += 1
-            st.session_state.question_count += 1  # Tăng số câu hỏi đã hỏi
+            st.session_state.question_count += 1
 
             response = ""
             clue = ""
-            
+
+            secret = st.session_state.secret_number
+            min_b = st.session_state.min_bound
+            max_b = st.session_state.max_bound
+
+            # Trả lời & cập nhật giới hạn
             if question_type == "Số đó có lớn hơn hoặc bằng...":
-                if st.session_state.secret_number >= number:  
+                if secret >= number:
                     response = random.choice(correct_responses)
                     clue = f"Số đó lớn hơn hoặc bằng {number}."
+                    st.session_state.min_bound = max(min_b, number)
                 else:
                     response = random.choice(incorrect_responses)
                     clue = f"Số đó bé hơn {number}."
-            
+                    st.session_state.max_bound = min(max_b, number - 1)
+
             elif question_type == "Số đó có bé hơn hoặc bằng...":
-                if st.session_state.secret_number <= number: 
+                if secret <= number:
                     response = random.choice(correct_responses)
                     clue = f"Số đó bé hơn hoặc bằng {number}."
+                    st.session_state.max_bound = min(max_b, number)
                 else:
                     response = random.choice(incorrect_responses)
                     clue = f"Số đó lớn hơn {number}."
+                    st.session_state.min_bound = max(min_b, number + 1)
 
+            # Hiển thị
             st.write(f"**Câu hỏi:** {question_type} {number}?")
             st.write(f"**Trả lời:** {response}")
-            
-            # Loại bỏ manh mối không hữu ích
-            if clue not in st.session_state.clues:
-                # Lọc những manh mối đã có mâu thuẫn trực tiếp
-                new_clues = []
-                for existing_clue in st.session_state.clues:
-                    # Nếu manh mối hiện tại mâu thuẫn với manh mối mới thì loại bỏ
-                    if "lớn hơn" in existing_clue and "bé hơn" in clue:
-                        continue
-                    elif "bé hơn" in existing_clue and "lớn hơn" in clue:
-                        continue
-                    new_clues.append(existing_clue)
-                new_clues.append(clue)
-                st.session_state.clues = new_clues
+            st.success(f"🧩 {clue}")
 
-        # 📜 Hiển thị manh mối đã thu thập
-        if st.session_state.clues:
-            st.subheader("🕵️‍♂️ **Các manh mối bạn đã rút ra:**")
-            for clue in st.session_state.clues:
+        # 🎯 Hiển thị các manh mối quan trọng nhất (không thừa)
+        st.subheader("🧠 **Manh mối bạn đã rút ra:**")
+        
+        clues = []
+        
+        if st.session_state.min_bound > 0:
+            clues.append(f"Số đó lớn hơn hoặc bằng {st.session_state.min_bound}.")
+        
+        if st.session_state.max_bound < max_num:
+            clues.append(f"Số đó bé hơn hoặc bằng {st.session_state.max_bound}.")
+        
+        if clues:
+            for clue in clues:
                 st.write(f"- {clue}")
+        else:
+            st.info("Bạn chưa có manh mối nào rõ ràng cả! Hỏi đi!")
 
     else:
         st.warning("🚨 **Hết lượt hỏi rồi má! Mau cho tôi câu trả lời đi.**")
 
-    # 🔒 Chốt số với nút bấm
+    # 🔒 Đoán số
     if 0 < st.session_state.attempts <= 10:
         st.subheader(f"🔒 **Chốt số** (Câu hỏi {st.session_state.question_count}/10)")
         user_guess = st.number_input(f"Bạn nghĩ số bí mật là (0 - {max_num}):", min_value=0, max_value=max_num, step=1)
 
-        # Chốt kết quả và tính điểm
         if st.button("🎯 **Chốt số ngay!**"):
-            if user_guess == st.session_state.secret_number:
-                st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {st.session_state.secret_number}! Quá đỉnh luôn!")
+            secret = st.session_state.secret_number
+            if user_guess == secret:
+                st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {secret}! Quá đỉnh luôn!")
             else:
-                st.error(f"😞 **Rất tiếc!** Số bí mật là {st.session_state.secret_number}. Bạn đã thua! 😭")
-            
-            # Tính điểm cho trò Đoán Số
+                st.error(f"😞 **Rất tiếc!** Số bí mật là {secret}. Bạn đã thua! 😭")
+
+            # Tính điểm
             remaining_questions = 10 - st.session_state.attempts
             score = 100 * ((10 + remaining_questions) / 10)
             st.write(f"🎯 **Điểm của bạn**: {score:.2f}")
 
-            # Reset sau khi chốt
+            # Reset toàn bộ
             st.session_state.secret_number = random.randint(0, max_num)
+            st.session_state.min_bound = 0
+            st.session_state.max_bound = max_num
             st.session_state.attempts = 0
-            st.session_state.clues = []
-            st.session_state.question_count = 0 
+            st.session_state.question_count = 0
+            st.session_state.last_max_num = max_num
             
 # 🖐 Búa Kéo Bao
 with tabs[2]:
