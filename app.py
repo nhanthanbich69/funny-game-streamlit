@@ -17,7 +17,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Tạo các tab
-tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "🪙 Tung Đồng Xu", "📊 Kết Quả"])
+tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "🪙 Tung Đồng Xu"])
 
 # 🎯 Các câu trả lời đúng & sai
 correct_responses = [
@@ -122,18 +122,24 @@ with tabs[1]:
         st.subheader(f"🔒 **Chốt số** (Câu hỏi {st.session_state.question_count}/10)")
         user_guess = st.number_input(f"Bạn nghĩ số bí mật là (0 - {max_num}):", min_value=0, max_value=max_num, step=1)
 
-        # Chốt kết quả
+        # Chốt kết quả và tính điểm
         if st.button("🎯 **Chốt số ngay!**"):
             if user_guess == st.session_state.secret_number:
                 st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {st.session_state.secret_number}! Quá đỉnh luôn!")
             else:
                 st.error(f"😞 **Rất tiếc!** Số bí mật là {st.session_state.secret_number}. Bạn đã thua! 😭")
+            
+            # Tính điểm cho trò Đoán Số
+            remaining_questions = 10 - st.session_state.attempts
+            score = 100 * ((10 + remaining_questions) / 10)
+            st.write(f"🎯 **Điểm của bạn**: {score:.2f}")
+
             # Reset sau khi chốt
             st.session_state.secret_number = random.randint(0, max_num)
             st.session_state.attempts = 0
             st.session_state.clues = []
             st.session_state.question_count = 0  # Reset số câu hỏi
-            
+
 # 🖐 Búa Kéo Bao
 with tabs[2]:
     st.header("🖐 **Búa Kéo Bao**")
@@ -195,6 +201,12 @@ with tabs[3]:
 
             results = [random.randint(1, sides) for _ in range(num_dice)]
             st.write(f"Kết quả tung {num_dice} xúc xắc {sides} mặt: {results}")
+            
+            # Tính điểm: tổng điểm và điểm trung bình
+            total_score = sum(results)
+            avg_score = total_score / num_dice
+            st.write(f"🎯 **Tổng điểm**: {total_score}")
+            st.write(f"🎯 **Điểm trung bình**: {avg_score:.2f}")
         except Exception as e:
             st.error(f"⚠️ Lỗi khi tung xúc xắc: {e}")
 
@@ -211,5 +223,11 @@ with tabs[4]:
 
             results = ["Mặt Sấp" if random.choice([True, False]) else "Mặt Ngửa" for _ in range(num_coins)]
             st.write(f"Kết quả tung {num_coins} đồng xu: {results}")
+
+            # Lưu lịch sử tung
+            if 'coin_history' not in st.session_state:
+                st.session_state.coin_history = []
+            st.session_state.coin_history.append(results)
+            st.write(f"📝 **Lịch sử tung đồng xu**: {st.session_state.coin_history}")
         except Exception as e:
             st.error(f"⚠️ Lỗi khi tung đồng xu: {e}")
