@@ -30,14 +30,14 @@ incorrect_responses = [
 ]
 
 # Tab Đoán Số
-with st.container():
+with tabs[0]:
     st.header("🎯 **Đoán Số Bí Mật (10 lượt đoán)**", anchor="top")
 
     # Các chế độ chơi (dễ, trung bình, khó)
     level = st.selectbox("⚡️ Chọn chế độ chơi", ["Dễ (0~30)", "Trung Bình (0~100)", "Khó (0~500)"])
 
     max_num = {"Dễ (0~30)": 30, "Trung Bình (0~100)": 100, "Khó (0~500)": 500}[level]
-    secret_number = random.randint(0, max_num)  # Cho phép chọn số 0
+    secret_number = random.randint(0, max_num)  # Sửa để hỗ trợ số 0
 
     # Biến lưu trữ số lần đoán
     if 'attempts' not in st.session_state:
@@ -53,10 +53,10 @@ with st.container():
     # Xử lý câu hỏi
     try:
         if question_type == "Số đó có lớn hơn một con số?":
-            number = st.slider("🚀 Chọn một số bạn muốn hỏi", 0, max_num)  # Allow 0 as a valid number
+            number = st.slider("🚀 Chọn một số bạn muốn hỏi", 0, max_num)  # Sửa để hỗ trợ số 0
             question = f"Số bí mật có phải lớn hơn {number} không?"
         elif question_type == "Số đó có bé hơn một con số?":
-            number = st.slider("🌟 Chọn một số bạn muốn hỏi", 0, max_num)  # Allow 0 as a valid number
+            number = st.slider("🌟 Chọn một số bạn muốn hỏi", 0, max_num)  # Sửa để hỗ trợ số 0
             question = f"Số bí mật có phải bé hơn {number} không?"
     except Exception as e:
         st.error(f"⚠️ Lỗi khi tạo câu hỏi: {e}")
@@ -108,19 +108,17 @@ with st.container():
             st.write(f"- {clue}")
 
     # Hiển thị phần nhập số
-    if st.session_state.attempts > 0 and st.session_state.attempts <= 10:
+    if st.session_state.attempts < 10:
         st.subheader("🔒 **Chốt số**")
 
         user_guess = st.number_input(f"Bạn chắc số bí mật là (0-{max_num}) chưa? Nghĩ kỹ đi -))", min_value=0, max_value=max_num, step=1)
 
-        # Khởi tạo confirm nếu chưa có và xử lý tránh lỗi
+        # Popup xác nhận khi nhập kết quả
         confirm = st.radio(
             f"Bạn chắc chắn số bí mật là {user_guess} chưa?",
-            ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"],
-            key="confirm_radio"
+            ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
         )
 
-        # Kiểm tra kết quả khi chọn "Chắc chắn"
         if confirm == "✔️ Chắc chắn":
             if user_guess == secret_number:
                 st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {secret_number}! Quá đỉnh luôn!")
@@ -130,7 +128,7 @@ with st.container():
             st.info("Bạn có thể tiếp tục trò chơi và thử lại!")
 
     # Reset lại sau khi kết thúc trò chơi
-    if st.session_state.attempts > 10 or (confirm and confirm == "✔️ Chắc chắn"):
+    if st.session_state.attempts > 10 or confirm == "✔️ Chắc chắn":
         st.session_state.attempts = 0
         st.session_state.clues = []
         
