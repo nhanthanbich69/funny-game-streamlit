@@ -8,9 +8,6 @@ st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc X�
 # Tạo các tab
 tabs = st.tabs(["🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "🪙 Tung Đồng Xu", "📝 Hướng Dẫn", "📊 Kết Quả"])
 
-import random
-import streamlit as st
-
 # Khởi tạo các danh sách câu trả lời đúng và sai
 correct_responses = [
     "🎯 Đúng rồi! Bạn đích thị là thám tử tài ba đấy! 🔥", 
