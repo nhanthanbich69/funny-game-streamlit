@@ -52,7 +52,7 @@ with tabs[0]:
 
 # 🎯 Đoán Số
 with tabs[1]:
-    st.header("🎯 **Đoán Số Bí Mật (10 lượt đoán)**")
+    st.header("🎯 **Đoán Số Bí Mật (10 lượt hỏi)**")
     if 'attempts' not in st.session_state:
         st.session_state.attempts = 0
     if 'clues' not in st.session_state:
