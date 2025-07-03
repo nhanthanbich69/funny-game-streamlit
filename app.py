@@ -10,7 +10,7 @@ tabs = st.tabs(["🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc"
 
 # Tab Đoán Số
 with tabs[0]:
-    st.header("🎯 **Đoán Số Bí Mật (10 lượt đoán)**")
+    st.header("🎯 **Đoán Số Bí Mật (10 lượt đoán)**", anchor="top")
 
     # Các chế độ chơi (dễ, trung bình, khó)
     level = st.selectbox("⚡️ Chọn chế độ chơi", ["Dễ (0~30)", "Trung Bình (0~100)", "Khó (0~500)"])
@@ -26,7 +26,8 @@ with tabs[0]:
 
     # Lựa chọn câu hỏi
     question_type = st.radio("❓ **Bạn muốn hỏi về số bí mật thế nào?**", 
-                             ("Số đó có lớn hơn một con số?", "Số đó có bé hơn một con số?", "Số đó có nằm trong một khoảng số nào đó?"))
+                             ("Số đó có lớn hơn một con số?", "Số đó có bé hơn một con số?", "Số đó có nằm trong một khoảng số nào đó?"),
+                             index=0, horizontal=True)  # Horizontal layout for the options
 
     # Xử lý câu hỏi
     try:
@@ -44,7 +45,7 @@ with tabs[0]:
         st.error(f"⚠️ Lỗi khi tạo câu hỏi: {e}")
 
     # Kiểm tra và phản hồi câu hỏi
-    if st.button("🕵️‍♂️ Hỏi câu"):
+    if st.button("🕵️‍♂️ **Hỏi câu**"):
         st.session_state.attempts += 1
 
         if st.session_state.attempts > 10:
@@ -55,15 +56,12 @@ with tabs[0]:
             response = ""
             try:
                 if "lớn hơn" in question:
-                    # Lấy số từ câu hỏi và loại bỏ phần không phải là số
                     number = int(''.join(filter(str.isdigit, question.split("lớn hơn")[1].strip())))
                     response = random.choice(correct_responses) if secret_number > number else random.choice(incorrect_responses)
                 elif "bé hơn" in question:
-                    # Lấy số từ câu hỏi và loại bỏ phần không phải là số
                     number = int(''.join(filter(str.isdigit, question.split("bé hơn")[1].strip())))
                     response = random.choice(correct_responses) if secret_number < number else random.choice(incorrect_responses)
                 elif "nằm trong khoảng" in question:
-                    # Lấy các số bắt đầu và kết thúc từ câu hỏi
                     parts = question.split("nằm trong khoảng")[1].strip()
                     start, end = map(int, filter(str.isdigit, parts.replace('đến', ' ').split()))
                     response = random.choice(correct_responses) if start <= secret_number <= end else random.choice(incorrect_responses)
@@ -84,11 +82,21 @@ with tabs[0]:
     # Chốt lại số
     if st.button("🔒 **Chốt số**"):
         try:
-            user_guess = st.number_input(f"Bạn chắc số bí mật là (1-{max_num}) chưa? Nghĩ kĩ đi -))", min_value=1, max_value=max_num)
-            if user_guess == secret_number:
-                st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {secret_number}! Quá đỉnh luôn!") 
-            else:
-                st.error(f"😞 **Rất tiếc!** Số bí mật là {secret_number}. Bạn đã thua! 😭")
+            user_guess = st.number_input(f"Bạn chắc số bí mật là (1-{max_num}) chưa? Nghĩ kỹ đi -))", min_value=1, max_value=max_num, step=1)
+            # Popup confirmation before confirming guess
+            confirm = st.radio(
+                f"Bạn chắc chắn số bí mật là {user_guess} chưa?",
+                ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
+            )
+
+            if confirm == "✔️ Chắc chắn":
+                if user_guess == secret_number:
+                    st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {secret_number}! Quá đỉnh luôn!")
+                else:
+                    st.error(f"😞 **Rất tiếc!** Số bí mật là {secret_number}. Bạn đã thua! 😭")
+            elif confirm == "❌ Tôi cần suy nghĩ thêm":
+                st.info("Bạn có thể tiếp tục trò chơi và thử lại!")
+
         except Exception as e:
             st.error(f"⚠️ Lỗi khi chốt số: {e}")
         
