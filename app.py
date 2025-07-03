@@ -177,14 +177,18 @@ with tabs[1]:
 
             # Tính độ lệch giữa số dự đoán và số bí mật
             difference = abs(user_guess - st.session_state.secret_number)
-
+            
             # Tính tỷ lệ lệch với phạm vi
             max_diff = max_num  # Phạm vi tối đa tùy vào độ khó
             score_percentage = max(0, 100 - (difference / max_diff) * 100)
-
-            # Tính điểm: điểm càng cao nếu số đoán gần đúng
-            remaining_questions = 10 - st.session_state.attempts
-            score = int(score_percentage * ((11 + remaining_questions) / 9))
+            
+            # Nếu đoán đúng thì cộng thêm điểm từ số lượt hỏi còn lại
+            if user_guess == st.session_state.secret_number:
+                remaining_questions = 10 - st.session_state.attempts
+                score = int(score_percentage * ((11 + remaining_questions) / 9))  # Cộng điểm nếu đoán đúng
+            else:
+                score = int(score_percentage)  # Giảm điểm tùy theo độ lệch nếu đoán sai
+            
             st.write(f"🎯 **Điểm của bạn**: {score:.2f}")
 
             # Reset toàn bộ
