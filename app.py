@@ -17,7 +17,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Tạo các tab
-tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "Tung Đồng Xu"])
+tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "🪙 Tung Đồng Xu", "📊 Kết Quả"])
 
 # 🎯 Các câu trả lời đúng & sai
 correct_responses = [
@@ -81,38 +81,32 @@ with tabs[1]:
 
         # 👇 Hỏi số
         if st.button("🕵️‍♂️ **Hỏi ngay!**"):
-            # Kiểm tra manh mối đã có
-            if question_type == "Số đó có lớn hơn một con số?" and f"Số đó lớn hơn {number}." in st.session_state.clues:
-                st.warning("🚨 **Bạn đã hỏi câu này rồi. Vui lòng hỏi câu khác!**")
-            elif question_type == "Số đó có bé hơn một con số?" and f"Số đó bé hơn {number}." in st.session_state.clues:
-                st.warning("🚨 **Bạn đã hỏi câu này rồi. Vui lòng hỏi câu khác!**")
-            else:
-                st.session_state.attempts += 1
-                st.session_state.question_count += 1  # Tăng số câu hỏi đã hỏi
+            st.session_state.attempts += 1
+            st.session_state.question_count += 1  # Tăng số câu hỏi đã hỏi
 
-                response = ""
-                clue = ""
-                
-                if question_type == "Số đó có lớn hơn một con số?":
-                    if st.session_state.secret_number > number:
-                        response = random.choice(correct_responses)
-                        clue = f"Số đó lớn hơn {number}."
-                    else:
-                        response = random.choice(incorrect_responses)
-                        clue = f"Số đó bé hơn hoặc bằng {number}."
-                elif question_type == "Số đó có bé hơn một con số?":
-                    if st.session_state.secret_number < number:
-                        response = random.choice(correct_responses)
-                        clue = f"Số đó bé hơn {number}."
-                    else:
-                        response = random.choice(incorrect_responses)
-                        clue = f"Số đó lớn hơn hoặc bằng {number}."
+            response = ""
+            clue = ""
+            
+            if question_type == "Số đó có lớn hơn một con số?":
+                if st.session_state.secret_number > number:
+                    response = random.choice(correct_responses)
+                    clue = f"Số đó lớn hơn {number}."
+                else:
+                    response = random.choice(incorrect_responses)
+                    clue = f"Số đó bé hơn hoặc bằng {number}."
+            elif question_type == "Số đó có bé hơn một con số?":
+                if st.session_state.secret_number < number:
+                    response = random.choice(correct_responses)
+                    clue = f"Số đó bé hơn {number}."
+                else:
+                    response = random.choice(incorrect_responses)
+                    clue = f"Số đó lớn hơn hoặc bằng {number}."
 
-                st.write(f"**Câu hỏi:** {question_type} {number}?")
-                st.write(f"**Trả lời:** {response}")
-                st.write(f"**Manh mối:** {clue}")
-                if clue not in st.session_state.clues:
-                    st.session_state.clues.append(clue)
+            st.write(f"**Câu hỏi:** {question_type} {number}?")
+            st.write(f"**Trả lời:** {response}")
+            st.write(f"**Manh mối:** {clue}")
+            if clue not in st.session_state.clues:
+                st.session_state.clues.append(clue)
 
         # 📜 Hiển thị manh mối đã thu thập
         if st.session_state.clues:
@@ -129,24 +123,24 @@ with tabs[1]:
         user_guess = st.number_input(f"Bạn nghĩ số bí mật là (0 - {max_num}):", min_value=0, max_value=max_num, step=1)
 
         # Xác nhận khi chọn "Chốt số"
-        confirm = st.radio(
-            "Bạn chắc chắn số bí mật là này không?",
-            ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
-        )
+        if st.button("🎯 **Chốt số ngay!**"):
+            confirm = st.radio(
+                "Bạn chắc chắn số bí mật là này không?",
+                ["✔️ Chắc chắn", "❌ Tôi cần suy nghĩ thêm"]
+            )
 
-        if confirm == "✔️ Chắc chắn":
-            if user_guess == st.session_state.secret_number:
-                st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {st.session_state.secret_number}! Quá đỉnh luôn!")
-            else:
-                st.error(f"😞 **Rất tiếc!** Số bí mật là {st.session_state.secret_number}. Bạn đã thua! 😭")
-            # Reset sau khi chốt
-            st.session_state.secret_number = random.randint(0, max_num)
-            st.session_state.attempts = 0
-            st.session_state.clues = []
-            st.session_state.question_count = 0  # Reset số câu hỏi
-
-        elif confirm == "❌ Tôi cần suy nghĩ thêm":
-            st.info("Bạn có thể tiếp tục trò chơi và thử lại!")
+            if confirm == "✔️ Chắc chắn":
+                if user_guess == st.session_state.secret_number:
+                    st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {st.session_state.secret_number}! Quá đỉnh luôn!")
+                else:
+                    st.error(f"😞 **Rất tiếc!** Số bí mật là {st.session_state.secret_number}. Bạn đã thua! 😭")
+                # Reset sau khi chốt
+                st.session_state.secret_number = random.randint(0, max_num)
+                st.session_state.attempts = 0
+                st.session_state.clues = []
+                st.session_state.question_count = 0  # Reset số câu hỏi
+            elif confirm == "❌ Tôi cần suy nghĩ thêm":
+                st.info("Bạn có thể tiếp tục trò chơi và thử lại!")
             
 # 🖐 Búa Kéo Bao
 with tabs[2]:
