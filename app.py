@@ -1,6 +1,7 @@
 import random
 import time
 import streamlit as st
+import base64
 
 # Tiêu đề ứng dụng
 st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu)")
@@ -36,6 +37,36 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
+# Đọc file âm thanh và chuyển thành base64 để nhúng
+def get_base64_audio(file_path):
+    with open(file_path, "rb") as audio_file:
+        return base64.b64encode(audio_file.read()).decode()
+
+# Danh sách các file âm thanh
+audio_files = [
+    "ms_bg.mp3",
+]
+
+# Lấy âm thanh dưới dạng base64
+def get_random_audio():
+    audio_file = random.choice(audio_files)
+    return get_base64_audio(audio_file)
+
+# CSS để ẩn giao diện trình phát âm thanh
+def embed_audio():
+    audio_base64 = get_random_audio()
+    st.markdown(
+        f"""
+        <audio autoplay loop>
+            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+        </audio>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Nhúng âm thanh nền
+embed_audio()
 
 # Tạo các tab
 tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "💰 Tung Đồng Xu"])
