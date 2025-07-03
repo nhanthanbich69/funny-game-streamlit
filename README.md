@@ -7,23 +7,11 @@ Chào mừng bạn đến với **Game Tùy Chọn**, một bộ game đơn gi�
 1. Clone dự án về máy tính của bạn:
 git clone https://github.com/your_username/game_project.git
 
-r
-Copy
-Edit
-
 2. Cài đặt các thư viện cần thiết:
 pip install -r requirements.txt
 
-markdown
-Copy
-Edit
-
 3. Chạy ứng dụng Streamlit:
 streamlit run app.py
-
-r
-Copy
-Edit
 
 ## Mô Tả Các Trò Chơi
 
