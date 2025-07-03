@@ -205,7 +205,7 @@ with tabs[2]:
     if st.button("💥 **Kết quả**"):
         try:
             with st.spinner("Kết quả chính là... 🕹️"):
-                time.sleep(3)
+                time.sleep(2)
 
             if st.session_state.player_choice:
                 if st.session_state.player_choice == computer_choice:
@@ -237,7 +237,7 @@ with tabs[3]:
     if st.button("🎲 **Tung Xúc Xắc**"):
         try:
             with st.spinner("Đang tung xúc xắc... 🎰"):
-                time.sleep(3)
+                time.sleep(2)
 
             results = [random.randint(1, sides) for _ in range(num_dice)]
             
@@ -261,7 +261,7 @@ with tabs[4]:
     if st.button("💰 **Tung Đồng Xu**"):
         try:
             with st.spinner("Đang tung đồng xu... "):
-                time.sleep(3)
+                time.sleep(1)
 
             results = ["Mặt Sấp" if random.choice([True, False]) else "Mặt Ngửa" for _ in range(num_coins)]
             
