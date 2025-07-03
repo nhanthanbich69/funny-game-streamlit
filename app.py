@@ -295,7 +295,7 @@ with tabs[4]:
             
             st.subheader("💰 **Kết quả tung đồng xu**:")
             for i, result in enumerate(results, 1):
-                st.write(f"🔹 **Lượt {i}:** {result}")
+                st.write(f"🔹 **Đồng xu thứ {i}:** {result}")
 
             if 'coin_history' not in st.session_state:
                 st.session_state.coin_history = []
