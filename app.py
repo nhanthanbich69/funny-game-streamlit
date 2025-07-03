@@ -1,25 +1,24 @@
 import random
-import time
 import streamlit as st
 import os
 
 # Tiêu đề ứng dụng
 st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu)")
 
-# Đọc file âm thanh (Chắc chắn file âm thanh có đường dẫn đúng trên máy chủ)
+# Đọc file âm thanh (Đảm bảo rằng file âm thanh nằm trong cùng thư mục với app.py)
 def get_audio_path(filename):
-    return os.path.join("audio_files", filename)
+    return os.path.join(os.getcwd(), filename)
 
 # Danh sách các file âm thanh
 audio_files = [
-    "ms_bg.mp3",
+    "ms_bg.mp3",  # File âm thanh có sẵn trong thư mục
 ]
 
 # Chọn bài hát ngẫu nhiên và phát
 def play_random_audio():
-    audio_file = random.choice(audio_files)
-    audio_path = get_audio_path(audio_file)
-    st.audio(audio_path, format="audio/mp3", loop=True)
+    audio_file = random.choice(audio_files)  # Chọn ngẫu nhiên (chỉ có 1 file trong ví dụ này)
+    audio_path = get_audio_path(audio_file)  # Đường dẫn tới file âm thanh
+    st.audio(audio_path, format="audio/mp3", loop=True)  # Phát âm thanh với vòng lặp vô tận
 
 # Phát âm thanh nền
 play_random_audio()
