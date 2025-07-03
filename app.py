@@ -5,12 +5,12 @@ import streamlit as st
 # Tiêu đề ứng dụng
 st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu)")
 
-# Thêm CSS để tạo hiệu ứng hover cho các nút và background tối
+# Thêm CSS để tạo hiệu ứng hover cho các nút và giữ màu cũ cho các phần khác
 st.markdown("""
     <style>
         body {
-            background-color: #2e2e2e;
-            color: #fff;
+            background-color: #fff;
+            color: #000;
         }
         .stButton > button:hover {
             background-color: #FFD700;
@@ -23,16 +23,16 @@ st.markdown("""
             border: 2px solid #FFD700;
         }
         .stSlider > div > div {
-            background-color: #444;
-            color: #fff;
+            background-color: #fff;
+            color: #000;
         }
         .stSelectbox > div {
-            background-color: #444;
-            color: #fff;
+            background-color: #fff;
+            color: #000;
         }
         .stTextInput > div {
-            background-color: #444;
-            color: #fff;
+            background-color: #fff;
+            color: #000;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -135,7 +135,7 @@ with tabs[1]:
                 st.write(f"- {clue}")
 
     else:
-        st.warning("🚨 **Hết lượt hỏi! Bây giờ bạn chỉ có thể đoán số bí mật.**")
+        st.warning("🚨 **Hết lượt hỏi rồi má! Mau cho tôi câu trả lời đi.**")
 
     # 🔒 Chốt số với nút bấm
     if 0 < st.session_state.attempts <= 10:
