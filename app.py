@@ -19,11 +19,32 @@ st.markdown("""
 # Tạo các tab
 tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "🪙 Tung Đồng Xu", "📊 Kết Quả"])
 
+# 🎯 Các câu trả lời đúng & sai
+correct_responses = [
+    "🎯 Đúng rồi! Bạn đích thị là thám tử tài ba đấy! 🔥",
+    "🔥 Wow! Bạn đã nhìn ra manh mối rồi! 🎉",
+    "🚀 Chuẩn òi! Bạn quá đẹp trai! 💪",
+    "🧠 Chính nó đó! Sắp win đến nơi rồi! 😎",
+    "💥 Đúng thế! You like siêu nhân giải đố! 💣",
+    "🎉 Chính xác! Bạn đúng là cao thủ! 🌟",
+    "🎯 Bạn khôn đấy -)) Đúng hướng rồi! 🔥"
+]
+
+incorrect_responses = [
+    "😅 Sai rồi! Câu trả lời không đúng đâu, thử lại nhé!",
+    "😢 Sai rồi! Bạn chắc chắn chưa biết số bí mật đâu! 🤷‍♂️",
+    "💔 Câu trả lời sai rồi! Đừng lo, thử lại lần sau!",
+    "🤔 Sai rồi! Có vẻ bạn đang đi sai hướng, thử lần nữa nhé!",
+    "😜 Ôi không, không phải rồi! Số bí mật đâu có thế!",
+    "🙃 Sai rồi! Bạn có chắc chưa? Hãy thử thêm lần nữa!",
+    "😞 Sai rồi! Đoán lại xem nào, bạn gần hơn rồi đấy!"
+]
+
 # Tab Hướng Dẫn
 with tabs[0]:
     st.header("📝 **Hướng dẫn chơi**")
     st.write("""
-    - **Đoán Số**: Bạn sẽ đoán một số bí mật trong phạm vi cho trước. Bạn có 10 lượt để đoán số bí mật.
+    - **Đoán Số**: Bạn sẽ đoán một số bí mật trong phạm vi cho trước.
     - **Búa Kéo Bao**: Bạn chọn giữa "Bao", "Búa", và "Kéo" và so kết quả với máy.
     - **Tung Xúc Xắc**: Chọn số lượng xúc xắc và loại xúc xắc rồi xem kết quả.
     - **Tung Đồng Xu**: Chọn số lượng đồng xu và xem kết quả tung (1, 2 hoặc 4 đồng xu).
@@ -64,26 +85,34 @@ with tabs[1]:
             st.session_state.attempts = 0
             st.session_state.clues = []
         else:
-            if question_type == "Số đó có lớn hơn một con số?":
-                if st.session_state.secret_number > number:
-                    response = random.choice(correct_responses)
-                    clue = f"Số đó lớn hơn {number}."
-                else:
-                    response = random.choice(incorrect_responses)
-                    clue = f"Số đó bé hơn hoặc bằng {number}."
-            else:
-                if st.session_state.secret_number < number:
-                    response = random.choice(correct_responses)
-                    clue = f"Số đó bé hơn {number}."
-                else:
-                    response = random.choice(incorrect_responses)
-                    clue = f"Số đó lớn hơn hoặc bằng {number}."
+            response = ""
+            clue = ""
+            
+            # Kiểm tra nếu danh sách câu trả lời không rỗng
+            if correct_responses and incorrect_responses:
+                if question_type == "Số đó có lớn hơn một con số?":
+                    if st.session_state.secret_number > number:
+                        response = random.choice(correct_responses)
+                        clue = f"Số đó lớn hơn {number}."
+                    else:
+                        response = random.choice(incorrect_responses)
+                        clue = f"Số đó bé hơn hoặc bằng {number}."
+                elif question_type == "Số đó có bé hơn một con số?":
+                    if st.session_state.secret_number < number:
+                        response = random.choice(correct_responses)
+                        clue = f"Số đó bé hơn {number}."
+                    else:
+                        response = random.choice(incorrect_responses)
+                        clue = f"Số đó lớn hơn hoặc bằng {number}."
 
-            st.write(f"**Câu hỏi:** {question_type} {number}?")
-            st.write(f"**Trả lời:** {response}")
-            st.write(f"**Manh mối:** {clue}")
-            if clue not in st.session_state.clues:
-                st.session_state.clues.append(clue)
+                st.write(f"**Câu hỏi:** {question_type} {number}?")
+                st.write(f"**Trả lời:** {response}")
+                st.write(f"**Manh mối:** {clue}")
+                if clue not in st.session_state.clues:
+                    st.session_state.clues.append(clue)
+
+            else:
+                st.error("⚠️ Lỗi: Danh sách câu trả lời không hợp lệ.")
 
     # 📜 Hiển thị manh mối đã thu thập
     if st.session_state.clues:
@@ -104,7 +133,7 @@ with tabs[1]:
             st.session_state.secret_number = random.randint(0, max_num)
             st.session_state.attempts = 0
             st.session_state.clues = []
-
+            
 # 🖐 Búa Kéo Bao
 with tabs[2]:
     st.header("🖐 **Búa Kéo Bao**")
