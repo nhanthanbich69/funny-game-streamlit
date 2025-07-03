@@ -158,7 +158,7 @@ with tabs[1]:
             for clue in clues:
                 st.write(f"- {clue}")
         else:
-            st.info("Bạn chưa có manh mối nào rõ ràng cả! Hỏi đi!")
+            st.info("Bạn chưa có manh mối nào rõ ràng cả! Bắt đầu hỏi đi!")
 
     else:
         st.warning("🚨 **Hết lượt hỏi rồi má! Mau cho tôi câu trả lời đi.**")
