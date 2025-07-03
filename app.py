@@ -119,7 +119,7 @@ with tabs[1]:
 
     # 🔒 Chốt số với nút bấm
     if 0 < st.session_state.attempts <= 10:
-        st.subheader(f"🔒 **Chốt số** (Câu hỏi {st.session_state.question_count}/10)")
+        st.subheader(f"🔒 **Chốt số** (Số câu đã hỏi {st.session_state.question_count}/10)")
         user_guess = st.number_input(f"Bạn nghĩ số bí mật là (0 - {max_num}):", min_value=0, max_value=max_num, step=1)
 
         # Xác nhận khi chọn "Chốt số"
