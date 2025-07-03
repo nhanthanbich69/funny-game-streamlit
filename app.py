@@ -42,8 +42,8 @@ with tabs[0]:
     # Biến lưu trữ số lần đoán
     if 'attempts' not in st.session_state:
         st.session_state.attempts = 0
-    if 'questions' not in st.session_state:
-        st.session_state.questions = []
+    if 'clues' not in st.session_state:
+        st.session_state.clues = []  # Manh mối
 
     # Lựa chọn câu hỏi
     question_type = st.radio("❓ **Bạn muốn hỏi về số bí mật thế nào?**", 
@@ -66,42 +66,60 @@ with tabs[0]:
         st.error(f"⚠️ Lỗi khi tạo câu hỏi: {e}")
 
     # Kiểm tra và phản hồi câu hỏi
-    if st.button("🕵️‍♂️ **Hỏi câu**"):
+    if st.button("🕵️‍♂️ **Hỏi**"): 
         st.session_state.attempts += 1
 
         if st.session_state.attempts > 10:
             st.error(f"😞 **Bạn đã hết lượt đoán rồi!** Số bí mật là {secret_number}. Bạn thua rồi! 😭")
             st.session_state.attempts = 0
-            st.session_state.questions = []
+            st.session_state.clues = []  # Reset manh mối
         else:
             response = ""
+            clue = ""
+
             try:
                 if "lớn hơn" in question:
                     number = int(''.join(filter(str.isdigit, question.split("lớn hơn")[1].strip())))
-                    response = random.choice(correct_responses) if secret_number > number else random.choice(incorrect_responses)
+                    if secret_number > number:
+                        response = random.choice(correct_responses)
+                        clue = f"Số đó lớn hơn {number}."
+                    else:
+                        response = random.choice(incorrect_responses)
+                        clue = f"Số đó bé hơn {number}."
                 elif "bé hơn" in question:
                     number = int(''.join(filter(str.isdigit, question.split("bé hơn")[1].strip())))
-                    response = random.choice(correct_responses) if secret_number < number else random.choice(incorrect_responses)
+                    if secret_number < number:
+                        response = random.choice(correct_responses)
+                        clue = f"Số đó bé hơn {number}."
+                    else:
+                        response = random.choice(incorrect_responses)
+                        clue = f"Số đó lớn hơn {number}."
                 elif "nằm trong khoảng" in question:
                     parts = question.split("nằm trong khoảng")[1].strip()
                     start, end = map(int, filter(str.isdigit, parts.replace('đến', ' ').split()))
-                    response = random.choice(correct_responses) if start <= secret_number <= end else random.choice(incorrect_responses)
+                    if start <= secret_number <= end:
+                        response = random.choice(correct_responses)
+                        clue = f"Số đó nằm trong khoảng từ {start} đến {end}."
+                    else:
+                        response = random.choice(incorrect_responses)
+                        clue = f"Số đó không nằm trong khoảng từ {start} đến {end}."
             except (IndexError, ValueError) as e:
                 st.error(f"⚠️ Lỗi trong việc xử lý câu hỏi: {e}")
 
             if response:
-                st.session_state.questions.append((question, response))
+                st.session_state.clues.append(clue)  # Lưu manh mối
                 st.write(f"**Câu hỏi:** {question}")
                 st.write(f"**Trả lời:** {response}")
+                st.write(f"**Manh mối:** {clue}")  # Hiển thị manh mối
 
-    # Lịch sử câu hỏi
-    if st.session_state.questions:
-        st.subheader("📜 **Lịch sử các câu hỏi:**")
-        for q, r in st.session_state.questions:
-            st.write(f"{q} -> {r}")
+    # Hiển thị các manh mối đã rút ra
+    if st.session_state.clues:
+        st.subheader("🕵️‍♂️ **Các manh mối bạn đã rút ra:**")
+        for clue in st.session_state.clues:
+            st.write(f"- {clue}")
 
     # Chốt lại số
-    if st.button("🔒 **Chốt số**"):
+    if st.button("🔒 **Chốt**"): 
         try:
             user_guess = st.number_input(f"Bạn chắc số bí mật là (1-{max_num}) chưa? Nghĩ kỹ đi -))", min_value=1, max_value=max_num, step=1)
             # Popup confirmation before confirming guess
@@ -123,8 +141,8 @@ with tabs[0]:
         
         # Reset lại sau khi kết thúc trò chơi
         st.session_state.attempts = 0
-        st.session_state.questions = []
-
+        st.session_state.clues = []  
+        
 # Tab Búa Kéo Bao
 with tabs[1]:
     st.header("🖐 **Búa Kéo Bao**") 
