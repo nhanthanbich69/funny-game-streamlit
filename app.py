@@ -190,7 +190,7 @@ with tabs[2]:
 with tabs[3]:
     st.header("🎲 **Tung Xúc Xắc**")
 
-    num_dice = st.slider("🔢 Chọn số lượng xúc xắc", min_value=1, max_value=5, value=1)
+    num_dice = st.slider("🔢 Chọn số lượng xúc xắc", min_value=1, max_value=4, value=1)
     dice_type = st.selectbox("🎲 Chọn loại xúc xắc", ["4 mặt", "6 mặt", "8 mặt", "10 mặt", "12 mặt", "20 mặt", "100 mặt"])
 
     dice_faces = {"4 mặt": 4, "6 mặt": 6, "8 mặt": 8, "10 mặt": 10, "12 mặt": 12, "20 mặt": 20, "100 mặt": 100}
@@ -208,13 +208,13 @@ with tabs[3]:
 
 # 🪙 Tung Đồng Xu
 with tabs[4]:
-    st.header("🪙 **Tung Đồng Xu**")
+    st.header("**Tung Đồng Xu**")
 
     num_coins = st.selectbox("🍀 **Chọn số lượng đồng xu**", [1, 2, 4])
 
-    if st.button("🪙 **Tung Đồng Xu**"):
+    if st.button("**Tung Đồng Xu**"):
         try:
-            with st.spinner("Đang tung đồng xu... 🪙"):
+            with st.spinner("Đang tung đồng xu... "):
                 time.sleep(3)
 
             results = ["Mặt Sấp" if random.choice([True, False]) else "Mặt Ngửa" for _ in range(num_coins)]
