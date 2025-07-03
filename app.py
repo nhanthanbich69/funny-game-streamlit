@@ -74,7 +74,7 @@ with tabs[1]:
     # ❓ Chọn loại câu hỏi
     if st.session_state.attempts < 10:  # Chỉ hiển thị phần hỏi khi còn lượt hỏi
         question_type = st.radio("❓ **Bạn muốn hỏi về số bí mật thế nào?**",
-                                 ("Số đó có lớn hơn một con số?", "Số đó có bé hơn một con số?"),
+                                 ("Số đó có lớn hơn...", "Số đó có bé hơn..."),
                                  index=0, horizontal=True)
 
         number = st.slider("🔍 Chọn số bạn muốn hỏi", 0, max_num)
@@ -87,14 +87,14 @@ with tabs[1]:
             response = ""
             clue = ""
             
-            if question_type == "Số đó có lớn hơn một con số?":
+            if question_type == "Số đó có lớn hơn...":
                 if st.session_state.secret_number > number:
                     response = random.choice(correct_responses)
                     clue = f"Số đó lớn hơn {number}."
                 else:
                     response = random.choice(incorrect_responses)
                     clue = f"Số đó bé hơn hoặc bằng {number}."
-            elif question_type == "Số đó có bé hơn một con số?":
+            elif question_type == "Số đó có bé hơn...":
                 if st.session_state.secret_number < number:
                     response = random.choice(correct_responses)
                     clue = f"Số đó bé hơn {number}."
