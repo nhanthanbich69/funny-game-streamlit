@@ -1,11 +1,12 @@
 # 🎮 **Game Tùy Chọn** (Đoán Số - Oẳn Tù Tì - Tung Xúc Xắc - Tung Đồng Xu)
 
 Chào mừng bạn đến với **Game Tùy Chọn**, một bộ game đơn giản và thú vị gồm các trò chơi như Đoán Số, Oẳn Tù Tì, Tung Xúc Xắc và Tung Đồng Xu!
+Deloy tại streamlit: https://lucky-game-by-duyanh.streamlit.app/
 
 ## Cách Cài Đặt
 
 1. Clone dự án về máy tính của bạn:
-git clone https://github.com/your_username/game_project.git
+git clone: https://github.com/nhanthanbich69/funny-game-streamlit
 
 2. Cài đặt các thư viện cần thiết:
 pip install -r requirements.txt
