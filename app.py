@@ -44,7 +44,7 @@ incorrect_responses = [
 with tabs[0]:
     st.header("📝 **Hướng dẫn chơi**")
     st.write("""
-    - **Đoán Số**: Bạn sẽ đoán một số bí mật trong phạm vi cho trước.
+    - **Đoán Số**: Bạn sẽ đoán một số bí mật trong phạm vi cho trước. Có tối đa 10 lần hỏi để thu hẹp phạm vi.
     - **Búa Kéo Bao**: Bạn chọn giữa "Bao", "Búa", và "Kéo" và so kết quả với máy.
     - **Tung Xúc Xắc**: Chọn số lượng xúc xắc và loại xúc xắc rồi xem kết quả.
     - **Tung Đồng Xu**: Chọn số lượng đồng xu và xem kết quả tung (1, 2 hoặc 4 đồng xu).
@@ -104,7 +104,6 @@ with tabs[1]:
 
             st.write(f"**Câu hỏi:** {question_type} {number}?")
             st.write(f"**Trả lời:** {response}")
-            st.write(f"**Manh mối:** {clue}")
             if clue not in st.session_state.clues:
                 st.session_state.clues.append(clue)
 
@@ -145,24 +144,57 @@ with tabs[2]:
     st.header("🖐 **Búa Kéo Bao**")
     col1, col2, col3 = st.columns(3)
 
+    # Initialize player choice and computer's last move
     if 'player_choice' not in st.session_state:
         st.session_state.player_choice = None
+    if 'computer_choice' not in st.session_state:
+        st.session_state.computer_choice = None
+    if 'previous_result' not in st.session_state:
+        st.session_state.previous_result = None
 
     try:
+        # Add hover effect using CSS
+        st.markdown("""
+        <style>
+            .button:hover {
+                background-color: #00bfae;
+                color: white;
+                transition: all 0.3s ease;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # Player choices
         with col1:
-            if st.button("✊ Búa"):
-                st.session_state.player_choice = "Búa"
+            if st.button("✊ Búa", key="bua", help="Búa thắng Kéo", on_click=lambda: st.session_state.update(player_choice="Búa")):
+                pass
         with col2:
-            if st.button("✋ Bao"):
-                st.session_state.player_choice = "Bao"
+            if st.button("✋ Bao", key="bao", help="Bao thắng Búa", on_click=lambda: st.session_state.update(player_choice="Bao")):
+                pass
         with col3:
-            if st.button("✌️ Kéo"):
-                st.session_state.player_choice = "Kéo"
+            if st.button("✌️ Kéo", key="keo", help="Kéo thắng Bao", on_click=lambda: st.session_state.update(player_choice="Kéo")):
+                pass
     except Exception as e:
         st.error(f"⚠️ Lỗi khi chọn Búa, Bao, Kéo: {e}")
 
-    # Máy tính chọn ngẫu nhiên Búa, Bao hoặc Kéo
-    computer_choice = random.choice(["Búa", "Bao", "Kéo"])
+    # Máy tính chọn ngẫu nhiên Búa, Bao hoặc Kéo dựa trên chiến thuật phản ứng có điều kiện
+    if st.session_state.previous_result == 'win':
+        # Nếu người chơi thắng, máy tính sẽ giữ nguyên chiến thuật
+        computer_choice = st.session_state.computer_choice
+    elif st.session_state.previous_result == 'lose':
+        # Nếu người chơi thua, máy tính sẽ chuyển chiến thuật theo chiều kim đồng hồ
+        if st.session_state.computer_choice == "Búa":
+            computer_choice = "Bao"
+        elif st.session_state.computer_choice == "Bao":
+            computer_choice = "Kéo"
+        elif st.session_state.computer_choice == "Kéo":
+            computer_choice = "Búa"
+    else:
+        # Máy tính chọn ngẫu nhiên ở vòng chơi đầu tiên
+        computer_choice = random.choice(["Búa", "Bao", "Kéo"])
+
+    # Lưu lại lựa chọn của máy tính
+    st.session_state.computer_choice = computer_choice
 
     if st.button("💥 **Kết quả**"):
         try:
@@ -172,12 +204,15 @@ with tabs[2]:
             if st.session_state.player_choice:
                 # Kiểm tra kết quả
                 if st.session_state.player_choice == computer_choice:
+                    st.session_state.previous_result = 'draw'
                     st.write(f"Máy chọn {computer_choice}. **Hòa rồi!** 😎 Thử lại xem!")
                 elif (st.session_state.player_choice == "Búa" and computer_choice == "Kéo") or \
                      (st.session_state.player_choice == "Kéo" and computer_choice == "Bao") or \
                      (st.session_state.player_choice == "Bao" and computer_choice == "Búa"):
+                    st.session_state.previous_result = 'win'
                     st.write(f"Máy chọn {computer_choice}. **Bạn thắng rồi!** 🎉 Chúc mừng bạn!")
                 else:
+                    st.session_state.previous_result = 'lose'
                     st.write(f"Máy chọn {computer_choice}. **Bạn thua rồi!** 😭 Cố lên lần sau!")
             else:
                 st.error("⚠️ Bạn chưa chọn Búa, Bao hoặc Kéo! Vui lòng chọn trước khi xem kết quả.")
