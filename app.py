@@ -189,7 +189,7 @@ with tabs[1]:
             else:
                 score = int(score_percentage)  # Giảm điểm tùy theo độ lệch nếu đoán sai
             
-            st.write(f"🎯 **Điểm của bạn**: {score:.2f}")
+            st.write(f"🎯 **Điểm của bạn**: {score}")
 
             # Reset toàn bộ
             st.session_state.secret_number = random.randint(0, max_num)
