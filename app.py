@@ -230,9 +230,9 @@ with tabs[4]:
             results = ["Mặt Sấp" if random.choice([True, False]) else "Mặt Ngửa" for _ in range(num_coins)]
             
             # Hiển thị kết quả với mô tả chi tiết
-            st.subheader("🪙 **Kết quả tung đồng xu**:")
+            st.subheader("💰 **Kết quả tung đồng xu**:")
             for i, result in enumerate(results, 1):
-                st.write(f"🪙 **Lượt {i}:** {result}")
+                st.write(f"🔹 **Lượt {i}:** {result}")
 
             # Lưu lịch sử tung
             if 'coin_history' not in st.session_state:
