@@ -1,72 +1,28 @@
 import random
 import time
 import streamlit as st
-import base64
+import os
 
 # Tiêu đề ứng dụng
 st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu)")
 
-# Thêm CSS để tạo hiệu ứng hover cho các nút và giữ màu cũ cho các phần khác
-st.markdown("""
-    <style>
-        body {
-            background-color: #fff;
-            color: #000;
-        }
-        .stButton > button:hover {
-            background-color: #FFD700;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-        .stButton > button {
-            background-color: #333;
-            color: #FFD700;
-            border: 2px solid #FFD700;
-        }
-        .stSlider > div > div {
-            background-color: #fff;
-            color: #000;
-        }
-        .stSelectbox > div {
-            background-color: #fff;
-            color: #000;
-        }
-        .stTextInput > div {
-            background-color: #fff;
-            color: #000;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-# Đọc file âm thanh và chuyển thành base64 để nhúng
-def get_base64_audio(file_path):
-    with open(file_path, "rb") as audio_file:
-        return base64.b64encode(audio_file.read()).decode()
+# Đọc file âm thanh (Chắc chắn file âm thanh có đường dẫn đúng trên máy chủ)
+def get_audio_path(filename):
+    return os.path.join("audio_files", filename)
 
 # Danh sách các file âm thanh
 audio_files = [
     "ms_bg.mp3",
 ]
 
-# Lấy âm thanh dưới dạng base64
-def get_random_audio():
+# Chọn bài hát ngẫu nhiên và phát
+def play_random_audio():
     audio_file = random.choice(audio_files)
-    return get_base64_audio(audio_file)
+    audio_path = get_audio_path(audio_file)
+    st.audio(audio_path, format="audio/mp3", loop=True)
 
-# CSS để ẩn giao diện trình phát âm thanh
-def embed_audio():
-    audio_base64 = get_random_audio()
-    st.markdown(
-        f"""
-        <audio autoplay loop>
-            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-        </audio>
-        """,
-        unsafe_allow_html=True
-    )
-
-# Nhúng âm thanh nền
-embed_audio()
+# Phát âm thanh nền
+play_random_audio()
 
 # Tạo các tab
 tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "💰 Tung Đồng Xu"])
