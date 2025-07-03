@@ -177,8 +177,8 @@ with tabs[1]:
 
             # Tính điểm
             remaining_questions = 10 - st.session_state.attempts
-            score = 100 * ((10 + remaining_questions) / 10)
-            st.write(f"🎯 **Điểm của bạn**: {score:.2f}")
+            score = int(100 * ((11 + remaining_questions) / 9))
+            st.write(f"🎯 **Điểm của bạn**: {score}")
 
             # Reset toàn bộ
             st.session_state.secret_number = random.randint(0, max_num)
