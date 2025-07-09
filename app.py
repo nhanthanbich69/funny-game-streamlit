@@ -344,6 +344,15 @@ with tabs[5]:
                 continue
         return sorted(list(word_set))
 
+    def random_line(lines):
+        return random.choice(lines)
+
+    def suggest_similar(word, dictionary):
+        prefix = word.split()[0] if ' ' in word else word
+        candidates = [w for w in dictionary if w.startswith(prefix[:3])]
+        matches = difflib.get_close_matches(word, candidates, n=1, cutoff=0.6)
+        return matches[0] if matches else None
+
     if 'word_dict' not in st.session_state:
         st.session_state.word_dict = load_word_list()
     if 'used_words' not in st.session_state:
@@ -379,16 +388,7 @@ with tabs[5]:
             st.session_state.invalid_total_count = 0
             st.session_state.invalid_consecutive_in_turn = 0
             st.session_state.last_input = ""
-            st.rerun()  # ✅ NEW API, tránh lỗi experimental_rerun()
-
-    def random_line(lines):
-        return random.choice(lines)
-
-    def suggest_similar(word, dictionary):
-        prefix = word.split()[0] if ' ' in word else word
-        candidates = [w for w in dictionary if w.startswith(prefix[:3])]
-        matches = difflib.get_close_matches(word, candidates, n=1, cutoff=0.6)
-        return matches[0] if matches else None
+            st.rerun()
 
     with col2:
         if st.button("🚀 Gửi liền tay"):
@@ -423,18 +423,24 @@ with tabs[5]:
                     ]))
 
                 if st.session_state.invalid_total_count >= 3:
+                    turns = len(history) // 2
+                    score = int(10 * (1.35 ** max(0, turns - 1)))
                     st.error(random_line([
                         "💀 Ba lần sai là đi luôn nha! Bot nghỉ chơi!",
                         "😵 Quá tam ba bận rồi nha! Bạn out!",
                         "🚫 Sai miết ai chơi nữa! Xử thua!"
                     ]))
+                    st.info(f"📉 Điểm an ủi: **{score}** điểm. Tập luyện thêm nhé!")
                     st.stop()
                 elif st.session_state.invalid_consecutive_in_turn >= 2:
+                    turns = len(history) // 2
+                    score = int(10 * (1.35 ** max(0, turns - 1)))
                     st.error(random_line([
                         "📉 Hai lần fail liên tục... buông bàn phím đi bạn 😵",
                         "🤧 2 lần liên tiếp là trượt sấp mặt rồi. Thua nha!",
                         "🙅‍♂️ Trượt 2 lần không cứu được! Game over!"
                     ]))
+                    st.info(f"📉 Điểm của bạn: **{score}** điểm.")
                     st.stop()
 
             elif history:
@@ -463,11 +469,19 @@ with tabs[5]:
                         ]))
                     else:
                         st.balloons()
+                        if len(history) <= 2:
+                            st.warning("😒 Mới vô bạn win luôn à? Không vui! Đánh lại từ đầu đi.")
+                            history.clear()
+                            used_words.clear()
+                            st.stop()
+                        turns = len(history) // 2
+                        score = int(1000 * (0.85 ** (turns - 2)))
                         st.success(random_line([
-                            "🎉 Bot cạn lời! Bạn đỉnh quá!",
-                            "🏆 Easy win! Bot chịu thua luôn!",
-                            "😎 Bạn thắng! Bot đi khóc góc tường!"
+                            f"🎉 Bot cạn lời! Bạn thắng sau {turns} lượt!",
+                            f"🏆 Easy win sau {turns} lượt chơi. Quá đỉnh!",
+                            f"💥 Bot out sau {turns} turns. Đỉnh của chóp!"
                         ]))
+                        st.info(f"💯 Điểm của bạn: **{score}** điểm")
             else:
                 st.session_state.invalid_consecutive_in_turn = 0
                 history.append(user_input)
@@ -485,11 +499,10 @@ with tabs[5]:
                     ]))
                 else:
                     st.balloons()
-                    st.success(random_line([
-                        "💥 Bạn đánh phát đầu bot out luôn! Quá dữ!",
-                        "🎊 Chưa kịp chơi bot đã thua, bạn bá đạo!",
-                        "🎉 Easy win round 1, bạn vô địch không cần đánh!"
-                    ]))
+                    st.warning("🤨 Win luôn round đầu là sao trời? Cho bot chơi cái đã chớ!")
+                    history.clear()
+                    used_words.clear()
+                    st.stop()
 
     if history:
         st.subheader("📜 **Lịch sử đấu khẩu cực gắt:**")
