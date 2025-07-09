@@ -5,7 +5,7 @@ import difflib
 import streamlit.components.v1 as components
 
 # Tiêu đề ứng dụng
-st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu - Nối Từ - Tính nhẩm siêu tốc)")
+st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu - Nối Từ - Tính Nhẩm - Đố Vui)")
 
 # Thêm CSS để tạo hiệu ứng hover cho các nút và giữ màu cũ cho các phần khác
 st.markdown("""
@@ -47,7 +47,8 @@ tabs = st.tabs([
     "🎲 Tung Xúc Xắc", 
     "💰 Tung Đồng Xu", 
     "🧩 Nối Từ",
-    "🧠 Tính nhẩm siêu tốc"
+    "🧮 Tính nhẩm siêu tốc",
+    "🎓 Đố Vui"
 ])
 
 # 🎯 Các câu trả lời đúng & sai
@@ -70,15 +71,36 @@ incorrect_responses = [
 
 # Tab Hướng Dẫn
 with tabs[0]:
-    st.header("📝 **Hướng dẫn chơi**")
-    st.write("""
-    - **Đoán Số**: Bạn sẽ đoán một số bí mật trong phạm vi cho trước. Có tối đa 10 lần hỏi để thu hẹp phạm vi.
-    - **Búa Kéo Bao**: Bạn chọn giữa "Bao", "Búa", và "Kéo" và so kết quả với máy.
-    - **Tung Xúc Xắc**: Chọn số lượng xúc xắc và loại xúc xắc rồi xem kết quả.
-    - **Tung Đồng Xu**: Chọn số lượng đồng xu và xem kết quả tung (1, 2 hoặc 4 đồng xu).
-    - **Nối Từ**: Bạn và bot thay phiên nói từ sao cho từ mới bắt đầu bằng **từ cuối** của từ trước. Sai 3 lần hoặc 2 lần liên tiếp là thua!
-    - **Tính Nhẩm Siêu Tốc** 🧠: Giải toán tốc độ trong giới hạn thời gian. Càng đúng nhiều thì độ khó càng tăng. Sai 3 lần là “game over”!
-    """)
+    st.header("📖 Hướng Dẫn Chơi")
+    st.markdown("""
+### Danh sách mini game bạn có thể chọn:
+
+1. 🎯 **Đoán Số**  
+   → Đoán một số bí mật trong phạm vi cho trước. Có tối đa 10 lần hỏi để tìm ra.
+
+2. ✊ **Búa Kéo Bao**  
+   → Chọn "Bao", "Búa", hoặc "Kéo" và đấu với máy. Đoán sai là thua ngay!
+
+3. 🎲 **Tung Xúc Xắc**  
+   → Chọn số và loại xúc xắc rồi xem kết quả tung.
+
+4. 🪙 **Tung Đồng Xu**  
+   → Chọn số lượng đồng xu (1, 2 hoặc 4) và xem mặt ngửa/sấp.
+
+5. 🧩 **Nối Từ**  
+   → Nhập từ bắt đầu bằng **từ cuối** của từ trước. Sai 3 lần là out luôn.
+
+6. 🧮 **Tính Nhẩm Siêu Tốc**  
+   → Trả lời các phép tính toán nhanh với thời gian giới hạn. Càng về sau càng căng!
+
+7. 🎓 **Đố Vui**  
+   → Câu hỏi về Việt Nam: lịch sử, địa lý, động vật, thực vật, v.v. Mỗi câu 4 đáp án. Trả lời đúng thì vui, sai thì... học lại 🤪
+
+---
+
+👉 Hãy chọn tab tương ứng để bắt đầu game!  
+🎉 Chúc bạn chơi vui, nhẹ tay với bàn phím và đừng rage quit 😎
+""")
 
 # 🎯 Đoán Số
 with tabs[1]:
@@ -696,3 +718,4 @@ with tabs[6]:
 
     st.metric("✅ Số câu đúng", st.session_state.math_correct)
     st.metric("🏆 Tổng điểm", st.session_state.score_math)
+
