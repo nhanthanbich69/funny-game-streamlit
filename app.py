@@ -2,9 +2,10 @@ import random
 import time
 import streamlit as st
 import difflib
+import time
 
 # Tiêu đề ứng dụng
-st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu - Nối Từ)")
+st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu - Nối Từ - Tính nhẩm siêu tốc)")
 
 # Thêm CSS để tạo hiệu ứng hover cho các nút và giữ màu cũ cho các phần khác
 st.markdown("""
@@ -45,7 +46,8 @@ tabs = st.tabs([
     "🖐 Búa Kéo Bao", 
     "🎲 Tung Xúc Xắc", 
     "💰 Tung Đồng Xu", 
-    "🧩 Nối Từ"
+    "🧩 Nối Từ",
+    "🧠 Tính nhẩm siêu tốc"
 ])
 
 # 🎯 Các câu trả lời đúng & sai
@@ -511,3 +513,113 @@ with tabs[5]:
             st.write(f"{i+1}. {speaker}: **{word}**")
 
     st.caption("📌 *Luật chơi:* Từ mới phải bắt đầu bằng **từ cuối** của từ trước. 3 lần sai là rớt đài, 2 lần sai liên tiếp là auto thua. Bot không tha ai đâu 😈")
+
+with tabs[6]:
+    st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
+
+    # Khởi tạo state
+    if 'math_started' not in st.session_state:
+        st.session_state.math_started = False
+    if 'math_correct' not in st.session_state:
+        st.session_state.math_correct = 0
+    if 'math_wrong' not in st.session_state:
+        st.session_state.math_wrong = 0
+    if 'math_start_time' not in st.session_state:
+        st.session_state.math_start_time = None
+    if 'math_time_limit' not in st.session_state:
+        st.session_state.math_time_limit = 15
+    if 'math_question' not in st.session_state:
+        st.session_state.math_question = ""
+    if 'math_answer' not in st.session_state:
+        st.session_state.math_answer = 0
+    if 'question_index' not in st.session_state:
+        st.session_state.question_index = 0
+    if 'score_math' not in st.session_state:
+        st.session_state.score_math = 0
+    if 'math_game_over' not in st.session_state:
+        st.session_state.math_game_over = False
+
+    # Reset game
+    if st.button("🔁 Chơi lại từ đầu"):
+        st.session_state.math_started = False
+        st.session_state.math_correct = 0
+        st.session_state.math_wrong = 0
+        st.session_state.math_start_time = None
+        st.session_state.math_time_limit = 15
+        st.session_state.math_question = ""
+        st.session_state.math_answer = 0
+        st.session_state.question_index = 0
+        st.session_state.score_math = 0
+        st.session_state.math_game_over = False
+        st.rerun()
+
+    # Hàm tạo phép toán
+    def generate_question(index):
+        level = index // 15  # Mỗi 15 câu tăng 1 cấp
+        a = random.randint(1, 10 + level * 10)
+        b = random.randint(1, 10 + level * 10)
+        op = random.choice(["+", "-", "*"])
+
+        if op == "+":
+            return f"{a} + {b}", a + b
+        elif op == "-":
+            return f"{a} - {b}", a - b
+        else:
+            return f"{a} * {b}", a * b
+
+    # Bắt đầu game
+    if not st.session_state.math_started and not st.session_state.math_game_over:
+        if st.button("🚀 Bắt đầu ngay"):
+            st.session_state.math_started = True
+            st.session_state.math_question, st.session_state.math_answer = generate_question(0)
+            st.session_state.math_start_time = time.time()
+            st.rerun()
+    elif st.session_state.math_game_over:
+        st.error("💥 Sai rồi nha! Game over!")
+        st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.math_correct}**")
+        st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.math_correct * 10} điểm**")
+    else:
+        # Đang chơi
+        current_time = time.time()
+        elapsed = current_time - st.session_state.math_start_time
+        remaining = st.session_state.math_time_limit - elapsed
+
+        # Nhắc gần hết giờ
+        if 0 < remaining < 5:
+            st.warning(f"⏳ Còn {int(remaining)}s! Gõ lẹ lên bạn ơi!")
+        elif remaining <= 0:
+            st.session_state.math_game_over = True
+            st.error("⏰ Hết giờ rồi bạn eiii! Out luôn nhé!")
+            st.rerun()
+
+        st.subheader(f"❓ Câu {st.session_state.question_index + 1}: {st.session_state.math_question}")
+
+        answer = st.text_input("✍️ Nhập kết quả:", key=f"math_answer_{st.session_state.question_index}")
+
+        if st.button("📨 Gửi đáp án"):
+            if not answer.strip().isdigit():
+                st.warning("🤨 Ghi số đi bạn ơi, đừng troll!")
+            else:
+                if int(answer.strip()) == st.session_state.math_answer:
+                    st.success("✅ Chính xác! Não bạn chưa bị lag!")
+                    st.session_state.math_correct += 1
+                    st.session_state.score_math = st.session_state.math_correct * 10
+                    st.session_state.question_index += 1
+
+                    # Tăng độ khó mỗi 15 câu
+                    if st.session_state.question_index % 15 == 0:
+                        st.session_state.math_time_limit = max(3, st.session_state.math_time_limit - 5)
+                        st.toast(f"🔥 Tăng độ khó! Giờ mỗi câu còn {st.session_state.math_time_limit}s")
+
+                    st.session_state.math_question, st.session_state.math_answer = generate_question(st.session_state.question_index)
+                    st.session_state.math_start_time = time.time()
+                    st.rerun()
+                else:
+                    st.session_state.math_game_over = True
+                    st.session_state.math_wrong += 1
+                    st.error("❌ Sai rồi... não tạm ngắt kết nối 😵")
+                    st.rerun()
+
+        st.metric("✅ Số câu đúng", st.session_state.math_correct)
+        st.metric("🏆 Tổng điểm", st.session_state.math_correct * 10)
+        st.progress(max(0, min(100, int((remaining / st.session_state.math_time_limit) * 100))))
