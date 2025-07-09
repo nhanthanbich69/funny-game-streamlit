@@ -1,0 +1,72 @@
+[
+  {
+    "question": "Loài vật nào có thể ngủ trong khi vẫn đang bay?",
+    "options": {
+      "a": "Chim én",
+      "b": "Chim ruồi",
+      "c": "Chim hải âu",
+      "d": "Dơi"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "Loài động vật nào không bao giờ nhắm mắt?",
+    "options": {
+      "a": "Cá mập",
+      "b": "Rắn",
+      "c": "Ếch",
+      "d": "Cú mèo"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Loài vật nào có thể sống sót sau khi mất não?",
+    "options": {
+      "a": "Giun đất",
+      "b": "Con sao biển",
+      "c": "Sứa",
+      "d": "Con rệp"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "Loài vật nào có thể chạy mà không bao giờ quay đầu lại nhìn?",
+    "options": {
+      "a": "Thỏ",
+      "b": "Chuột túi",
+      "c": "Ngựa",
+      "d": "Đà điểu"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Con gì có tim nằm trong đầu?",
+    "options": {
+      "a": "Gián",
+      "b": "Tôm",
+      "c": "Bạch tuộc",
+      "d": "Cua"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Loài vật nào có răng mọc suốt đời không ngừng?",
+    "options": {
+      "a": "Chuột",
+      "b": "Cá mập",
+      "c": "Rùa",
+      "d": "Heo"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Loài nào có thể sống hàng tháng mà không ăn gì?",
+    "options": {
+      "a": "Thằn lằn",
+      "b": "Cá vàng",
+      "c": "Gián",
+      "d": "Cá sấu"
+    },
+    "answer": "c"
+  }
+]
