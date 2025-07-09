@@ -380,8 +380,11 @@ with tabs[5]:
                 st.error("📕 Không có từ này trong từ điển nha!")
             elif user_input in used_words:
                 st.error("♻️ Từ này xài rồi bạn êi!")
-            elif history and not user_input.startswith(history[-1][-1]):
-                st.error(f"🔗 Từ phải bắt đầu bằng chữ **'{history[-1][-1].upper()}'** của từ trước đó!")
+            elif history:
+                last_word = history[-1].split()[-1]  # từ cuối cùng trong cụm
+                next_first_word = user_input.split()[0]  # từ đầu tiên trong từ mới
+                if next_first_word != last_word:
+                    st.error(f"🔗 Từ phải bắt đầu bằng từ **'{last_word}'** chứ không phải **'{next_first_word}'**!")
             else:
                 history.append(user_input)
                 used_words.add(user_input)
