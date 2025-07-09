@@ -517,6 +517,9 @@ with tabs[5]:
 with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
 
+    import random, time
+    import streamlit.components.v1 as components
+
     # ---------------- INIT STATE ----------------
     default_state = {
         'math_started': False,
@@ -547,11 +550,8 @@ with tabs[6]:
             shift = index_in_level * step
             min_val = base_min + shift
             max_val = min(base_max, base_min + shift + step * 3)
-        
             if min_val > max_val:
-                # Fallback về full range nếu bị lệch
                 min_val, max_val = base_min, base_max
-        
             return random.randint(min_val, max_val)
 
         def get_add_digits(level):
@@ -578,7 +578,6 @@ with tabs[6]:
             else:
                 return min(3, level), min(3, level + 1)
 
-        # Chọn phép toán theo tỉ lệ
         op_pool = (
             ["+"] * 35 + ["-"] * 25 +
             (["*"] * 25 + ["/"] * 15 if level >= 1 else [])
@@ -595,11 +594,15 @@ with tabs[6]:
 
         elif op == "*":
             d1, d2 = get_mul_digits(level)
+            if not d1 or not d2:
+                return generate_question(index)
             a, b = increasing_rand_digit(d1), increasing_rand_digit(d2)
             return f"{a} x {b}", a * b
 
         elif op == "/":
             d1, d2 = get_mul_digits(level)
+            if not d1 or not d2:
+                return generate_question(index)
             b = increasing_rand_digit(d2)
             result = increasing_rand_digit(d1)
             a = b * result
@@ -637,10 +640,11 @@ with tabs[6]:
         elapsed = now - st.session_state.math_start_time
         remaining = int(st.session_state.math_time_limit - elapsed)
 
+        # ✨ Fix hết giờ không dừng
         if remaining <= 0:
-            st.session_state.math_game_over = True
-            st.error("⏰ Hết giờ! Não lag mất tiêu rồi 😵")
-            st.rerun()
+            if not st.session_state.math_game_over:
+                st.session_state.math_game_over = True
+                st.rerun()
             st.stop()
 
         if remaining <= 3:
@@ -674,9 +678,7 @@ with tabs[6]:
                     st.session_state.math_correct += 1
                     st.session_state.score_math += 10
                     st.session_state.question_index += 1
-
                     adjust_difficulty()
-
                     st.session_state.math_question, st.session_state.math_answer = generate_question(st.session_state.question_index)
                     st.session_state.math_start_time = time.time()
                     st.session_state.math_wrong_this_question = 0
@@ -684,7 +686,6 @@ with tabs[6]:
                 else:
                     st.session_state.math_wrong_this_question += 1
                     st.session_state.score_math = max(0, st.session_state.score_math - 4)
-
                     if st.session_state.math_wrong_this_question >= 3:
                         st.session_state.math_game_over = True
                         st.error("❌ Sai 3 lần rồi! Game over!")
