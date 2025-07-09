@@ -534,7 +534,45 @@ with tabs[6]:
         if key not in st.session_state:
             st.session_state[key] = val
 
-    # ---------------- RESET ----------------
+    # ---------------- GEN QUESTION ----------------
+    def generate_question(index):
+        level = index // 15
+
+        # Tăng độ khó cộng/trừ
+        add_sub_max = 10 + (level - 1) * 20
+
+        # Nhân/chia nhẹ nhàng
+        mult_min, mult_max = 2, min(12, 5 * level + level)
+
+        op_pool = (
+            ["+"] * 4 + ["-"] * 3 +
+            (["*"] * 2 + ["/"] * 1 if level >= 1 else [])
+        )
+        op = random.choice(op_pool)
+
+        if op == "+":
+            a = random.randint(10, add_sub_max)
+            b = random.randint(10, add_sub_max)
+            return f"{a} + {b}", a + b
+
+        elif op == "-":
+            a = random.randint(10, add_sub_max)
+            b = random.randint(10, add_sub_max)
+            if a < b: a, b = b, a
+            return f"{a} - {b}", a - b
+
+        elif op == "*":
+            a = random.randint(mult_min, mult_max)
+            b = random.randint(mult_min, mult_max)
+            return f"{a} * {b}", a * b
+
+        elif op == "/":
+            b = random.randint(mult_min, mult_max)
+            result = random.randint(mult_min, mult_max)
+            a = b * result
+            return f"{a} / {b}", result
+
+    # ---------------- RESET GAME ----------------
     def reset_game():
         st.session_state.math_started = True
         st.session_state.math_correct = 0
@@ -550,60 +588,20 @@ with tabs[6]:
         st.session_state.math_question, st.session_state.math_answer = generate_question(0)
         st.rerun()
 
+    # ---------------- GAME FLOW ----------------
     if st.session_state.math_game_over:
-        if st.button("🔁 Chơi lại từ đầu"):
-            reset_game()
-
-    def generate_question(index):
-        level = index // 15
-    
-        # Tăng độ khó cộng/trừ theo level
-        add_sub_max = 10 + (level - 1) * 20
-    
-        # Nhân/chia đơn giản hơn, chỉ dùng số từ 1 đến 12
-        x = (5 * level) + level
-        mult_min, mult_max = 2, min(12, x)
-    
-        # Tỷ lệ phép toán (cộng/trừ 70%, nhân/chia 30%)
-        op_pool = (
-            ["+"] * 4 + ["-"] * 3 +
-            (["*"] * 2 + ["/"] * 1 if level >= 1 else [])
-        )
-        op = random.choice(op_pool)
-    
-        if op == "+":
-            a = random.randint(10, add_sub_max)
-            b = random.randint(10, add_sub_max)
-            return f"{a} + {b}", a + b
-    
-        elif op == "-":
-            a = random.randint(10, add_sub_max)
-            b = random.randint(10, add_sub_max)
-            if a < b: a, b = b, a
-            return f"{a} - {b}", a - b
-    
-        elif op == "*":
-            a = random.randint(mult_min, mult_max)
-            b = random.randint(mult_min, mult_max)
-            return f"{a} * {b}", a * b
-    
-        elif op == "/":
-            b = random.randint(mult_min, mult_max)
-            result = random.randint(mult_min, mult_max)
-            a = b * result
-            return f"{a} / {b}", result
-
-    # ---------------- START ----------------
-    if not st.session_state.math_started and not st.session_state.math_game_over:
-        if st.button("🚀 Bắt đầu ngay"):
-            reset_game()
-
-    # ---------------- GAME OVER ----------------
-    elif st.session_state.math_game_over:
         st.error("💥 Sai rồi nha! Game over!")
         st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.math_correct}**")
         st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.score_math} điểm**")
+        if st.button("🔁 Chơi lại từ đầu"):
+            reset_game()
+
+    elif not st.session_state.math_started:
+        if st.button("🚀 Bắt đầu ngay"):
+            reset_game()
+
     else:
+        # ---------------- GAME PLAY ----------------
         now = time.time()
         elapsed = now - st.session_state.math_start_time
         remaining = int(st.session_state.math_time_limit - elapsed)
@@ -616,7 +614,7 @@ with tabs[6]:
         if remaining <= 3:
             st.warning(f"⚠️ Còn {remaining} giây thôi! Căng rồi nha!!!")
 
-        # JS đếm ngược realtime (không reload)
+        # JS đếm ngược
         components.html(f"""
         <script>
         let seconds = {remaining};
@@ -643,12 +641,13 @@ with tabs[6]:
                 if int(answer.strip()) == st.session_state.math_answer:
                     st.success("✅ Chính xác! Não vẫn mượt nha!")
                     st.session_state.math_correct += 1
-                    st.session_state.score_math = max(0, st.session_state.math_score_math)  # đảm bảo không âm
-                    st.session_state.score_math += 10
+                    st.session_state.score_math = max(0, st.session_state.score_math + 10)
                     st.session_state.question_index += 1
+
                     if st.session_state.question_index % 15 == 0:
                         st.session_state.math_time_limit = max(3, st.session_state.math_time_limit - 5)
-                        st.toast(f"🔥 Tăng độ khó! Giới hạn mỗi câu còn {st.session_state.math_time_limit}s")
+                        st.toast(f"🔥 Tăng độ khó! Mỗi câu còn {st.session_state.math_time_limit}s")
+
                     st.session_state.math_question, st.session_state.math_answer = generate_question(st.session_state.question_index)
                     st.session_state.math_start_time = time.time()
                     st.session_state.math_wrong_this_question = 0
@@ -656,6 +655,7 @@ with tabs[6]:
                 else:
                     st.session_state.math_wrong_this_question += 1
                     st.session_state.score_math = max(0, st.session_state.score_math - 4)
+
                     if st.session_state.math_wrong_this_question >= 3:
                         st.session_state.math_game_over = True
                         st.error("❌ Sai 3 lần rồi! Game over!")
