@@ -326,37 +326,49 @@ with tabs[4]:
         except Exception as e:
             st.error(f"⚠️ Lỗi khi tung đồng xu: {e}")
 
-# 🧠 Tab 5: Nối Từ (Word Chain)
 with tabs[5]:
-    st.header("🔗 **Nối Từ**")
+    st.header("🧩 **Nối Từ**")
 
-    if 'word_chain_history' not in st.session_state:
-        st.session_state.word_chain_history = []
+    # Tải từ điển từ các file hợp lệ
+    def load_word_list():
+        file_paths = [
+            "/mnt/data/tudien.txt",
+            "/mnt/data/tudien1.txt",
+            "/mnt/data/tudien2.txt",
+            "/mnt/data/tudien_old2.txt"
+        ]
+        word_set = set()
+        for path in file_paths:
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        word = line.strip().lower()
+                        if word:
+                            word_set.add(word)
+            except FileNotFoundError:
+                continue  # Không báo lỗi, chỉ bỏ qua
+        return sorted(list(word_set))
+
+    if 'word_dict' not in st.session_state:
+        st.session_state.word_dict = load_word_list()
     if 'used_words' not in st.session_state:
         st.session_state.used_words = set()
-    if 'word_dict' not in st.session_state:
-        all_words = set()
-        for file_path in ["tudien.txt", "tudien1.txt", "tudien2.txt", "tudien_old2.txt"]:
-            try:
-                with open(file_path, "r", encoding="utf-8") as f:
-                    lines = f.readlines()
-                    words = [line.strip().lower() for line in lines if line.strip()]
-                    all_words.update(words)
-            except Exception as e:
-                st.warning(f"⚠️ Không thể đọc {file_path}: {e}")
-        st.session_state.word_dict = list(all_words)
+    if 'word_chain_history' not in st.session_state:
+        st.session_state.word_chain_history = []
 
-    # Dữ liệu game
     word_dict = st.session_state.word_dict
     used_words = st.session_state.used_words
     history = st.session_state.word_chain_history
 
-    # Input từ người chơi
-    user_input = st.text_input("✍️ **Nhập từ của bạn:**", "").strip().lower()
+    if not word_dict:
+        st.error("🚫 Không tìm thấy từ điển nào! Hãy đảm bảo bạn đã upload ít nhất 1 trong các file: `tudien.txt`, `tudien1.txt`, `tudien2.txt`, `tudien_old2.txt`.")
+        st.stop()
+
+    user_input = st.text_input("🎤 **Nhập từ của bạn:**", "").strip().lower()
 
     col1, col2 = st.columns([1, 3])
     with col1:
-        if st.button("🚀 Bắt đầu mới"):
+        if st.button("🔄 Chơi lại"):
             st.session_state.word_chain_history = []
             st.session_state.used_words = set()
             st.experimental_rerun()
@@ -364,32 +376,33 @@ with tabs[5]:
     with col2:
         if st.button("📩 Gửi từ"):
             if not user_input:
-                st.warning("⛔ Nhập cái gì đã chớ?")
+                st.warning("🤔 Nhập gì đó đi bạn!")
             elif user_input not in word_dict:
-                st.error("🚫 Từ này không nằm trong từ điển nha!")
+                st.error("📕 Không có từ này trong từ điển nha!")
             elif user_input in used_words:
-                st.error("🌀 Từ này xài rồi, chơi đồ mới đi bạn!")
+                st.error("♻️ Từ này xài rồi bạn êi!")
             elif history and not user_input.startswith(history[-1][-1]):
-                st.error(f"🔄 Từ phải bắt đầu bằng **'{history[-1][-1].upper()}'** cơ mà!")
+                st.error(f"🔗 Từ phải bắt đầu bằng chữ **'{history[-1][-1].upper()}'** của từ trước đó!")
             else:
                 history.append(user_input)
                 used_words.add(user_input)
 
                 # Máy phản đòn
                 last_char = user_input[-1]
-                possible = [w for w in word_dict if w.startswith(last_char) and w not in used_words]
-                if possible:
-                    bot_word = random.choice(possible)
+                options = [w for w in word_dict if w.startswith(last_char) and w not in used_words]
+                if options:
+                    bot_word = random.choice(options)
                     history.append(bot_word)
                     used_words.add(bot_word)
-                    st.success(f"🤖 Bot: **{bot_word}**")
+                    st.success(f"🤖 Bot nối: **{bot_word}**")
                 else:
-                    st.success("🎉 Bạn thắng rồi! Bot chịu thua nha.")
+                    st.balloons()
+                    st.success("🎉 Bot hết từ để nối. Bạn thắng rồi bro!!")
 
     # Hiển thị lịch sử
     if history:
-        st.subheader("📜 **Lịch sử nối từ:**")
+        st.subheader("📜 **Lịch sử Nối Từ:**")
         for i, word in enumerate(history):
             st.markdown(f"{'🧑‍💻' if i % 2 == 0 else '🤖'} {word}")
 
-    st.caption("📌 Mỗi từ phải bắt đầu bằng chữ cái **cuối cùng** của từ trước đó. Từ đã dùng không được lặp lại!")
+    st.caption("📌 Luật chơi: Từ mới phải bắt đầu bằng **chữ cái cuối cùng** của từ trước đó. Không được lặp lại nha!")
