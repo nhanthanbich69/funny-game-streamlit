@@ -624,29 +624,28 @@ with tabs[6]:
             st.toast(f"🔥 Tăng độ khó! Mỗi câu còn {st.session_state.math_time_limit}s")
 
     # ---------------- GAME FLOW ----------------
+    now = time.time()
+    elapsed = now - st.session_state.math_start_time
+    remaining = int(st.session_state.math_time_limit - elapsed)
+
+    # ✨ Hết giờ -> đánh dấu game over -> rerun để hiển thị giao diện dừng
+    if remaining <= 0 and not st.session_state.math_game_over:
+        st.session_state.math_game_over = True
+        st.rerun()
+
+    # 🔒 Đã hết giờ -> hiển thị dừng và ngắt hoàn toàn UI
     if st.session_state.math_game_over:
-        st.error("💥 Dừng tay! Game over!")
+        st.error("⏰ Hết giờ! Não lag mất tiêu rồi 😵")
         st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.math_correct}**")
         st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.score_math} điểm**")
         if st.button("🔁 Chơi lại từ đầu"):
             reset_game()
+        st.stop()
 
-    elif not st.session_state.math_started:
+    if not st.session_state.math_started:
         if st.button("🚀 Bắt đầu ngay"):
             reset_game()
-
     else:
-        now = time.time()
-        elapsed = now - st.session_state.math_start_time
-        remaining = int(st.session_state.math_time_limit - elapsed)
-
-        # ✨ Fix hết giờ không dừng
-        if remaining <= 0:
-            if not st.session_state.math_game_over:
-                st.session_state.math_game_over = True
-                st.rerun()
-            st.stop()
-
         if remaining <= 3:
             st.warning(f"⚠️ Còn {remaining} giây thôi! Căng rồi nha!!!")
 
