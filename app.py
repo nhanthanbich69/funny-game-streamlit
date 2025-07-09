@@ -536,19 +536,19 @@ with tabs[6]:
 
     # ---------------- GEN QUESTION ----------------
     def generate_question(index):
-        level = index // 15
+        level = index // 10
     
         # Đảm bảo không bao giờ lỗi
         add_sub_max = max(20, 10 + (level - 1) * 20)
     
         # Nhân/chia nhẹ hơn
         x = (5 * level) + level
-        mult_min, mult_max = 2, min(12, x)
+        mult_min, mult_max = 2, max(12, x)
     
         # Tỷ lệ phép tính
         op_pool = (
-            ["+"] * 4 + ["-"] * 3 +
-            (["*"] * 2 + ["/"] * 1 if level >= 1 else [])
+            ["+"] * 35 + ["-"] * 25 +
+            (["*"] * 25 + ["/"] * 15 if level >= 1 else [])
         )
         op = random.choice(op_pool)
     
@@ -558,8 +558,14 @@ with tabs[6]:
             return f"{a} + {b}", a + b
     
         elif op == "-":
-            a = random.randint(10, add_sub_max)
-            b = random.randint(10, add_sub_max)
+            if level == 0:
+                y, z = 1, 1
+            else:
+                y = 1 + sum(random.randint(8, 12) for _ in range(level))
+                z = 1 + sum(random.randint(8, 12) for _ in range(level))
+            
+            a = random.randint(y, add_sub_max)
+            b = random.randint(z, add_sub_max)
             if a < b: a, b = b, a
             return f"{a} - {b}", a - b
     
@@ -592,7 +598,7 @@ with tabs[6]:
 
     # ---------------- GAME FLOW ----------------
     if st.session_state.math_game_over:
-        st.error("💥 Sai rồi nha! Game over!")
+        st.error("💥 Dừng tay! Game over!")
         st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.math_correct}**")
         st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.score_math} điểm**")
         if st.button("🔁 Chơi lại từ đầu"):
