@@ -1,0 +1,102 @@
+[
+  {
+    "question": "Ai là người được mệnh danh là 'Bà Triệu thứ hai' của Việt Nam?",
+    "options": {
+      "a": "Ngô Thị Nhậm",
+      "b": "Nguyễn Thị Minh Khai",
+      "c": "Hai Bà Trưng",
+      "d": "Nguyễn Thị Định"
+    },
+    "answer": "d"
+  },
+  {
+    "question": "Kinh đô đầu tiên của nước Việt cổ là gì?",
+    "options": {
+      "a": "Cổ Loa",
+      "b": "Hoa Lư",
+      "c": "Thăng Long",
+      "d": "Huế"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Ngọn núi cao nhất Việt Nam là gì?",
+    "options": {
+      "a": "Phu Xai Lai Leng",
+      "b": "Tà Xùa",
+      "c": "Fansipan",
+      "d": "Tà Chì Nhù"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "Vị vua nào trị vì lâu nhất trong lịch sử phong kiến Việt Nam?",
+    "options": {
+      "a": "Lê Thánh Tông",
+      "b": "Lý Nhân Tông",
+      "c": "Gia Long",
+      "d": "Minh Mạng"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Địa danh nào từng được mệnh danh là 'Thủ đô kháng chiến'?",
+    "options": {
+      "a": "Tuyên Quang",
+      "b": "Thái Nguyên",
+      "c": "Chiêm Hóa",
+      "d": "Việt Bắc"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Bãi biển nào dài nhất Việt Nam?",
+    "options": {
+      "a": "Nha Trang",
+      "b": "Cửa Lò",
+      "c": "Trà Cổ",
+      "d": "Mũi Né"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "Sông nào dài nhất Việt Nam chảy hoàn toàn trong lãnh thổ?",
+    "options": {
+      "a": "Sông Hồng",
+      "b": "Sông Đồng Nai",
+      "c": "Sông Cả",
+      "d": "Sông Thu Bồn"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Người đặt nền móng cho chữ quốc ngữ là ai?",
+    "options": {
+      "a": "Trương Vĩnh Ký",
+      "b": "Alexandre de Rhodes",
+      "c": "Nguyễn Văn Vĩnh",
+      "d": "Giám mục Bá Đa Lộc"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Chợ nổi Cái Răng thuộc tỉnh nào?",
+    "options": {
+      "a": "Cần Thơ",
+      "b": "Tiền Giang",
+      "c": "An Giang",
+      "d": "Vĩnh Long"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Hang Sơn Đoòng nằm ở đâu?",
+    "options": {
+      "a": "Lào Cai",
+      "b": "Hà Giang",
+      "c": "Quảng Bình",
+      "d": "Lạng Sơn"
+    },
+    "answer": "c"
+  }
+]
