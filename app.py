@@ -535,62 +535,74 @@ with tabs[6]:
             st.session_state[key] = val
 
     # ---------------- RESET ----------------
+    def reset_game():
+        st.session_state.math_started = True
+        st.session_state.math_correct = 0
+        st.session_state.math_wrong = 0
+        st.session_state.math_start_time = time.time()
+        st.session_state.math_time_limit = 15
+        st.session_state.math_question = ""
+        st.session_state.math_answer = 0
+        st.session_state.question_index = 0
+        st.session_state.score_math = 0
+        st.session_state.math_game_over = False
+        st.session_state.math_wrong_this_question = 0
+        st.session_state.math_question, st.session_state.math_answer = generate_question(0)
+        st.rerun()
+
     if st.session_state.math_game_over:
         if st.button("🔁 Chơi lại từ đầu"):
-            st.session_state.math_started = True
-            st.session_state.math_correct = 0
-            st.session_state.math_wrong = 0
-            st.session_state.math_start_time = time.time()
-            st.session_state.math_time_limit = 15
-            st.session_state.math_question, st.session_state.math_answer = "", 0
-            st.session_state.question_index = 0
-            st.session_state.score_math = 0
-            st.session_state.math_game_over = False
-            st.session_state.math_wrong_this_question = 0
-            st.session_state.math_question, st.session_state.math_answer = generate_question(0)
-            st.rerun()
+            reset_game()
 
-    # ---------------- GEN QUESTION ----------------
-    def generate_question(index):
-        level = index // 15
-        if level == 0:
-            a, b = random.randint(1, 20), random.randint(1, 20)
-            op = random.choice(["+", "-"])
-        elif level == 1:
-            a, b = random.randint(10, 50), random.randint(10, 50)
-            op = random.choice(["+", "-", "*"])
-        else:
-            a = random.randint(20, 100 + level * 10)
-            b = random.randint(2, 15 + level)
-            op = random.choice(["+", "-", "*", "/"])
-            if op == "/":
-                result = random.randint(2, 12 + level)
-                a = result * b
-                return f"{a} / {b}", result
-        if op == "-" and a < b:
-            a, b = b, a
-        return {
-            "+": (f"{a} + {b}", a + b),
-            "-": (f"{a} - {b}", a - b),
-            "*": (f"{a} * {b}", a * b)
-        }[op]
+def generate_question(index):
+    level = index // 15
+
+    # Tăng độ khó cộng/trừ theo level
+    add_sub_max = 10 + (level - 1) * 20
+
+    # Nhân/chia đơn giản hơn, chỉ dùng số từ 1 đến 12
+    x = (5 * level) + level
+    mult_min, mult_max = 2, min(12, x)
+
+    # Tỷ lệ phép toán (cộng/trừ 70%, nhân/chia 30%)
+    op_pool = (
+        ["+"] * 4 + ["-"] * 3 +
+        (["*"] * 2 + ["/"] * 1 if level >= 1 else [])
+    )
+    op = random.choice(op_pool)
+
+    if op == "+":
+        a = random.randint(10, add_sub_max)
+        b = random.randint(10, add_sub_max)
+        return f"{a} + {b}", a + b
+
+    elif op == "-":
+        a = random.randint(10, add_sub_max)
+        b = random.randint(10, add_sub_max)
+        if a < b: a, b = b, a
+        return f"{a} - {b}", a - b
+
+    elif op == "*":
+        a = random.randint(mult_min, mult_max)
+        b = random.randint(mult_min, mult_max)
+        return f"{a} * {b}", a * b
+
+    elif op == "/":
+        b = random.randint(mult_min, mult_max)
+        result = random.randint(mult_min, mult_max)
+        a = b * result
+        return f"{a} / {b}", result
 
     # ---------------- START ----------------
     if not st.session_state.math_started and not st.session_state.math_game_over:
         if st.button("🚀 Bắt đầu ngay"):
-            st.session_state.math_started = True
-            st.session_state.math_question, st.session_state.math_answer = generate_question(0)
-            st.session_state.math_start_time = time.time()
-            st.session_state.math_wrong_this_question = 0
-            st.rerun()
+            reset_game()
 
     # ---------------- GAME OVER ----------------
     elif st.session_state.math_game_over:
         st.error("💥 Sai rồi nha! Game over!")
         st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.math_correct}**")
-        st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.math_correct * 10} điểm**")
-
-    # ---------------- GAME PLAY ----------------
+        st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.score_math} điểm**")
     else:
         now = time.time()
         elapsed = now - st.session_state.math_start_time
@@ -601,16 +613,19 @@ with tabs[6]:
             st.error("⏰ Hết giờ! Não lag mất tiêu rồi 😵")
             st.rerun()
 
-        # Bộ đếm JS động (không dùng progress bar nữa)
+        if remaining <= 3:
+            st.warning(f"⚠️ Còn {remaining} giây thôi! Căng rồi nha!!!")
+
+        # JS đếm ngược realtime (không reload)
         components.html(f"""
         <script>
         let seconds = {remaining};
         const countdown = setInterval(function() {{
             if (seconds <= 0) {{
                 clearInterval(countdown);
-                window.location.reload();
             }}
-            document.getElementById("clock").innerText = "⏳ Còn " + seconds + " giây!";
+            let clock = document.getElementById("clock");
+            if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
             seconds -= 1;
         }}, 1000);
         </script>
@@ -628,25 +643,25 @@ with tabs[6]:
                 if int(answer.strip()) == st.session_state.math_answer:
                     st.success("✅ Chính xác! Não vẫn mượt nha!")
                     st.session_state.math_correct += 1
-                    st.session_state.score_math = st.session_state.math_correct * 10
+                    st.session_state.score_math = max(0, st.session_state.math_score_math)  # đảm bảo không âm
+                    st.session_state.score_math += 10
                     st.session_state.question_index += 1
-
                     if st.session_state.question_index % 15 == 0:
                         st.session_state.math_time_limit = max(3, st.session_state.math_time_limit - 5)
-                        st.toast(f"⚡ Level up! Còn {st.session_state.math_time_limit}s mỗi câu")
-
+                        st.toast(f"🔥 Tăng độ khó! Giới hạn mỗi câu còn {st.session_state.math_time_limit}s")
                     st.session_state.math_question, st.session_state.math_answer = generate_question(st.session_state.question_index)
                     st.session_state.math_start_time = time.time()
                     st.session_state.math_wrong_this_question = 0
                     st.rerun()
                 else:
                     st.session_state.math_wrong_this_question += 1
+                    st.session_state.score_math = max(0, st.session_state.score_math - 4)
                     if st.session_state.math_wrong_this_question >= 3:
                         st.session_state.math_game_over = True
-                        st.error("❌ Sai 3 lần rồi! Bot buồn ngủ 😵")
+                        st.error("❌ Sai 3 lần rồi! Game over!")
                         st.rerun()
                     else:
-                        st.warning(f"⚠️ Sai rồi! Còn {3 - st.session_state.math_wrong_this_question} lần thử!")
+                        st.warning(f"❌ Sai rồi! Còn {3 - st.session_state.math_wrong_this_question} lần thử!")
 
         st.metric("✅ Số câu đúng", st.session_state.math_correct)
         st.metric("🏆 Tổng điểm", st.session_state.score_math)
