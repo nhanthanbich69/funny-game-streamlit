@@ -329,7 +329,6 @@ with tabs[4]:
 with tabs[5]:
     st.header("🧩 **Nối Từ**")
 
-    # Tải từ điển từ các file hợp lệ
     def load_word_list():
         file_paths = [
             "data/tudien.txt",
@@ -345,7 +344,7 @@ with tabs[5]:
                         if word:
                             word_set.add(word)
             except FileNotFoundError:
-                continue  # Không báo lỗi, chỉ bỏ qua
+                continue
         return sorted(list(word_set))
 
     if 'word_dict' not in st.session_state:
@@ -360,7 +359,7 @@ with tabs[5]:
     history = st.session_state.word_chain_history
 
     if not word_dict:
-        st.error("🚫 Không tìm thấy từ điển nào! Hãy đảm bảo bạn đã upload ít nhất 1 trong các file: `tudien.txt`, `tudien1.txt`, `tudien2.txt`, `tudien_old2.txt`.")
+        st.error("🚫 Không tìm thấy từ điển nào!")
         st.stop()
 
     user_input = st.text_input("🎤 **Nhập từ của bạn:**", "").strip().lower()
@@ -377,34 +376,54 @@ with tabs[5]:
             if not user_input:
                 st.warning("🤔 Nhập gì đó đi bạn!")
             elif user_input not in word_dict:
-                st.error("📕 Không có từ này trong từ điển nha!")
+                st.error("📕 Từ không có trong từ điển nha!")
             elif user_input in used_words:
-                st.error("♻️ Từ này xài rồi bạn êi!")
+                st.error("♻️ Từ này dùng rồi nghen!")
             elif history:
-                last_word = history[-1].split()[-1]  # từ cuối cùng trong cụm
-                next_first_word = user_input.split()[0]  # từ đầu tiên trong từ mới
+                last_word = history[-1].split()[-1]
+                next_first_word = user_input.split()[0]
                 if next_first_word != last_word:
-                    st.error(f"🔗 Từ phải bắt đầu bằng từ **'{last_word}'** chứ không phải **'{next_first_word}'**!")
+                    st.error(f"❌ Luật là phải bắt đầu bằng **'{last_word}'**. Bạn nhập **'{next_first_word}'** là trật rồi!")
+                else:
+                    # Hợp lệ
+                    history.append(user_input)
+                    used_words.add(user_input)
+
+                    # Máy phản đòn
+                    bot_candidates = [
+                        w for w in word_dict
+                        if w.split()[0] == user_input.split()[-1] and w not in used_words
+                    ]
+                    if bot_candidates:
+                        bot_word = random.choice(bot_candidates)
+                        history.append(bot_word)
+                        used_words.add(bot_word)
+                        st.success(f"🤖 Bot nối: **{bot_word}**")
+                    else:
+                        st.balloons()
+                        st.success("🎉 Bot cạn lời! Bạn win rồi bro!")
             else:
+                # Trường hợp khởi đầu
                 history.append(user_input)
                 used_words.add(user_input)
 
                 # Máy phản đòn
-                last_char = user_input[-1]
-                options = [w for w in word_dict if w.startswith(last_char) and w not in used_words]
-                if options:
-                    bot_word = random.choice(options)
+                bot_candidates = [
+                    w for w in word_dict
+                    if w.split()[0] == user_input.split()[-1] and w not in used_words
+                ]
+                if bot_candidates:
+                    bot_word = random.choice(bot_candidates)
                     history.append(bot_word)
                     used_words.add(bot_word)
                     st.success(f"🤖 Bot nối: **{bot_word}**")
                 else:
                     st.balloons()
-                    st.success("🎉 Bot hết từ để nối. Bạn thắng rồi bro!!")
+                    st.success("🎉 Bot chưa ra chợ đã hết tiền! Bạn thắng!")
 
-    # Hiển thị lịch sử
     if history:
         st.subheader("📜 **Lịch sử Nối Từ:**")
         for i, word in enumerate(history):
             st.markdown(f"{'🧑‍💻' if i % 2 == 0 else '🤖'} {word}")
 
-    st.caption("📌 Luật chơi: Từ mới phải bắt đầu bằng **chữ cái cuối cùng** của từ trước đó. Không được lặp lại nha!")
+    st.caption("📌 Luật chơi: Từ mới phải bắt đầu bằng **từ cuối cùng** của từ trước đó (không phải chữ cái!).")
