@@ -76,6 +76,8 @@ with tabs[0]:
     - **Búa Kéo Bao**: Bạn chọn giữa "Bao", "Búa", và "Kéo" và so kết quả với máy.
     - **Tung Xúc Xắc**: Chọn số lượng xúc xắc và loại xúc xắc rồi xem kết quả.
     - **Tung Đồng Xu**: Chọn số lượng đồng xu và xem kết quả tung (1, 2 hoặc 4 đồng xu).
+    - **Nối Từ**: Bạn và bot thay phiên nói từ sao cho từ mới bắt đầu bằng **từ cuối** của từ trước. Sai 3 lần hoặc 2 lần liên tiếp là thua!
+    - **Tính Nhẩm Siêu Tốc** 🧠: Giải toán tốc độ trong giới hạn thời gian. Càng đúng nhiều thì độ khó càng tăng. Sai 3 lần là “game over”!
     """)
 
 # 🎯 Đoán Số
