@@ -3,7 +3,7 @@ import time
 import streamlit as st
 
 # Tiêu đề ứng dụng
-st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu)")
+st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu - Nối Từ)")
 
 # Thêm CSS để tạo hiệu ứng hover cho các nút và giữ màu cũ cho các phần khác
 st.markdown("""
@@ -37,8 +37,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Tạo các tab
-tabs = st.tabs(["📝 Hướng Dẫn", "🎯 Đoán Số", "🖐 Búa Kéo Bao", "🎲 Tung Xúc Xắc", "💰 Tung Đồng Xu"])
+# 🎮 Tạo các tab (thêm Nối Từ ở vị trí tab 5)
+tabs = st.tabs([
+    "📝 Hướng Dẫn", 
+    "🎯 Đoán Số", 
+    "🖐 Búa Kéo Bao", 
+    "🎲 Tung Xúc Xắc", 
+    "💰 Tung Đồng Xu", 
+    "🧩 Nối Từ"
+])
 
 # 🎯 Các câu trả lời đúng & sai
 correct_responses = [
