@@ -537,41 +537,43 @@ with tabs[6]:
     # ---------------- GEN QUESTION ----------------
     def generate_question(index):
         level = index // 15
-
-        # Tăng độ khó cộng/trừ
-        add_sub_max = 10 + (level - 1) * 20
-
-        # Nhân/chia nhẹ nhàng
-        mult_min, mult_max = 2, min(12, 5 * level + level)
-
+    
+        # Đảm bảo không bao giờ lỗi
+        add_sub_max = max(20, 10 + (level - 1) * 20)
+    
+        # Nhân/chia nhẹ hơn
+        x = (5 * level) + level
+        mult_min, mult_max = 2, min(12, x)
+    
+        # Tỷ lệ phép tính
         op_pool = (
             ["+"] * 4 + ["-"] * 3 +
             (["*"] * 2 + ["/"] * 1 if level >= 1 else [])
         )
         op = random.choice(op_pool)
-
+    
         if op == "+":
             a = random.randint(10, add_sub_max)
             b = random.randint(10, add_sub_max)
             return f"{a} + {b}", a + b
-
+    
         elif op == "-":
             a = random.randint(10, add_sub_max)
             b = random.randint(10, add_sub_max)
             if a < b: a, b = b, a
             return f"{a} - {b}", a - b
-
+    
         elif op == "*":
             a = random.randint(mult_min, mult_max)
             b = random.randint(mult_min, mult_max)
             return f"{a} * {b}", a * b
-
+    
         elif op == "/":
             b = random.randint(mult_min, mult_max)
             result = random.randint(mult_min, mult_max)
             a = b * result
             return f"{a} / {b}", result
-
+        
     # ---------------- RESET GAME ----------------
     def reset_game():
         st.session_state.math_started = True
