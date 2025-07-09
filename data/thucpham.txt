@@ -1,0 +1,62 @@
+[
+  {
+    "question": "Loại quả nào có thể gây say giống như rượu?",
+    "options": {
+      "a": "Sầu riêng",
+      "b": "Mãng cầu",
+      "c": "Nho rừng",
+      "d": "Quả vả"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Loại hạt nào có thể độc chết người nếu ăn sống?",
+    "options": {
+      "a": "Hạt điều",
+      "b": "Hạt nhãn",
+      "c": "Hạt mít",
+      "d": "Hạt hướng dương"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Loại gia vị nào từng được dùng làm tiền tệ?",
+    "options": {
+      "a": "Hồi",
+      "b": "Tiêu đen",
+      "c": "Gừng",
+      "d": "Tỏi"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Loại thực phẩm nào có thể tồn tại hàng ngàn năm mà không hỏng?",
+    "options": {
+      "a": "Gạo",
+      "b": "Mật ong",
+      "c": "Muối",
+      "d": "Mì ăn liền"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Món ăn nào của Việt Nam từng vào top 50 món ăn ngon nhất thế giới?",
+    "options": {
+      "a": "Phở",
+      "b": "Bún bò Huế",
+      "c": "Cơm tấm",
+      "d": "Bánh cuốn"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Thực phẩm nào từng được NASA sử dụng trên tàu vũ trụ vì dinh dưỡng cao và không cần bảo quản?",
+    "options": {
+      "a": "Cá khô",
+      "b": "Hạt chia",
+      "c": "Mật ong",
+      "d": "Thịt bò khô"
+    },
+    "answer": "c"
+  }
+]
