@@ -518,7 +518,7 @@ with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
 
     # ---------------- INIT STATE ----------------
-    for key, val in {
+    default_state = {
         'math_started': False,
         'math_correct': 0,
         'math_wrong': 0,
@@ -530,71 +530,77 @@ with tabs[6]:
         'score_math': 0,
         'math_game_over': False,
         'math_wrong_this_question': 0
-    }.items():
-        if key not in st.session_state:
-            st.session_state[key] = val
+    }
+    for k, v in default_state.items():
+        st.session_state.setdefault(k, v)
 
     # ---------------- GEN QUESTION ----------------
     def generate_question(index):
         level = index // 10
-    
-        # Đảm bảo không bao giờ lỗi
-        add_sub_max = max(20, 10 + (level - 1) * 20)
-    
-        # Nhân/chia nhẹ hơn
-        x = (5 * level) + level
-        mult_min, mult_max = 2, max(12, x)
-    
-        # Tỷ lệ phép tính
+
+        def digit_range(d):
+            start = 10**(d - 1)
+            end = 10**d - 1
+            return start, end
+
+        def rand_digit(d):
+            return random.randint(*digit_range(d))
+
+        if level == 0:
+            add_digits = [1]
+            mul_digits = []
+        elif level == 1:
+            add_digits = [1, 2]
+            mul_digits = [1]
+        elif level == 2:
+            add_digits = [2]
+            mul_digits = [1, 2]
+        else:
+            add_digits = [2, 3]
+            mul_digits = [2]
+
         op_pool = (
             ["+"] * 35 + ["-"] * 25 +
-            (["*"] * 25 + ["/"] * 15 if level >= 1 else [])
+            (["*"] * 25 + ["/"] * 15 if mul_digits else [])
         )
         op = random.choice(op_pool)
-    
+
         if op == "+":
-            a = random.randint(10, add_sub_max)
-            b = random.randint(10, add_sub_max)
+            d1, d2 = random.choices(add_digits, k=2)
+            a, b = rand_digit(d1), rand_digit(d2)
             return f"{a} + {b}", a + b
-    
+
         elif op == "-":
-            if level == 0:
-                y, z = 1, 1
-            else:
-                y = 1 + sum(random.randint(8, 12) for _ in range(level))
-                z = 1 + sum(random.randint(8, 12) for _ in range(level))
-            
-            a = random.randint(y, add_sub_max)
-            b = random.randint(z, add_sub_max)
-            if a < b: a, b = b, a
-            return f"{a} - {b}", a - b
-    
+            d1, d2 = random.choices(add_digits, k=2)
+            a, b = rand_digit(d1), rand_digit(d2)
+            return f"{max(a, b)} - {min(a, b)}", abs(a - b)
+
         elif op == "*":
-            a = random.randint(mult_min, mult_max)
-            b = random.randint(mult_min, mult_max)
+            d1, d2 = random.choices(mul_digits, k=2)
+            a, b = rand_digit(d1), rand_digit(d2)
             return f"{a} * {b}", a * b
-    
+
         elif op == "/":
-            b = random.randint(mult_min, mult_max)
-            result = random.randint(mult_min, mult_max)
+            d1, d2 = random.choices(mul_digits, k=2)
+            b = rand_digit(d2)
+            result = rand_digit(d1)
             a = b * result
             return f"{a} / {b}", result
-        
+
     # ---------------- RESET GAME ----------------
     def reset_game():
-        st.session_state.math_started = True
-        st.session_state.math_correct = 0
-        st.session_state.math_wrong = 0
-        st.session_state.math_start_time = time.time()
-        st.session_state.math_time_limit = 15
-        st.session_state.math_question = ""
-        st.session_state.math_answer = 0
-        st.session_state.question_index = 0
-        st.session_state.score_math = 0
-        st.session_state.math_game_over = False
-        st.session_state.math_wrong_this_question = 0
+        for k in default_state:
+            st.session_state[k] = default_state[k]
         st.session_state.math_question, st.session_state.math_answer = generate_question(0)
+        st.session_state.math_started = True
+        st.session_state.math_start_time = time.time()
         st.rerun()
+
+    # ---------------- TĂNG ĐỘ KHÓ ----------------
+    def adjust_difficulty():
+        if st.session_state.question_index % 15 == 0:
+            st.session_state.math_time_limit = max(3, st.session_state.math_time_limit - 5)
+            st.toast(f"🔥 Tăng độ khó! Mỗi câu còn {st.session_state.math_time_limit}s")
 
     # ---------------- GAME FLOW ----------------
     if st.session_state.math_game_over:
@@ -609,7 +615,6 @@ with tabs[6]:
             reset_game()
 
     else:
-        # ---------------- GAME PLAY ----------------
         now = time.time()
         elapsed = now - st.session_state.math_start_time
         remaining = int(st.session_state.math_time_limit - elapsed)
@@ -622,7 +627,6 @@ with tabs[6]:
         if remaining <= 3:
             st.warning(f"⚠️ Còn {remaining} giây thôi! Căng rồi nha!!!")
 
-        # JS đếm ngược
         components.html(f"""
         <script>
         let seconds = {remaining};
@@ -638,7 +642,7 @@ with tabs[6]:
         <h2 id="clock">⏳ Còn {remaining} giây!</h2>
         """, height=70)
 
-        st.subheader(f"❓ Câu {st.session_state.question_index + 1}: `{st.session_state.math_question}`")
+        st.subheader(f"❓ Câu {st.session_state.question_index + 1}: {st.session_state.math_question}")
 
         answer = st.text_input("✍️ Nhập kết quả:", key=f"math_answer_{st.session_state.question_index}")
 
@@ -649,12 +653,10 @@ with tabs[6]:
                 if int(answer.strip()) == st.session_state.math_answer:
                     st.success("✅ Chính xác! Não vẫn mượt nha!")
                     st.session_state.math_correct += 1
-                    st.session_state.score_math = max(0, st.session_state.score_math + 10)
+                    st.session_state.score_math += 10
                     st.session_state.question_index += 1
 
-                    if st.session_state.question_index % 15 == 0:
-                        st.session_state.math_time_limit = max(3, st.session_state.math_time_limit - 5)
-                        st.toast(f"🔥 Tăng độ khó! Mỗi câu còn {st.session_state.math_time_limit}s")
+                    adjust_difficulty()
 
                     st.session_state.math_question, st.session_state.math_answer = generate_question(st.session_state.question_index)
                     st.session_state.math_start_time = time.time()
