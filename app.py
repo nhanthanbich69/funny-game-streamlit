@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 # Tiêu đề ứng dụng
 st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu - Nối Từ - Tính Nhẩm - Đố Vui)")
 
-# CSS cho hiệu ứng và màu
+# Thêm CSS cho hiệu ứng đẹp
 st.markdown("""
     <style>
         body {
@@ -25,8 +25,14 @@ st.markdown("""
             color: #FFD700;
             border: 2px solid #FFD700;
         }
-        .stSlider > div > div,
-        .stSelectbox > div,
+        .stSlider > div > div {
+            background-color: #fff;
+            color: #000;
+        }
+        .stSelectbox > div {
+            background-color: #fff;
+            color: #000;
+        }
         .stTextInput > div {
             background-color: #fff;
             color: #000;
@@ -34,7 +40,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Tên các trò chơi
+# --- Danh sách tên tab ---
 tab_names = [
     "📝 Hướng Dẫn",
     "🎯 Đoán Số",
@@ -46,13 +52,18 @@ tab_names = [
     "🎓 Đố Vui"
 ]
 
-# Sidebar để chọn trò chơi
-selected_tab = st.sidebar.radio("🎮 **Chọn Trò Chơi:**", tab_names, index=0)
+# --- Sidebar để chọn tab ---
+selected_tab = st.sidebar.selectbox("🎮 Chọn trò chơi:", tab_names)
 
-# Hướng dẫn chơi
-if selected_tab == tab_names[0]:
-    st.header("📖 Hướng Dẫn Chơi")
-    st.markdown("""
+# --- Tạo tất cả tabs (ẩn logic) ---
+tabs = st.tabs(tab_names)
+
+# --- Render tab tương ứng ---
+tab_index = tab_names.index(selected_tab)
+with tabs[tab_index]:
+    if selected_tab == "📝 Hướng Dẫn":
+        st.header("📖 Hướng Dẫn Chơi")
+        st.markdown("""
 ### Danh sách mini game bạn có thể chọn:
 
 1. 🎯 **Đoán Số**  
@@ -78,7 +89,7 @@ if selected_tab == tab_names[0]:
 
 ---
 
-👉 Hãy chọn trò chơi ở **sidebar bên trái** để bắt đầu!  
+👉 Hãy chọn tab tương ứng từ **sidebar bên trái** để bắt đầu game!  
 🎉 Chúc bạn chơi vui, nhẹ tay với bàn phím và đừng rage quit 😎
 """)
 
