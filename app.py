@@ -332,10 +332,9 @@ with tabs[5]:
     # Tải từ điển từ các file hợp lệ
     def load_word_list():
         file_paths = [
-            "/mnt/data/tudien.txt",
-            "/mnt/data/tudien1.txt",
-            "/mnt/data/tudien2.txt",
-            "/mnt/data/tudien_old2.txt"
+            "data/tudien.txt",
+            "data/tudien1.txt",
+            "data/tudien2.txt"
         ]
         word_set = set()
         for path in file_paths:
