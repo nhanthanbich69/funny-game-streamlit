@@ -1,0 +1,72 @@
+[
+  {
+    "question": "Cây nào sống lâu nhất được ghi nhận trên thế giới?",
+    "options": {
+      "a": "Cây tùng Nhật",
+      "b": "Cây thông bristlecone",
+      "c": "Cây sồi đỏ",
+      "d": "Cây baobab"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Loài cây nào có hạt nặng nhất thế giới?",
+    "options": {
+      "a": "Dừa biển",
+      "b": "Sầu riêng",
+      "c": "Dẻ ngựa",
+      "d": "Hạt cau"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Cây nào không có lá, không hoa, không quả nhưng vẫn được gọi là 'cây'?",
+    "options": {
+      "a": "Cây gỗ mục",
+      "b": "Cây nấm",
+      "c": "Cây cảnh giả",
+      "d": "Cây san hô"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Cây nào có khả năng “đi bộ” thật sự để tìm nước?",
+    "options": {
+      "a": "Cây chuối rừng",
+      "b": "Cây dương xỉ đi bộ",
+      "c": "Cây cọ di động",
+      "d": "Cây dừa nước"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "Loài cây nào có thể sống trong điều kiện khắc nghiệt nhất trên Trái đất?",
+    "options": {
+      "a": "Xương rồng sa mạc",
+      "b": "Rêu địa y vùng bắc cực",
+      "c": "Cây lúa hoang",
+      "d": "Tràm gió"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Cây nào có thể mọc được trên đá núi lửa và đất cát biển?",
+    "options": {
+      "a": "Cây phi lao",
+      "b": "Cây si",
+      "c": "Cây lúa mạch",
+      "d": "Cây mít"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Thực vật nào không có rễ nhưng vẫn sống khỏe?",
+    "options": {
+      "a": "Tảo bẹ",
+      "b": "Cây sen đá",
+      "c": "Phong lan",
+      "d": "Cây ăn thịt"
+    },
+    "answer": "a"
+  }
+]
