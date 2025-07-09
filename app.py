@@ -327,8 +327,11 @@ with tabs[4]:
         except Exception as e:
             st.error(f"⚠️ Lỗi khi tung đồng xu: {e}")
 
+import difflib
+import random
+
 with tabs[5]:
-    st.header("💣 **Nối Từ** 🤘🔥")
+    st.header("💣 **Nối Từ – Đấu Trường Drama GenZ** 🤘🔥")
 
     def load_word_list():
         file_paths = ["data/tudien.txt", "data/tudien1.txt", "data/tudien2.txt"]
@@ -362,10 +365,10 @@ with tabs[5]:
     history = st.session_state.word_chain_history
 
     if not word_dict:
-        st.error("🚫 Trò chưa chơi mà từ điển không có. Vui lòng upload lẹ lẹ 😤")
+        st.error("🚫 Từ điển trống trơn. Upload lẹ lẹ bạn ơi 😤")
         st.stop()
 
-    user_input = st.text_input("💬 **Gõ từ đi idol (đừng bịa nha):**", "").strip().lower()
+    user_input = st.text_input("💬 **Gõ từ đi idol (nhưng đừng bịa!):**", "").strip().lower()
 
     if user_input != st.session_state.last_input:
         st.session_state.invalid_consecutive_in_turn = 0
@@ -373,13 +376,16 @@ with tabs[5]:
 
     col1, col2 = st.columns([1, 3])
     with col1:
-        if st.button("🔁 Chơi lại đi bạn ơi"):
+        if st.button("🔁 Chơi lại luôn nè"):
             st.session_state.word_chain_history = []
             st.session_state.used_words = set()
             st.session_state.invalid_total_count = 0
             st.session_state.invalid_consecutive_in_turn = 0
             st.session_state.last_input = ""
             st.experimental_rerun()
+
+    def random_line(lines):
+        return random.choice(lines)
 
     def suggest_similar(word, dictionary):
         matches = difflib.get_close_matches(word, dictionary, n=1, cutoff=0.75)
@@ -388,24 +394,48 @@ with tabs[5]:
     with col2:
         if st.button("🚀 Gửi liền tay"):
             if not user_input:
-                st.warning("😴 Trống trơn? Bạn định hack não bot à?")
+                st.warning(random_line([
+                    "😴 Gõ cái gì đi bạn, đừng ngủ gật!",
+                    "🤨 Còn trống kìa, viết lẹ đi!",
+                    "⛔ Gõ trống là chơi chi?!"
+                ]))
             elif user_input in used_words:
-                st.error("♻️ Từ này hết xài được rồi nha, đừng spam nữa!")
+                st.error(random_line([
+                    "♻️ Từ này xài rồi nha, đừng spam!",
+                    "⚠️ Đừng recycle từ cũ chứ!",
+                    "😒 Chơi dơ quá, từ đó dùng rồi!"
+                ]))
             elif user_input not in word_dict:
                 st.session_state.invalid_total_count += 1
                 st.session_state.invalid_consecutive_in_turn += 1
 
                 suggestion = suggest_similar(user_input, word_dict)
                 if suggestion:
-                    st.warning(f"🔍 Bạn chắc chắn không định viết **'{suggestion}'** hả? Viết ẩu là bị bóc phốt liền á!")
+                    st.warning(random_line([
+                        f"🤔 Ý bạn là **'{suggestion}'** không? Gõ sai tè le zậy?",
+                        f"🧐 Hmm... gần giống **'{suggestion}'**, đánh cho chuẩn nào!",
+                        f"🔍 Định viết **'{suggestion}'** hả? Đánh đúng tên đi bạn êi!"
+                    ]))
                 else:
-                    st.error(f"❌ Từ **'{user_input}'** nghe hư cấu dữ! Trong từ điển không ai biết nó luôn bạn ơi 😅")
+                    st.error(random_line([
+                        f"❌ **'{user_input}'** nghe lạ lắm bạn ơi 😅",
+                        f"📕 Từ gì mà không có luôn trong từ điển, bạn chơi chiêu hả?",
+                        f"🙃 **'{user_input}'** là hàng fake à? Bot không nhận đâu nha!"
+                    ]))
 
                 if st.session_state.invalid_total_count >= 3:
-                    st.error("💀 Quá tam ba bận. Bạn chính thức bị loại khỏi cuộc chơi! Bot tiễn bạn một đoạn...")
+                    st.error(random_line([
+                        "💀 Ba lần sai là đi luôn nha! Bot nghỉ chơi!",
+                        "😵 Quá tam ba bận rồi nha! Bạn out!",
+                        "🚫 Sai miết ai chơi nữa! Xử thua!"
+                    ]))
                     st.stop()
                 elif st.session_state.invalid_consecutive_in_turn >= 2:
-                    st.error("📉 2 lần fail liên tục? Trình bạn đang chạm đáy. Byeeee 😵")
+                    st.error(random_line([
+                        "📉 Hai lần fail liên tục... buông bàn phím đi bạn 😵",
+                        "🤧 2 lần liên tiếp là trượt sấp mặt rồi. Thua nha!",
+                        "🙅‍♂️ Trượt 2 lần không cứu được! Game over!"
+                    ]))
                     st.stop()
 
             elif history:
@@ -413,7 +443,11 @@ with tabs[5]:
                 last_word = history[-1].split()[-1]
                 next_first_word = user_input.split()[0]
                 if next_first_word != last_word:
-                    st.error(f"📛 Cần bắt đầu bằng từ **'{last_word}'** mà bạn lại gõ **'{next_first_word}'**? Bối rối ghê á 😬")
+                    st.error(random_line([
+                        f"🚫 Phải bắt đầu bằng **'{last_word}'** chứ không phải **'{next_first_word}'**!",
+                        f"📛 Gõ sai từ đầu rồi nha. Luật là bắt đầu bằng **'{last_word}'**!",
+                        f"⛔ Trật tự rồi! Từ trước là **'{last_word}'**, bạn nhập gì vậy?"
+                    ]))
                 else:
                     history.append(user_input)
                     used_words.add(user_input)
@@ -423,10 +457,18 @@ with tabs[5]:
                         bot_word = random.choice(bot_candidates)
                         history.append(bot_word)
                         used_words.add(bot_word)
-                        st.success(f"🤖 Bot bật chế độ rap diss: **{bot_word}**. Đỡ không kịp luôn 😤")
+                        st.success(random_line([
+                            f"🤖 Bot đáp: **{bot_word}**. Vào mood chiến luôn!",
+                            f"🔥 Bot gài chiêu: **{bot_word}**. Dám đỡ không?",
+                            f"⚡ Bot bắn thẳng: **{bot_word}**. Né không kịp!"
+                        ]))
                     else:
                         st.balloons()
-                        st.success("🎉 Bot đơ luôn rồi 😵 Bạn thắng quá áp đảo!!!")
+                        st.success(random_line([
+                            "🎉 Bot cạn lời! Bạn đỉnh quá!",
+                            "🏆 Easy win! Bot chịu thua luôn!",
+                            "😎 Bạn thắng! Bot đi khóc góc tường!"
+                        ]))
             else:
                 st.session_state.invalid_consecutive_in_turn = 0
                 history.append(user_input)
@@ -437,15 +479,23 @@ with tabs[5]:
                     bot_word = random.choice(bot_candidates)
                     history.append(bot_word)
                     used_words.add(bot_word)
-                    st.success(f"🤖 Bot khởi động nhẹ: **{bot_word}**. Bạn đừng run nha 😎")
+                    st.success(random_line([
+                        f"🤖 Bot mở hàng bằng: **{bot_word}**. Vô lẹ đi!",
+                        f"🎯 Bot quăng nhẹ: **{bot_word}**. Bắt được không?",
+                        f"💥 Bot khởi động với: **{bot_word}**. Tới bạn rồi đó!"
+                    ]))
                 else:
                     st.balloons()
-                    st.success("💥 Bot còn chưa kịp bắt nhịp đã bị knock-out. Easy win!!! 🏆")
+                    st.success(random_line([
+                        "💥 Bạn đánh phát đầu bot out luôn! Quá dữ!",
+                        "🎊 Chưa kịp chơi bot đã thua, bạn bá đạo!",
+                        "🎉 Easy win round 1, bạn vô địch không cần đánh!"
+                    ]))
 
     if history:
-        st.subheader("📜 **Drama Lịch Sử Đấu Từ:**")
+        st.subheader("📜 **Lịch sử đấu khẩu cực gắt:**")
         for i, word in enumerate(history):
             speaker = "🧑‍💻 Bạn" if i % 2 == 0 else "🤖 Bot"
             st.write(f"{i+1}. {speaker}: **{word}**")
 
-    st.caption("📌 *Luật chơi:* Mỗi từ mới phải bắt đầu bằng **từ cuối cùng** của từ trước. 3 lần sai là đi luôn, 2 lần fail liên tiếp là bị loại. Bịp quá không chơi lại được nha bro!")
+    st.caption("📌 *Luật chơi:* Từ mới phải bắt đầu bằng **từ cuối** của từ trước. 3 lần sai là rớt đài, 2 lần sai liên tiếp là auto thua. Bot không tha ai đâu 😈")
