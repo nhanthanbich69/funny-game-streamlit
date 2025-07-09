@@ -384,6 +384,8 @@ with tabs[5]:
         st.session_state.invalid_consecutive_in_turn = 0
     if 'last_input' not in st.session_state:
         st.session_state.last_input = ""
+    if 'game_over' not in st.session_state:
+        st.session_state.game_over = False
 
     word_dict = st.session_state.word_dict
     used_words = st.session_state.used_words
@@ -393,11 +395,13 @@ with tabs[5]:
         st.error("🚫 Từ điển trống trơn. Upload lẹ lẹ bạn ơi 😤")
         st.stop()
 
-    user_input = st.text_input("💬 **Gõ từ đi idol (nhưng đừng bịa!):**", "").strip().lower()
-
-    if user_input != st.session_state.last_input:
-        st.session_state.invalid_consecutive_in_turn = 0
-    st.session_state.last_input = user_input
+    if not st.session_state.game_over:
+        user_input = st.text_input("💬 **Gõ từ đi idol (nhưng đừng bịa!):**", "").strip().lower()
+        if user_input != st.session_state.last_input:
+            st.session_state.invalid_consecutive_in_turn = 0
+        st.session_state.last_input = user_input
+    else:
+        user_input = ""
 
     col1, col2 = st.columns([1, 3])
     with col1:
@@ -407,10 +411,11 @@ with tabs[5]:
             st.session_state.invalid_total_count = 0
             st.session_state.invalid_consecutive_in_turn = 0
             st.session_state.last_input = ""
+            st.session_state.game_over = False
             st.rerun()
 
     with col2:
-        if st.button("🚀 Gửi liền tay"):
+        if not st.session_state.game_over and st.button("🚀 Gửi liền tay"):
             if not user_input:
                 st.warning(random_line([
                     "😴 Gõ cái gì đi bạn, đừng ngủ gật!",
@@ -446,6 +451,7 @@ with tabs[5]:
                     score = int(10 * (1.35 ** max(0, turns - 1)))
                     st.error("💀 Bạn out cuộc chơi rồi!")
                     st.info(f"📉 Điểm an ủi: **{score}** điểm.")
+                    st.session_state.game_over = True
                     st.stop()
 
             elif history:
@@ -482,6 +488,7 @@ with tabs[5]:
                             f"💥 Bot out sau {turns} turns. Đỉnh của chóp!"
                         ]))
                         st.info(f"💯 Điểm của bạn: **{score}** điểm")
+                        st.session_state.game_over = True
                         st.stop()
             else:
                 # Lượt đầu: kiểm tra nếu từ này khiến bot không phản lại được thì không cho
