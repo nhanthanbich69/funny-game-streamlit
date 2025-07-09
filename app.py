@@ -441,7 +441,6 @@ with tabs[5]:
                         f"🙃 **'{user_input}'** là hàng fake à? Bot không nhận đâu nha!"
                     ]))
 
-                # Tính điểm thua
                 if st.session_state.invalid_total_count >= 3 or st.session_state.invalid_consecutive_in_turn >= 2:
                     turns = len(history) // 2
                     score = int(10 * (1.35 ** max(0, turns - 1)))
@@ -476,11 +475,6 @@ with tabs[5]:
                     else:
                         st.balloons()
                         turns = len(history) // 2
-                        if turns == 1:
-                            st.warning("🤨 Win luôn round đầu là sao trời? Cho bot chơi cái đã chớ!")
-                            history.clear()
-                            used_words.clear()
-                            st.stop()
                         score = int(1000 * (0.85 ** (turns - 2)))
                         st.success(random_line([
                             f"🎉 Bot cạn lời! Bạn thắng sau {turns} lượt!",
@@ -489,29 +483,25 @@ with tabs[5]:
                         ]))
                         st.info(f"💯 Điểm của bạn: **{score}** điểm")
                         st.stop()
-
             else:
-                # First move
+                # Lượt đầu: kiểm tra nếu từ này khiến bot không phản lại được thì không cho
+                bot_candidates = [w for w in word_dict if w.split()[0] == user_input.split()[-1] and w not in used_words]
+                if not bot_candidates:
+                    st.warning("😑 Từ này dễ thắng quá, bot không phản được. Đánh từ khác đi bạn!")
+                    st.stop()
+
                 st.session_state.invalid_consecutive_in_turn = 0
                 history.append(user_input)
                 used_words.add(user_input)
 
-                bot_candidates = [w for w in word_dict if w.split()[0] == user_input.split()[-1] and w not in used_words]
-                if bot_candidates:
-                    bot_word = random.choice(bot_candidates)
-                    history.append(bot_word)
-                    used_words.add(bot_word)
-                    st.success(random_line([
-                        f"🤖 Bot mở hàng bằng: **{bot_word}**. Vô lẹ đi!",
-                        f"🎯 Bot quăng nhẹ: **{bot_word}**. Bắt được không?",
-                        f"💥 Bot khởi động với: **{bot_word}**. Tới bạn rồi đó!"
-                    ]))
-                else:
-                    st.balloons()
-                    st.warning("🤨 Win luôn round đầu là sao trời? Cho bot chơi cái đã chớ!")
-                    history.clear()
-                    used_words.clear()
-                    st.stop()
+                bot_word = random.choice(bot_candidates)
+                history.append(bot_word)
+                used_words.add(bot_word)
+                st.success(random_line([
+                    f"🤖 Bot mở hàng bằng: **{bot_word}**. Vô lẹ đi!",
+                    f"🎯 Bot quăng nhẹ: **{bot_word}**. Bắt được không?",
+                    f"💥 Bot khởi động với: **{bot_word}**. Tới bạn rồi đó!"
+                ]))
 
     if history:
         st.subheader("📜 **Lịch sử đấu khẩu cực gắt:**")
