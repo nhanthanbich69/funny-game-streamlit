@@ -334,22 +334,22 @@ with tabs[5]:
 
     def load_word_list():
         file_paths = [
-    "data/tudien.txt",
-    "data/tudien1.txt",
-    "data/tudien2.txt",
-    "data/tudien-master/danhtu.txt",
-    "data/tudien-master/danhtunhanxung.txt",
-    "data/tudien-master/dongtu.txt",
-    "data/tudien-master/lientu.txt",
-    "data/tudien-master/photu.txt",
-    "data/tudien-master/tagged-1.txt",
-    "data/tudien-master/tagged-2.txt",
-    "data/tudien-master/tenrieng.txt",
-    "data/tudien-master/tinhtu.txt",
-    "data/tudien-master/trotu.txt",
-    "data/tudien-master/tudien-ast.txt",
-    "data/tudien-master/tudien-khongdau.txt"
-]
+            "data/tudien.txt",
+            "data/tudien1.txt",
+            "data/tudien2.txt",
+            "data/tudien-master/danhtu.txt",
+            "data/tudien-master/danhtunhanxung.txt",
+            "data/tudien-master/dongtu.txt",
+            "data/tudien-master/lientu.txt",
+            "data/tudien-master/photu.txt",
+            "data/tudien-master/tagged-1.txt",
+            "data/tudien-master/tagged-2.txt",
+            "data/tudien-master/tenrieng.txt",
+            "data/tudien-master/tinhtu.txt",
+            "data/tudien-master/trotu.txt",
+            "data/tudien-master/tudien-ast.txt",
+            "data/tudien-master/tudien-khongdau.txt"
+        ]
         word_set = set()
         for path in file_paths:
             try:
@@ -371,6 +371,7 @@ with tabs[5]:
         matches = difflib.get_close_matches(word, candidates, n=1, cutoff=0.6)
         return matches[0] if matches else None
 
+    # Khởi tạo session state
     if 'word_dict' not in st.session_state:
         st.session_state.word_dict = load_word_list()
     if 'used_words' not in st.session_state:
@@ -440,25 +441,12 @@ with tabs[5]:
                         f"🙃 **'{user_input}'** là hàng fake à? Bot không nhận đâu nha!"
                     ]))
 
-                if st.session_state.invalid_total_count >= 3:
+                # Tính điểm thua
+                if st.session_state.invalid_total_count >= 3 or st.session_state.invalid_consecutive_in_turn >= 2:
                     turns = len(history) // 2
                     score = int(10 * (1.35 ** max(0, turns - 1)))
-                    st.error(random_line([
-                        "💀 Ba lần sai là đi luôn nha! Bot nghỉ chơi!",
-                        "😵 Quá tam ba bận rồi nha! Bạn out!",
-                        "🚫 Sai miết ai chơi nữa! Xử thua!"
-                    ]))
-                    st.info(f"📉 Điểm an ủi: **{score}** điểm. Tập luyện thêm nhé!")
-                    st.stop()
-                elif st.session_state.invalid_consecutive_in_turn >= 2:
-                    turns = len(history) // 2
-                    score = int(10 * (1.35 ** max(0, turns - 1)))
-                    st.error(random_line([
-                        "📉 Hai lần fail liên tục... buông bàn phím đi bạn 😵",
-                        "🤧 2 lần liên tiếp là trượt sấp mặt rồi. Thua nha!",
-                        "🙅‍♂️ Trượt 2 lần không cứu được! Game over!"
-                    ]))
-                    st.info(f"📉 Điểm của bạn: **{score}** điểm.")
+                    st.error("💀 Bạn out cuộc chơi rồi!")
+                    st.info(f"📉 Điểm an ủi: **{score}** điểm.")
                     st.stop()
 
             elif history:
@@ -487,12 +475,12 @@ with tabs[5]:
                         ]))
                     else:
                         st.balloons()
-                        if len(history) <= 2:
-                            st.warning("😒 Mới vô bạn win luôn à? Không vui! Đánh lại từ đầu đi.")
+                        turns = len(history) // 2
+                        if turns == 1:
+                            st.warning("🤨 Win luôn round đầu là sao trời? Cho bot chơi cái đã chớ!")
                             history.clear()
                             used_words.clear()
                             st.stop()
-                        turns = len(history) // 2
                         score = int(1000 * (0.85 ** (turns - 2)))
                         st.success(random_line([
                             f"🎉 Bot cạn lời! Bạn thắng sau {turns} lượt!",
@@ -500,7 +488,10 @@ with tabs[5]:
                             f"💥 Bot out sau {turns} turns. Đỉnh của chóp!"
                         ]))
                         st.info(f"💯 Điểm của bạn: **{score}** điểm")
+                        st.stop()
+
             else:
+                # First move
                 st.session_state.invalid_consecutive_in_turn = 0
                 history.append(user_input)
                 used_words.add(user_input)
@@ -529,7 +520,7 @@ with tabs[5]:
             st.write(f"{i+1}. {speaker}: **{word}**")
 
     st.caption("📌 *Luật chơi:* Từ mới phải bắt đầu bằng **từ cuối** của từ trước. 3 lần sai là rớt đài, 2 lần sai liên tiếp là auto thua. Bot không tha ai đâu 😈")
-
+    
 with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
     # ---------------- INIT STATE ----------------
