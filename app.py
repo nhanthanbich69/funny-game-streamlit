@@ -333,7 +333,23 @@ with tabs[5]:
     st.header("💣 **Nối Từ** 🤘🔥")
 
     def load_word_list():
-        file_paths = ["data/tudien.txt", "data/tudien1.txt", "data/tudien2.txt"]
+        file_paths = [
+    "data/tudien.txt",
+    "data/tudien1.txt",
+    "data/tudien2.txt",
+    "data/tudien-master/danhtu.txt",
+    "data/tudien-master/danhtunhanxung.txt",
+    "data/tudien-master/dongtu.txt",
+    "data/tudien-master/lientu.txt",
+    "data/tudien-master/photu.txt",
+    "data/tudien-master/tagged-1.txt",
+    "data/tudien-master/tagged-2.txt",
+    "data/tudien-master/tenrieng.txt",
+    "data/tudien-master/tinhtu.txt",
+    "data/tudien-master/trotu.txt",
+    "data/tudien-master/tudien-ast.txt",
+    "data/tudien-master/tudien-khongdau.txt"
+]
         word_set = set()
         for path in file_paths:
             try:
