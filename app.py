@@ -517,6 +517,9 @@ with tabs[5]:
 with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
 
+    import random, time
+    import streamlit.components.v1 as components
+
     # ---------------- INIT STATE ----------------
     default_state = {
         'math_started': False,
@@ -537,55 +540,66 @@ with tabs[6]:
     # ---------------- GEN QUESTION ----------------
     def generate_question(index):
         level = index // 10
+        index_in_level = index % 10
 
         def digit_range(d):
-            start = 10**(d - 1)
-            end = 10**d - 1
-            return start, end
+            return 10**(d - 1), 10**d - 1
 
-        def rand_digit(d):
-            return random.randint(*digit_range(d))
+        def increasing_rand_digit(d, step=2):
+            base_min, base_max = digit_range(d)
+            shift = index_in_level * step
+            return random.randint(base_min + shift, min(base_max, base_min + shift + step * 3))
 
-        if level == 0:
-            add_digits = [1]
-            mul_digits = []
-        elif level == 1:
-            add_digits = [1, 2]
-            mul_digits = [1]
-        elif level == 2:
-            add_digits = [2]
-            mul_digits = [1, 2]
-        else:
-            add_digits = [2, 3]
-            mul_digits = [2]
+        def get_add_digits(level):
+            if level == 0:
+                return 1, 1
+            elif level == 1:
+                return 1, 2
+            elif level == 2:
+                return 2, 2
+            elif level == 3:
+                return 2, 3
+            else:
+                return min(3, 1 + level), min(3, 1 + level)
 
+        def get_mul_digits(level):
+            if level == 0:
+                return None
+            elif level == 1:
+                return 1, 1
+            elif level == 2:
+                return 1, 2
+            elif level == 3:
+                return 2, 2
+            else:
+                return min(3, level), min(3, level + 1)
+
+        # Chọn phép toán theo tỉ lệ
         op_pool = (
             ["+"] * 35 + ["-"] * 25 +
-            (["*"] * 25 + ["/"] * 15 if mul_digits else [])
+            (["*"] * 25 + ["/"] * 15 if level >= 1 else [])
         )
         op = random.choice(op_pool)
 
-        if op == "+":
-            d1, d2 = random.choices(add_digits, k=2)
-            a, b = rand_digit(d1), rand_digit(d2)
-            return f"{a} + {b}", a + b
-
-        elif op == "-":
-            d1, d2 = random.choices(add_digits, k=2)
-            a, b = rand_digit(d1), rand_digit(d2)
-            return f"{max(a, b)} - {min(a, b)}", abs(a - b)
+        if op in ["+", "-"]:
+            d1, d2 = get_add_digits(level)
+            a, b = increasing_rand_digit(d1), increasing_rand_digit(d2)
+            if op == "+":
+                return f"{a} + {b}", a + b
+            else:
+                return f"{max(a, b)} - {min(a, b)}", abs(a - b)
 
         elif op == "*":
-            d1, d2 = random.choices(mul_digits, k=2)
-            a, b = rand_digit(d1), rand_digit(d2)
-            return f"{a} * {b}", a * b
+            d1, d2 = get_mul_digits(level)
+            a, b = increasing_rand_digit(d1), increasing_rand_digit(d2)
+            return f"{a} x {b}", a * b
 
         elif op == "/":
-            d1, d2 = random.choices(mul_digits, k=2)
-            b = rand_digit(d2)
-            result = rand_digit(d1)
+            d1, d2 = get_mul_digits(level)
+            b = increasing_rand_digit(d2)
+            result = increasing_rand_digit(d1)
             a = b * result
-            return f"{a} / {b}", result
+            return f"{a} : {b}", result
 
     # ---------------- RESET GAME ----------------
     def reset_game():
@@ -623,6 +637,7 @@ with tabs[6]:
             st.session_state.math_game_over = True
             st.error("⏰ Hết giờ! Não lag mất tiêu rồi 😵")
             st.rerun()
+            st.stop()
 
         if remaining <= 3:
             st.warning(f"⚠️ Còn {remaining} giây thôi! Căng rồi nha!!!")
