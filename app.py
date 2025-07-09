@@ -554,44 +554,44 @@ with tabs[6]:
         if st.button("🔁 Chơi lại từ đầu"):
             reset_game()
 
-def generate_question(index):
-    level = index // 15
-
-    # Tăng độ khó cộng/trừ theo level
-    add_sub_max = 10 + (level - 1) * 20
-
-    # Nhân/chia đơn giản hơn, chỉ dùng số từ 1 đến 12
-    x = (5 * level) + level
-    mult_min, mult_max = 2, min(12, x)
-
-    # Tỷ lệ phép toán (cộng/trừ 70%, nhân/chia 30%)
-    op_pool = (
-        ["+"] * 4 + ["-"] * 3 +
-        (["*"] * 2 + ["/"] * 1 if level >= 1 else [])
-    )
-    op = random.choice(op_pool)
-
-    if op == "+":
-        a = random.randint(10, add_sub_max)
-        b = random.randint(10, add_sub_max)
-        return f"{a} + {b}", a + b
-
-    elif op == "-":
-        a = random.randint(10, add_sub_max)
-        b = random.randint(10, add_sub_max)
-        if a < b: a, b = b, a
-        return f"{a} - {b}", a - b
-
-    elif op == "*":
-        a = random.randint(mult_min, mult_max)
-        b = random.randint(mult_min, mult_max)
-        return f"{a} * {b}", a * b
-
-    elif op == "/":
-        b = random.randint(mult_min, mult_max)
-        result = random.randint(mult_min, mult_max)
-        a = b * result
-        return f"{a} / {b}", result
+    def generate_question(index):
+        level = index // 15
+    
+        # Tăng độ khó cộng/trừ theo level
+        add_sub_max = 10 + (level - 1) * 20
+    
+        # Nhân/chia đơn giản hơn, chỉ dùng số từ 1 đến 12
+        x = (5 * level) + level
+        mult_min, mult_max = 2, min(12, x)
+    
+        # Tỷ lệ phép toán (cộng/trừ 70%, nhân/chia 30%)
+        op_pool = (
+            ["+"] * 4 + ["-"] * 3 +
+            (["*"] * 2 + ["/"] * 1 if level >= 1 else [])
+        )
+        op = random.choice(op_pool)
+    
+        if op == "+":
+            a = random.randint(10, add_sub_max)
+            b = random.randint(10, add_sub_max)
+            return f"{a} + {b}", a + b
+    
+        elif op == "-":
+            a = random.randint(10, add_sub_max)
+            b = random.randint(10, add_sub_max)
+            if a < b: a, b = b, a
+            return f"{a} - {b}", a - b
+    
+        elif op == "*":
+            a = random.randint(mult_min, mult_max)
+            b = random.randint(mult_min, mult_max)
+            return f"{a} * {b}", a * b
+    
+        elif op == "/":
+            b = random.randint(mult_min, mult_max)
+            result = random.randint(mult_min, mult_max)
+            a = b * result
+            return f"{a} / {b}", result
 
     # ---------------- START ----------------
     if not st.session_state.math_started and not st.session_state.math_game_over:
