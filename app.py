@@ -516,10 +516,6 @@ with tabs[5]:
 
 with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
-
-    import random, time
-    import streamlit.components.v1 as components
-
     # ---------------- INIT STATE ----------------
     default_state = {
         'math_started': False,
@@ -532,7 +528,8 @@ with tabs[6]:
         'question_index': 0,
         'score_math': 0,
         'math_game_over': False,
-        'math_wrong_this_question': 0
+        'math_wrong_this_question': 0,
+        'math_force_stop': False  # 👈 Flag để dừng game khi hết giờ
     }
     for k, v in default_state.items():
         st.session_state.setdefault(k, v)
@@ -623,19 +620,23 @@ with tabs[6]:
             st.session_state.math_time_limit = max(3, st.session_state.math_time_limit - 5)
             st.toast(f"🔥 Tăng độ khó! Mỗi câu còn {st.session_state.math_time_limit}s")
 
-    # ---------------- GAME FLOW ----------------
+    # ---------------- TIMER LOGIC ----------------
     now = time.time()
-    elapsed = now - st.session_state.math_start_time
+    elapsed = now - st.session_state.math_start_time if st.session_state.math_start_time else 0
     remaining = int(st.session_state.math_time_limit - elapsed)
 
-    # ✨ Hết giờ: đánh dấu game_over rồi rerun
-    if not st.session_state.math_game_over and remaining <= 0:
-        st.session_state.math_game_over = True
+    if remaining <= 0 and not st.session_state.math_force_stop:
+        st.session_state.math_force_stop = True
         st.rerun()
 
-    # ✂️ Nếu đã hết giờ: show kết quả và dừng toàn bộ UI
+    if st.session_state.math_force_stop and not st.session_state.math_game_over:
+        st.session_state.math_game_over = True
+        st.session_state.math_force_stop = False
+        st.rerun()
+
+    # ---------------- GAME FLOW ----------------
     if st.session_state.math_game_over:
-        st.error("⏰ Hết giờ! Não lag mất tiêu rồi 😵")
+        st.error("💥 Dừng tay! Game over!")
         st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.math_correct}**")
         st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.score_math} điểm**")
         if st.button("🔁 Chơi lại từ đầu"):
@@ -645,52 +646,51 @@ with tabs[6]:
     if not st.session_state.math_started:
         if st.button("🚀 Bắt đầu ngay"):
             reset_game()
-    else:
-        if remaining <= 3:
-            st.warning(f"⚠️ Còn {remaining} giây thôi! Căng rồi nha!!!")
+        st.stop()
 
-        components.html(f"""
-        <script>
-        let seconds = {remaining};
-        const countdown = setInterval(function() {{
-            if (seconds <= 0) {{
-                clearInterval(countdown);
-            }}
-            let clock = document.getElementById("clock");
-            if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
-            seconds -= 1;
-        }}, 1000);
-        </script>
-        <h2 id="clock">⏳ Còn {remaining} giây!</h2>
-        """, height=70)
+    if remaining <= 3:
+        st.warning(f"⚠️ Còn {remaining} giây thôi! Căng rồi nha!!!")
 
-        st.subheader(f"❓ Câu {st.session_state.question_index + 1}: {st.session_state.math_question}")
+    components.html(f"""
+    <script>
+    let seconds = {remaining};
+    const countdown = setInterval(function() {{
+        if (seconds <= 0) {{
+            clearInterval(countdown);
+        }}
+        let clock = document.getElementById("clock");
+        if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
+        seconds -= 1;
+    }}, 1000);
+    </script>
+    <h2 id="clock">⏳ Còn {remaining} giây!</h2>
+    """, height=70)
 
-        answer = st.text_input("✍️ Nhập kết quả:", key=f"math_answer_{st.session_state.question_index}")
+    st.subheader(f"❓ Câu {st.session_state.question_index + 1}: {st.session_state.math_question}")
+    answer = st.text_input("✍️ Nhập kết quả:", key=f"math_answer_{st.session_state.question_index}")
 
-        if st.button("📨 Gửi đáp án"):
-            if not answer.strip().isdigit():
-                st.warning("🤨 Nhập số đi bạn ơi, đừng troll!")
+    if st.button("📨 Gửi đáp án"):
+        if not answer.strip().isdigit():
+            st.warning("🤨 Nhập số đi bạn ơi, đừng troll!")
+        else:
+            if int(answer.strip()) == st.session_state.math_answer:
+                st.success("✅ Chính xác! Não vẫn mượt nha!")
+                st.session_state.math_correct += 1
+                st.session_state.score_math += 10
+                st.session_state.question_index += 1
+                adjust_difficulty()
+                st.session_state.math_question, st.session_state.math_answer = generate_question(st.session_state.question_index)
+                st.session_state.math_start_time = time.time()
+                st.session_state.math_wrong_this_question = 0
+                st.rerun()
             else:
-                if int(answer.strip()) == st.session_state.math_answer:
-                    st.success("✅ Chính xác! Não vẫn mượt nha!")
-                    st.session_state.math_correct += 1
-                    st.session_state.score_math += 10
-                    st.session_state.question_index += 1
-                    adjust_difficulty()
-                    st.session_state.math_question, st.session_state.math_answer = generate_question(st.session_state.question_index)
-                    st.session_state.math_start_time = time.time()
-                    st.session_state.math_wrong_this_question = 0
+                st.session_state.math_wrong_this_question += 1
+                st.session_state.score_math = max(0, st.session_state.score_math - 4)
+                if st.session_state.math_wrong_this_question >= 3:
+                    st.session_state.math_game_over = True
                     st.rerun()
                 else:
-                    st.session_state.math_wrong_this_question += 1
-                    st.session_state.score_math = max(0, st.session_state.score_math - 4)
-                    if st.session_state.math_wrong_this_question >= 3:
-                        st.session_state.math_game_over = True
-                        st.error("❌ Sai 3 lần rồi! Game over!")
-                        st.rerun()
-                    else:
-                        st.warning(f"❌ Sai rồi! Còn {3 - st.session_state.math_wrong_this_question} lần thử!")
+                    st.warning(f"❌ Sai rồi! Còn {3 - st.session_state.math_wrong_this_question} lần thử!")
 
-        st.metric("✅ Số câu đúng", st.session_state.math_correct)
-        st.metric("🏆 Tổng điểm", st.session_state.score_math)
+    st.metric("✅ Số câu đúng", st.session_state.math_correct)
+    st.metric("🏆 Tổng điểm", st.session_state.score_math)
