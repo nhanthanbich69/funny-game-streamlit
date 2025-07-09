@@ -628,12 +628,12 @@ with tabs[6]:
     elapsed = now - st.session_state.math_start_time
     remaining = int(st.session_state.math_time_limit - elapsed)
 
-    # ✨ Hết giờ -> đánh dấu game over -> rerun để hiển thị giao diện dừng
-    if remaining <= 0 and not st.session_state.math_game_over:
+    # ✨ Hết giờ: đánh dấu game_over rồi rerun
+    if not st.session_state.math_game_over and remaining <= 0:
         st.session_state.math_game_over = True
         st.rerun()
 
-    # 🔒 Đã hết giờ -> hiển thị dừng và ngắt hoàn toàn UI
+    # ✂️ Nếu đã hết giờ: show kết quả và dừng toàn bộ UI
     if st.session_state.math_game_over:
         st.error("⏰ Hết giờ! Não lag mất tiêu rồi 😵")
         st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.math_correct}**")
