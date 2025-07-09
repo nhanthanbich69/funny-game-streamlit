@@ -327,11 +327,8 @@ with tabs[4]:
         except Exception as e:
             st.error(f"⚠️ Lỗi khi tung đồng xu: {e}")
 
-import difflib
-import random
-
 with tabs[5]:
-    st.header("💣 **Nối Từ – Đấu Trường Drama GenZ** 🤘🔥")
+    st.header("💣 **Nối Từ** 🤘🔥")
 
     def load_word_list():
         file_paths = ["data/tudien.txt", "data/tudien1.txt", "data/tudien2.txt"]
@@ -382,13 +379,15 @@ with tabs[5]:
             st.session_state.invalid_total_count = 0
             st.session_state.invalid_consecutive_in_turn = 0
             st.session_state.last_input = ""
-            st.experimental_rerun()
+            st.rerun()  # ✅ NEW API, tránh lỗi experimental_rerun()
 
     def random_line(lines):
         return random.choice(lines)
 
     def suggest_similar(word, dictionary):
-        matches = difflib.get_close_matches(word, dictionary, n=1, cutoff=0.75)
+        prefix = word.split()[0] if ' ' in word else word
+        candidates = [w for w in dictionary if w.startswith(prefix[:3])]
+        matches = difflib.get_close_matches(word, candidates, n=1, cutoff=0.6)
         return matches[0] if matches else None
 
     with col2:
