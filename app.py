@@ -40,17 +40,34 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🎮 Tạo các tab (thêm Nối Từ ở vị trí tab 5)
-tabs = st.tabs([
-    "📝 Hướng Dẫn", 
-    "🎯 Đoán Số", 
-    "🖐 Búa Kéo Bao", 
-    "🎲 Tung Xúc Xắc", 
-    "💰 Tung Đồng Xu", 
+# 🎮 Tạo các tab 
+st.markdown("""
+    <style>
+    .horizontal-radio > div {
+        display: flex !important;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .horizontal-radio label {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+tab_names = [
+    "📝 Hướng Dẫn",
+    "🎯 Đoán Số",
+    "🖐 Búa Kéo Bao",
+    "🎲 Tung Xúc Xắc",
+    "💰 Tung Đồng Xu",
     "🧩 Nối Từ",
-    "🧮 Tính nhẩm siêu tốc",
+    "🧠 Tính Nhẩm",
     "🎓 Đố Vui"
-])
+]
+
+selected_tab = st.radio("🎮 Chọn trò chơi:", tab_names, horizontal=True, key="menu", label_visibility="collapsed")
+
 
 # 🎯 Các câu trả lời đúng & sai
 correct_responses = [
