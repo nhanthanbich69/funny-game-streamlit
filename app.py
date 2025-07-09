@@ -528,8 +528,7 @@ with tabs[6]:
         'question_index': 0,
         'score_math': 0,
         'math_game_over': False,
-        'math_wrong_this_question': 0,
-        'math_force_stop': False  # 👈 Flag để dừng game khi hết giờ
+        'math_wrong_this_question': 0
     }
     for k, v in default_state.items():
         st.session_state.setdefault(k, v)
@@ -620,21 +619,15 @@ with tabs[6]:
             st.session_state.math_time_limit = max(3, st.session_state.math_time_limit - 5)
             st.toast(f"🔥 Tăng độ khó! Mỗi câu còn {st.session_state.math_time_limit}s")
 
-    # ---------------- TIMER LOGIC ----------------
+    # ---------------- TIMER ----------------
     now = time.time()
     elapsed = now - st.session_state.math_start_time if st.session_state.math_start_time else 0
     remaining = int(st.session_state.math_time_limit - elapsed)
 
-    if remaining <= 0 and not st.session_state.math_force_stop:
-        st.session_state.math_force_stop = True
-        st.rerun()
-
-    if st.session_state.math_force_stop and not st.session_state.math_game_over:
+    if not st.session_state.math_game_over and remaining <= 0:
         st.session_state.math_game_over = True
-        st.session_state.math_force_stop = False
-        st.rerun()
 
-    # ---------------- GAME FLOW ----------------
+    # ---------------- GAME OVER ----------------
     if st.session_state.math_game_over:
         st.error("💥 Dừng tay! Game over!")
         st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.math_correct}**")
@@ -643,11 +636,13 @@ with tabs[6]:
             reset_game()
         st.stop()
 
+    # ---------------- GAME START ----------------
     if not st.session_state.math_started:
         if st.button("🚀 Bắt đầu ngay"):
             reset_game()
         st.stop()
 
+    # ---------------- HIỆN ĐỒNG HỒ ----------------
     if remaining <= 3:
         st.warning(f"⚠️ Còn {remaining} giây thôi! Căng rồi nha!!!")
 
@@ -666,6 +661,7 @@ with tabs[6]:
     <h2 id="clock">⏳ Còn {remaining} giây!</h2>
     """, height=70)
 
+    # ---------------- GAME PLAY ----------------
     st.subheader(f"❓ Câu {st.session_state.question_index + 1}: {st.session_state.math_question}")
     answer = st.text_input("✍️ Nhập kết quả:", key=f"math_answer_{st.session_state.question_index}")
 
