@@ -517,9 +517,6 @@ with tabs[5]:
 with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
 
-    import random, time
-    import streamlit.components.v1 as components
-
     # ---------------- INIT STATE ----------------
     default_state = {
         'math_started': False,
@@ -548,7 +545,14 @@ with tabs[6]:
         def increasing_rand_digit(d, step=2):
             base_min, base_max = digit_range(d)
             shift = index_in_level * step
-            return random.randint(base_min + shift, min(base_max, base_min + shift + step * 3))
+            min_val = base_min + shift
+            max_val = min(base_max, base_min + shift + step * 3)
+        
+            if min_val > max_val:
+                # Fallback về full range nếu bị lệch
+                min_val, max_val = base_min, base_max
+        
+            return random.randint(min_val, max_val)
 
         def get_add_digits(level):
             if level == 0:
