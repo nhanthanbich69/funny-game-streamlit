@@ -556,15 +556,41 @@ with tabs[6]:
     # Hàm tạo phép toán
     def generate_question(index):
         level = index // 15  # Mỗi 15 câu tăng 1 cấp
-        a = random.randint(1, 10 + level * 10)
-        b = random.randint(1, 10 + level * 10)
-        op = random.choice(["+", "-", "*"])
-
+    
+        # Tăng độ phức tạp theo cấp độ
+        if level == 0:
+            a = random.randint(1, 20)
+            b = random.randint(1, 20)
+            op = random.choice(["+", "-"])
+        elif level == 1:
+            a = random.randint(10, 50)
+            b = random.randint(10, 50)
+            op = random.choice(["+", "-", "*"])
+        else:
+            # level >= 2, cho phép phép chia
+            a = random.randint(20, 100 + level * 10)
+            b = random.randint(1, 20 + level * 5)
+    
+            op = random.choice(["+", "-", "*", "/"])
+    
+            if op == "/":
+                # Chọn b và tạo a sao cho chia hết
+                b = random.randint(2, 15 + level)
+                answer = random.randint(2, 12 + level)
+                a = b * answer
+                return f"{a} / {b}", a // b
+    
+        # Tránh kết quả âm nếu là phép trừ
+        if op == "-":
+            if a < b:
+                a, b = b, a
+    
+        # Trả về kết quả
         if op == "+":
             return f"{a} + {b}", a + b
         elif op == "-":
             return f"{a} - {b}", a - b
-        else:
+        elif op == "*":
             return f"{a} * {b}", a * b
 
     # Bắt đầu game
