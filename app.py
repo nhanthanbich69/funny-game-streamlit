@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 # Tiêu đề ứng dụng
 st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu - Nối Từ - Tính Nhẩm - Đố Vui)")
 
-# Thêm CSS để tạo hiệu ứng hover cho các nút và giữ màu cũ cho các phần khác
+# CSS cho hiệu ứng và màu
 st.markdown("""
     <style>
         body {
@@ -25,14 +25,8 @@ st.markdown("""
             color: #FFD700;
             border: 2px solid #FFD700;
         }
-        .stSlider > div > div {
-            background-color: #fff;
-            color: #000;
-        }
-        .stSelectbox > div {
-            background-color: #fff;
-            color: #000;
-        }
+        .stSlider > div > div,
+        .stSelectbox > div,
         .stTextInput > div {
             background-color: #fff;
             color: #000;
@@ -40,21 +34,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🎮 Tạo các tab 
-st.markdown("""
-    <style>
-    .horizontal-radio > div {
-        display: flex !important;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-    .horizontal-radio label {
-        margin-right: 20px;
-        white-space: nowrap;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
+# Tên các trò chơi
 tab_names = [
     "📝 Hướng Dẫn",
     "🎯 Đoán Số",
@@ -66,29 +46,11 @@ tab_names = [
     "🎓 Đố Vui"
 ]
 
-selected_tab = st.radio("🎮 Chọn trò chơi:", tab_names, horizontal=True, key="menu", label_visibility="collapsed")
+# Sidebar để chọn trò chơi
+selected_tab = st.sidebar.radio("🎮 **Chọn Trò Chơi:**", tab_names, index=0)
 
-
-# 🎯 Các câu trả lời đúng & sai
-correct_responses = [
-    "🎉 Chính xác!",
-    "✅ Ừ đúng rồi đó!",
-    "🧠 Có vẻ bạn đang suy luận tốt!",
-    "📈 Thông tin này đáng giá đấy!",
-    "👌 Đúng thế!"
-]
-
-incorrect_responses = [
-    "😅 Ôi không, sai rồi!",
-    "😜 Không đúng, sai rồi liu liu",
-    "🛑 Bạn lạc hướng rồi, nghĩ lại đi!",
-    "🙃 Suýt nữa thì đoán đúng rồi, nhưng sai nhá!",
-    "🚫 Cẩn thận, thông tin này sai đấy!",
-    "💔 Không phải rồi, thử tiếp đi!"
-]
-
-# Tab Hướng Dẫn
-with tabs[0]:
+# Hướng dẫn chơi
+if selected_tab == tab_names[0]:
     st.header("📖 Hướng Dẫn Chơi")
     st.markdown("""
 ### Danh sách mini game bạn có thể chọn:
@@ -116,13 +78,31 @@ with tabs[0]:
 
 ---
 
-👉 Hãy chọn tab tương ứng để bắt đầu game!  
+👉 Hãy chọn trò chơi ở **sidebar bên trái** để bắt đầu!  
 🎉 Chúc bạn chơi vui, nhẹ tay với bàn phím và đừng rage quit 😎
 """)
 
 # 🎯 Đoán Số
 with tabs[1]:
     st.header("🎯 **Đoán Số Bí Mật (10 lượt hỏi)**")
+
+    # 🎯 Các câu trả lời đúng & sai
+    correct_responses = [
+        "🎉 Chính xác!",
+        "✅ Ừ đúng rồi đó!",
+        "🧠 Có vẻ bạn đang suy luận tốt!",
+        "📈 Thông tin này đáng giá đấy!",
+        "👌 Đúng thế!"
+    ]
+    
+    incorrect_responses = [
+        "😅 Ôi không, sai rồi!",
+        "😜 Không đúng, sai rồi liu liu",
+        "🛑 Bạn lạc hướng rồi, nghĩ lại đi!",
+        "🙃 Suýt nữa thì đoán đúng rồi, nhưng sai nhá!",
+        "🚫 Cẩn thận, thông tin này sai đấy!",
+        "💔 Không phải rồi, thử tiếp đi!"
+    ]
 
     # Khởi tạo trạng thái
     if 'attempts' not in st.session_state:
