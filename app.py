@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 st.set_page_config(
     page_title="Game Tùy Chọn",
     layout="wide",  # Hiển thị full màn hình
-    initial_sidebar_state="collapsed"  # Sidebar bị ẩn
+    initial_sidebar_state="collapsed"  
 )
 
 # 🎨 Tuỳ chỉnh CSS nhẹ nhàng để căn giữa trang
@@ -78,9 +78,8 @@ with st.container():
     - **🎲 Tung Xúc Xắc** – Chọn loại và số lượng, xem mặt nào ra.
     - **💰 Tung Đồng Xu** – 1, 2 hoặc 4 đồng xu, thử vận may.
     - **🧩 Nối Từ** – Mỗi từ mới bắt đầu bằng từ cuối trước đó.
-    - **🧠 Tính Nhẩm** – Giải nhanh phép tính trong thời gian giới hạn.
     - **🎓 Đố Vui** – Câu hỏi về Việt Nam, mỗi câu 4 đáp án.
-
+    - **🧠 Tính Nhẩm** – Giải nhanh phép tính trong thời gian giới hạn.
     --- 
     👉 Chọn 1 tab bên dưới để bắt đầu chơi!
     """)
@@ -92,8 +91,8 @@ tab_names = [
     "🎲 Tung Xúc Xắc",
     "💰 Tung Đồng Xu",
     "🧩 Nối Từ",
-    "🧠 Tính Nhẩm",
-    "🎓 Đố Vui"
+    "🎓 Đố Vui",
+    "🧠 Tính Nhẩm"
 ]
 tabs = st.tabs(tab_names)
 
@@ -554,8 +553,124 @@ with tabs[4]:
             st.write(f"{i+1}. {speaker}: **{word}**")
 
     st.caption("📌 *Luật chơi:* Từ mới phải bắt đầu bằng **từ cuối** của từ trước. 3 lần sai là rớt đài, 2 lần sai liên tiếp là auto thua. Bot không tha ai đâu 😈")
-    
+
 with tabs[5]:
+    st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
+
+    # ---------------- INIT STATE ----------------
+    default_state_quiz = {
+        "quiz_data": [],
+        "quiz_index": 0,
+        "quiz_score": 0,
+        "quiz_skipped": [],
+        "quiz_finished": False,
+        "answered": set()
+    }
+
+    for k, v in default_state_quiz.items():
+        st.session_state.setdefault(f"quiz_{k}", v)
+
+    # ---------------- LOAD QUESTIONS ----------------
+    def load_quiz_data():
+        all_questions = []
+        filenames = [
+            "data/dongvat.txt",
+            "data/lichsudialy.txt",
+            "data/thucpham.txt",
+            "data/thucvat.txt"
+        ]
+        for filename in filenames:
+            try:
+                with open(filename, "r", encoding="utf-8") as f:
+                    questions = json.load(f)
+                    all_questions.extend(questions)
+            except Exception as e:
+                st.warning(f"⚠️ Không thể đọc {filename}: {e}")
+        random.shuffle(all_questions)
+        return all_questions
+
+    # ---------------- RESET GAME ----------------
+    def reset_quiz():
+        st.session_state.quiz_data = load_quiz_data()
+        st.session_state.quiz_index = 0
+        st.session_state.quiz_score = 0
+        st.session_state.quiz_skipped = []
+        st.session_state.quiz_finished = False
+        st.session_state.answered = set()
+
+    # ---------------- BẮT ĐẦU ----------------
+    if not st.session_state.quiz_data:
+        reset_quiz()
+        st.stop()
+
+    if st.button("🔁 Chơi lại"):
+        reset_quiz()
+        st.rerun()
+
+    # ---------------- CÂU HỎI HIỆN TẠI ----------------
+    questions = st.session_state.quiz_data
+    index = st.session_state.quiz_index
+
+    while index in st.session_state.answered and index < len(questions):
+        index += 1
+
+    if index >= len(questions):
+        if st.session_state.quiz_skipped:
+            index = st.session_state.quiz_skipped.pop(0)
+        else:
+            st.session_state.quiz_finished = True
+            st.rerun()
+
+    st.session_state.quiz_index = index
+    q = questions[index]
+
+    st.subheader(f"❓ Câu {index + 1}: {q['question']}")
+
+    selected = st.radio(
+        "Chọn đáp án:",
+        options=["a", "b", "c", "d"],
+        format_func=lambda opt: f"{opt.upper()}. {q['options'][opt]}",
+        index=None,
+        key=f"quiz_radio_{index}"
+    )
+
+    # ---------------- GỬI ĐÁP ÁN VÀ BỎ QUA ----------------
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("📨 Gửi đáp án", key=f"submit_{index}"):
+            if selected is None:
+                st.warning("🤔 Chưa chọn đáp án mà bạn!")
+            else:
+                correct = q["answer"]
+                if selected == correct:
+                    st.success("✅ Chính xác! +10 điểm")
+                    st.session_state.quiz_score += 10
+                else:
+                    st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
+                st.session_state.answered.add(index)
+                st.session_state.quiz_index += 1
+                st.rerun()
+
+    with col2:
+        if st.button("⏭️ Bỏ qua", key=f"skip_{index}"):
+            if index not in st.session_state.quiz_skipped:
+                st.session_state.quiz_skipped.append(index)
+            st.session_state.quiz_index += 1
+            st.rerun()
+
+    # ---------------- GAME OVER ----------------
+    if st.session_state.quiz_finished:
+        st.error("💥 Hết thời gian!")
+        st.markdown(f"### ✅ Số câu đúng: **{st.session_state.quiz_score // 10}**")
+        st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
+        st.stop()
+        
+    # Hiển thị kết quả số câu đúng và điểm
+    st.metric("✅ Số câu đúng", st.session_state.quiz_score // 10)
+    st.metric("🏆 Tổng điểm", st.session_state.quiz_score)
+    
+with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
     # ---------------- INIT STATE ----------------
     default_state = {
@@ -731,119 +846,3 @@ with tabs[5]:
 
     st.metric("✅ Số câu đúng", st.session_state.math_correct)
     st.metric("🏆 Tổng điểm", st.session_state.score_math)
-
-with tabs[6]:
-    st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
-
-    # ---------------- INIT STATE ----------------
-    default_state_quiz = {
-        "quiz_data": [],
-        "quiz_index": 0,
-        "quiz_score": 0,
-        "quiz_skipped": [],
-        "quiz_finished": False,
-        "answered": set()
-    }
-
-    for k, v in default_state_quiz.items():
-        st.session_state.setdefault(f"quiz_{k}", v)
-
-    # ---------------- LOAD QUESTIONS ----------------
-    def load_quiz_data():
-        all_questions = []
-        filenames = [
-            "data/dongvat.txt",
-            "data/lichsudialy.txt",
-            "data/thucpham.txt",
-            "data/thucvat.txt"
-        ]
-        for filename in filenames:
-            try:
-                with open(filename, "r", encoding="utf-8") as f:
-                    questions = json.load(f)
-                    all_questions.extend(questions)
-            except Exception as e:
-                st.warning(f"⚠️ Không thể đọc {filename}: {e}")
-        random.shuffle(all_questions)
-        return all_questions
-
-    # ---------------- RESET GAME ----------------
-    def reset_quiz():
-        st.session_state.quiz_data = load_quiz_data()
-        st.session_state.quiz_index = 0
-        st.session_state.quiz_score = 0
-        st.session_state.quiz_skipped = []
-        st.session_state.quiz_finished = False
-        st.session_state.answered = set()
-
-    # ---------------- BẮT ĐẦU ----------------
-    if not st.session_state.quiz_data:
-        reset_quiz()
-        st.stop()
-
-    if st.button("🔁 Chơi lại"):
-        reset_quiz()
-        st.rerun()
-
-    # ---------------- CÂU HỎI HIỆN TẠI ----------------
-    questions = st.session_state.quiz_data
-    index = st.session_state.quiz_index
-
-    while index in st.session_state.answered and index < len(questions):
-        index += 1
-
-    if index >= len(questions):
-        if st.session_state.quiz_skipped:
-            index = st.session_state.quiz_skipped.pop(0)
-        else:
-            st.session_state.quiz_finished = True
-            st.rerun()
-
-    st.session_state.quiz_index = index
-    q = questions[index]
-
-    st.subheader(f"❓ Câu {index + 1}: {q['question']}")
-
-    selected = st.radio(
-        "Chọn đáp án:",
-        options=["a", "b", "c", "d"],
-        format_func=lambda opt: f"{opt.upper()}. {q['options'][opt]}",
-        index=None,
-        key=f"quiz_radio_{index}"
-    )
-
-    # ---------------- GỬI ĐÁP ÁN VÀ BỎ QUA ----------------
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button("📨 Gửi đáp án", key=f"submit_{index}"):
-            if selected is None:
-                st.warning("🤔 Chưa chọn đáp án mà bạn!")
-            else:
-                correct = q["answer"]
-                if selected == correct:
-                    st.success("✅ Chính xác! +10 điểm")
-                    st.session_state.quiz_score += 10
-                else:
-                    st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
-                st.session_state.answered.add(index)
-                st.session_state.quiz_index += 1
-                st.rerun()
-
-    with col2:
-        if st.button("⏭️ Bỏ qua", key=f"skip_{index}"):
-            if index not in st.session_state.quiz_skipped:
-                st.session_state.quiz_skipped.append(index)
-            st.session_state.quiz_index += 1
-            st.rerun()
-
-    # ---------------- GAME OVER ----------------
-    if st.session_state.quiz_finished:
-        st.error("💥 Hết thời gian!")
-        st.markdown(f"### ✅ Số câu đúng: **{st.session_state.quiz_score // 10}**")
-        st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
-        st.stop()
-        
-    # Hiển thị kết quả số câu đúng và điểm
-    st.metric("✅ Số câu đúng", st.session_state.quiz_score // 10)
-    st.metric("🏆 Tổng điểm", st.session_state.quiz_score)
