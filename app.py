@@ -53,7 +53,7 @@ st.markdown("""
 - **🎓 Đố Vui** – Câu hỏi về Việt Nam, mỗi câu 4 đáp án.
 
 --- 
-👉 Chọn 1 tab bên trên để bắt đầu chơi!
+👉 Chọn 1 tab bên dưới để bắt đầu chơi!
 """)
 
 # 🧩 Tabs game
