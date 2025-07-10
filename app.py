@@ -745,8 +745,9 @@ with tabs[6]:
         "quiz_finished": False,
         "answered": set()
     }
+    # Sử dụng tiền tố quiz_ để phân biệt trạng thái của tab 6 với các tab khác
     for k, v in default_state.items():
-        st.session_state.setdefault(k, v)
+        st.session_state.setdefault(f"quiz_{k}", v)
 
     # ---------------- LOAD QUESTIONS ----------------
     def load_quiz_data():
