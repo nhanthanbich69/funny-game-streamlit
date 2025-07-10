@@ -12,12 +12,26 @@ st.set_page_config(
     initial_sidebar_state="collapsed"  # Sidebar bị ẩn
 )
 
-# 🌟 Tiêu đề chính
-st.title("🎮 **Game Tùy Chọn**")
-
-# 🎨 Tuỳ chỉnh CSS nhẹ nhàng cho đẹp
+# 🎨 Tuỳ chỉnh CSS nhẹ nhàng để căn giữa trang
 st.markdown("""
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .game-container {
+            width: 90%;  /* Đặt chiều rộng của game */
+            max-width: 1200px; /* Giới hạn chiều rộng tối đa */
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
         .stButton > button:hover {
             background-color: #FFD700;
             color: white;
@@ -36,25 +50,40 @@ st.markdown("""
             background-color: #fff;
             color: #000;
         }
+        .stRadio > div {
+            display: flex;
+            justify-content: center;
+        }
+        /* Đảm bảo rằng game sẽ căn giữa ngay cả trên màn hình nhỏ */
+        @media (max-width: 768px) {
+            .game-container {
+                width: 95%;  /* Chiếm 95% màn hình trên điện thoại */
+                padding: 10px;
+            }
+        }
     </style>
 """, unsafe_allow_html=True)
 
+# 🌟 Tiêu đề chính
+st.title("🎮 **Game Tùy Chọn**")
+
 # 🌟 Hướng dẫn chuyển sang Main Layout (Không dùng Sidebar)
-st.header("📖 **Hướng Dẫn**")
-st.markdown("""
-#### 🎮 Game hiện có:
+with st.container():
+    st.header("📖 **Hướng Dẫn**")
+    st.markdown("""
+    #### 🎮 Game hiện có:
 
-- **🎯 Đoán Số** – Đoán số bí mật trong phạm vi 1–100, tối đa 10 lần.
-- **🖐 Búa Kéo Bao** – Chọn 1 trong 3 để đấu bot.
-- **🎲 Tung Xúc Xắc** – Chọn loại và số lượng, xem mặt nào ra.
-- **💰 Tung Đồng Xu** – 1, 2 hoặc 4 đồng xu, thử vận may.
-- **🧩 Nối Từ** – Mỗi từ mới bắt đầu bằng từ cuối trước đó.
-- **🧠 Tính Nhẩm** – Giải nhanh phép tính trong thời gian giới hạn.
-- **🎓 Đố Vui** – Câu hỏi về Việt Nam, mỗi câu 4 đáp án.
+    - **🎯 Đoán Số** – Đoán số bí mật trong phạm vi 1–100, tối đa 10 lần.
+    - **🖐 Búa Kéo Bao** – Chọn 1 trong 3 để đấu bot.
+    - **🎲 Tung Xúc Xắc** – Chọn loại và số lượng, xem mặt nào ra.
+    - **💰 Tung Đồng Xu** – 1, 2 hoặc 4 đồng xu, thử vận may.
+    - **🧩 Nối Từ** – Mỗi từ mới bắt đầu bằng từ cuối trước đó.
+    - **🧠 Tính Nhẩm** – Giải nhanh phép tính trong thời gian giới hạn.
+    - **🎓 Đố Vui** – Câu hỏi về Việt Nam, mỗi câu 4 đáp án.
 
---- 
-👉 Chọn 1 tab bên dưới để bắt đầu chơi!
-""")
+    --- 
+    👉 Chọn 1 tab bên dưới để bắt đầu chơi!
+    """)
 
 # 🧩 Tabs game
 tab_names = [
