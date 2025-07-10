@@ -604,11 +604,14 @@ with tabs[5]:
 
     # ---------------- BẮT ĐẦU ----------------
     if not st.session_state.quiz_data:
-        reset_quiz()
+        reset_quiz()  # Nạp dữ liệu quiz nếu chưa có
 
-    if st.button("🔁 Chơi lại"):
-        reset_quiz()
-        st.rerun()
+    if st.button("🚀 Bắt đầu"):
+        reset_quiz()  # Bắt đầu lại trò chơi
+        st.session_state.quiz_finished = False
+        st.session_state.quiz_index = 0
+        st.session_state.quiz_score = 0
+        st.session_state.answered = set()
 
     # ---------------- TIMER ----------------
     now = time.time()
@@ -646,56 +649,62 @@ with tabs[5]:
     """, height=70)
 
     # ---------------- CÂU HỎI HIỆN TẠI ----------------
-    questions = st.session_state.quiz_data
-    index = st.session_state.quiz_index
+    if not st.session_state.quiz_finished:
+        questions = st.session_state.quiz_data
+        index = st.session_state.quiz_index
 
-    while index in st.session_state.answered and index < len(questions):
-        index += 1
+        while index in st.session_state.answered and index < len(questions):
+            index += 1
 
-    if index >= len(questions):
-        if st.session_state.quiz_skipped:
-            index = st.session_state.quiz_skipped.pop(0)
-        else:
-            st.session_state.quiz_finished = True
-            st.rerun()
-
-    st.session_state.quiz_index = index
-    q = questions[index]
-
-    st.subheader(f"❓ Câu {index + 1}: {q['question']}")
-
-    selected = st.radio(
-        "Chọn đáp án:",
-        options=["a", "b", "c", "d"],
-        format_func=lambda opt: f"{opt.upper()}. {q['options'][opt]}",
-        index=None,
-        key=f"quiz_radio_{index}"
-    )
-
-    # ---------------- GỬI ĐÁP ÁN VÀ BỎ QUA ----------------
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button("📨 Gửi đáp án", key=f"submit_{index}"):
-            if selected is None:
-                st.warning("🤔 Chưa chọn đáp án mà bạn!")
+        if index >= len(questions):
+            if st.session_state.quiz_skipped:
+                index = st.session_state.quiz_skipped.pop(0)
             else:
-                correct = q["answer"]
-                if selected == correct:
-                    st.success("✅ Chính xác! +10 điểm")
-                    st.session_state.quiz_score += 10
+                st.session_state.quiz_finished = True
+                st.rerun()
+
+        st.session_state.quiz_index = index
+        q = questions[index]
+
+        st.subheader(f"❓ Câu {index + 1}: {q['question']}")
+
+        selected = st.radio(
+            "Chọn đáp án:",
+            options=["a", "b", "c", "d"],
+            format_func=lambda opt: f"{opt.upper()}. {q['options'][opt]}",
+            index=None,
+            key=f"quiz_radio_{index}"
+        )
+
+        # ---------------- GỬI ĐÁP ÁN VÀ BỎ QUA ----------------
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("📨 Gửi đáp án", key=f"submit_{index}"):
+                if selected is None:
+                    st.warning("🤔 Chưa chọn đáp án mà bạn!")
                 else:
-                    st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
-                st.session_state.answered.add(index)
+                    correct = q["answer"]
+                    if selected == correct:
+                        st.success("✅ Chính xác! +5 điểm")
+                        st.session_state.quiz_score += 5
+                    else:
+                        st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
+                        st.session_state.quiz_score -= 2  # Trừ điểm nếu sai
+                    st.session_state.answered.add(index)
+                    st.session_state.quiz_index += 1
+                    st.rerun()
+
+        with col2:
+            if st.button("⏭️ Bỏ qua", key=f"skip_{index}"):
+                if index not in st.session_state.quiz_skipped:
+                    st.session_state.quiz_skipped.append(index)
                 st.session_state.quiz_index += 1
                 st.rerun()
 
-    with col2:
-        if st.button("⏭️ Bỏ qua", key=f"skip_{index}"):
-            if index not in st.session_state.quiz_skipped:
-                st.session_state.quiz_skipped.append(index)
-            st.session_state.quiz_index += 1
-            st.rerun()
+    # Cập nhật số câu đúng và điểm
+    st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score}** điểm")
+    st.markdown(f"### ✅ Số câu đúng: **{len(st.session_state.answered)}/{len(st.session_state.quiz_data)}**")
 
 with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
