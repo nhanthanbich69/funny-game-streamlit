@@ -78,8 +78,8 @@ with st.container():
     - **🎲 Tung Xúc Xắc** – Chọn loại và số lượng, xem mặt nào ra.
     - **💰 Tung Đồng Xu** – 1, 2 hoặc 4 đồng xu, thử vận may.
     - **🧩 Nối Từ** – Mỗi từ mới bắt đầu bằng từ cuối trước đó.
-    - **🎓 Đố Vui** – Câu hỏi về Việt Nam, mỗi câu 4 đáp án.
     - **🧠 Tính Nhẩm** – Giải nhanh phép tính trong thời gian giới hạn.
+    - **🎓 Đố Vui** – Câu hỏi về Việt Nam, mỗi câu 4 đáp án.
     --- 
     👉 Chọn 1 tab bên dưới để bắt đầu chơi!
     """)
@@ -91,8 +91,8 @@ tab_names = [
     "🎲 Tung Xúc Xắc",
     "💰 Tung Đồng Xu",
     "🧩 Nối Từ",
-    "🎓 Đố Vui",
-    "🧠 Tính Nhẩm"
+    "🧠 Tính Nhẩm",
+    "🎓 Đố Vui"
 ]
 tabs = st.tabs(tab_names)
 
