@@ -7,7 +7,7 @@ import streamlit.components.v1 as components
 
 # ⛳ Cấu hình page
 st.set_page_config(
-    page_title="Game Tùy Chọn",
+    page_title="🎮 Siêu Ứng Dụng Mini Game",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -56,18 +56,18 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 🎮 Tiêu đề và hướng dẫn
-st.title("🎮 Game Tùy Chọn")
+st.title("🔥 Bộ Sưu Tập Game Mini Siêu Vui")
 st.header("📖 Hướng Dẫn")
 
 st.markdown("""
 <div class="game-list">
-    <strong>🎮 Game hiện có:</strong><br><br>
-    🎯 Đoán Số – Đoán số bí mật trong phạm vi 1–100, tối đa 10 lần.<br>
-    🖐 Búa Kéo Bao – Chọn 1 trong 3 để đấu bot.<br>
-    🎲💰 Tung Xúc Xắc / Đồng Xu – Chọn kiểu chơi rồi thử vận may.<br>
-    🧩 Nối Từ – Mỗi từ mới bắt đầu bằng chữ cái cuối của từ trước.<br>
-    🎓 Đố Vui – Câu hỏi kiến thức tổng hợp với 4 lựa chọn.<br><br>
-    👉 Chọn 1 tab bên dưới để bắt đầu chơi!
+    <strong>🕹️ Danh sách trò chơi:</strong><br><br>
+    🎯 <u>Đoán Số</u> – Đoán số bí mật từ 1–100, có tối đa 10 lần đoán.<br>
+    🖐 <u>Búa Kéo Bao</u> – Chọn nhanh tay, thắng nhanh gọn.<br>
+    🎲💰 <u>Tung Xúc Xắc / Đồng Xu</u> – Đơn giản, vui là chính.<br>
+    🧩 <u>Nối Từ</u> – Từ sau phải bắt đầu bằng từ cuối trước đó.<br>
+    🎓 <u>Đố Vui</u> – Kiến thức tổng hợp, chạy đua với thời gian!<br><br>
+    👉 Chọn tab bên dưới để bắt đầu hành trình vui vẻ!
 </div>
 """, unsafe_allow_html=True)
 
