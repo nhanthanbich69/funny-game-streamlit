@@ -15,70 +15,39 @@ st.set_page_config(
 # 🎨 Tuỳ chỉnh CSS để căn giữa đẹp
 st.markdown("""
     <style>
-        /* ==== RESET & TOÀN TRANG ==== */
-        html, body, .block-container {
-            margin: 0 auto;
-            padding: 0;
-            max-width: 100%;
+        /* Nút đẹp hơn */
+        .stButton > button {
+            background-color: #333;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+            padding: 10px 20px;
+            font-weight: bold;
+            transition: 0.3s;
         }
 
-        body {
-            background-color: #f4f4f4;
+        .stButton > button:hover {
+            background-color: #FFD700;
+            color: white;
         }
 
-        /* ==== CĂN GIỮA HEADER & TABS ==== */
-        .block-container {
+        /* Căn giữa block cần thiết */
+        .centered-block {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
         }
 
-        /* ==== CĂN GIỮA TOÀN BỘ NỘI DUNG ==== */
-        .game-container {
-            width: 100%;
-            max-width: 1000px;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-top: 20px;
-        }
-
-        /* ==== TAB CĂN GIỮA ==== */
-        .stTabs [data-baseweb="tab-list"] {
-            justify-content: center;
-        }
-
-        /* ==== BUTTONS ==== */
-        .stButton > button {
-            background-color: #333;
-            color: #FFD700;
-            border: 2px solid #FFD700;
-            font-weight: bold;
-            padding: 10px 24px;
-            transition: 0.3s;
+        /* Danh sách game căn giữa đẹp */
+        .game-list {
+            text-align: center;
+            line-height: 1.8rem;
+            font-size: 16px;
             margin-top: 10px;
         }
 
-        .stButton > button:hover {
-            background-color: #FFD700;
-            color: white;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
-        }
-
-        /* ==== WIDGET CĂN GIỮA ==== */
-        .stSelectbox > div, .stSlider > div, .stRadio > div {
-            display: flex;
-            justify-content: center;
-        }
-
-        /* ==== MOBILE ==== */
+        /* Mobile fix */
         @media (max-width: 768px) {
-            .game-container {
-                padding: 15px;
-                width: 95%;
-            }
             .stButton > button {
                 width: 100%;
                 font-size: 18px;
@@ -87,28 +56,20 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🌟 Tiêu đề chính
-st.title("🎮 **Game Tùy Chọn**")
+st.title("🎮 Game Tùy Chọn")
+st.header("📖 Hướng Dẫn")
 
-# 🌟 Hướng dẫn
-with st.container():
-    st.markdown('<div class="game-container">', unsafe_allow_html=True)
-
-    st.title("🎮 Game Tùy Chọn")
-    st.header("📖 Hướng Dẫn")
-    st.markdown("""
-    #### 🎮 Game hiện có:
-
-    - **🎯 Đoán Số** – Đoán số bí mật trong phạm vi 1–100, tối đa 10 lần.
-    - **🖐 Búa Kéo Bao** – Chọn 1 trong 3 để đấu bot.
-    - **🎲💰 Tung Xúc Xắc / Đồng Xu** – Chọn kiểu chơi rồi thử vận may.
-    - **🧩 Nối Từ** – Mỗi từ mới bắt đầu bằng chữ cái cuối của từ trước.
-    - **🎓 Đố Vui** – Câu hỏi kiến thức tổng hợp với 4 lựa chọn.
-    ---
+st.markdown("""
+<div class="game-list">
+    <strong>🎮 Game hiện có:</strong><br><br>
+    🎯 Đoán Số – Đoán số bí mật trong phạm vi 1–100, tối đa 10 lần.<br>
+    🖐 Búa Kéo Bao – Chọn 1 trong 3 để đấu bot.<br>
+    🎲💰 Tung Xúc Xắc / Đồng Xu – Chọn kiểu chơi rồi thử vận may.<br>
+    🧩 Nối Từ – Mỗi từ mới bắt đầu bằng chữ cái cuối của từ trước.<br>
+    🎓 Đố Vui – Câu hỏi kiến thức tổng hợp với 4 lựa chọn.<br><br>
     👉 Chọn 1 tab bên dưới để bắt đầu chơi!
-    """)
-
-    st.markdown('</div>', unsafe_allow_html=True)
+</div>
+""", unsafe_allow_html=True)
 
 # 🧩 Tabs game — Gộp Xúc Xắc và Đồng Xu thành 1 tab
 tab_names = [
@@ -120,28 +81,16 @@ tab_names = [
 ]
 tabs = st.tabs(tab_names)
 
-# 🎯 Đoán Số
 with tabs[0]:
     st.markdown('<div class="game-container">', unsafe_allow_html=True)
-    st.header("🎯 **Đoán Số Bí Mật (10 lượt hỏi)**")
+    st.header("🎯 Đoán Số Bí Mật (10 lượt hỏi)")
 
-    # 🎯 Các câu trả lời đúng & sai
-    correct_responses = [
-        "🎉 Chính xác!",
-        "✅ Ừ đúng rồi đó!",
-        "🧠 Có vẻ bạn đang suy luận tốt!",
-        "📈 Thông tin này đáng giá đấy!",
-        "👌 Đúng thế!"
-    ]
-    
-    incorrect_responses = [
-        "😅 Ôi không, sai rồi!",
-        "😜 Không đúng, sai rồi liu liu",
-        "🛑 Bạn lạc hướng rồi, nghĩ lại đi!",
-        "🙃 Suýt nữa thì đoán đúng rồi, nhưng sai nhá!",
-        "🚫 Cẩn thận, thông tin này sai đấy!",
-        "💔 Không phải rồi, thử tiếp đi!"
-    ]
+    # Căn giữa block chính của game
+    st.markdown('<div class="centered-block">', unsafe_allow_html=True)
+
+    # Các câu trả lời đúng & sai
+    correct_responses = ["🎉 Chính xác!", "✅ Ừ đúng rồi đó!", "🧠 Có vẻ bạn đang suy luận tốt!", "📈 Thông tin này đáng giá đấy!", "👌 Đúng thế!"]
+    incorrect_responses = ["😅 Ôi không, sai rồi!", "😜 Không đúng, sai rồi liu liu", "🛑 Bạn lạc hướng rồi, nghĩ lại đi!", "🙃 Suýt nữa thì đoán đúng rồi, nhưng sai nhá!", "🚫 Cẩn thận, thông tin này sai đấy!", "💔 Không phải rồi, thử tiếp đi!"]
 
     # Khởi tạo trạng thái
     if 'attempts' not in st.session_state:
@@ -157,11 +106,9 @@ with tabs[0]:
     if 'last_max_num' not in st.session_state:
         st.session_state.last_max_num = 99
 
-    # 🎮 Chọn độ khó
     level = st.selectbox("⚡️ Chọn chế độ chơi", ["Thường (0~99)", "Khó (0~300)", "Bậc thầy (0~1000)"])
     max_num = {"Thường (0~99)": 99, "Khó (0~300)": 300, "Bậc thầy (0~1000)": 1000}[level]
 
-    # 🎰 Reset khi đổi độ khó hoặc mới vào
     if st.session_state.secret_number is None or st.session_state.last_max_num != max_num:
         st.session_state.secret_number = random.randint(0, max_num)
         st.session_state.last_max_num = max_num
@@ -170,25 +117,20 @@ with tabs[0]:
         st.session_state.attempts = 0
         st.session_state.question_count = 0
 
-    # ❓ Nếu còn lượt hỏi
     if st.session_state.attempts < 10:
         question_type = st.radio("❓ **Bạn muốn hỏi gì về số bí mật?**",
                                  ("Số đó lớn hơn hoặc bằng...", "Số đó bé hơn hoặc bằng..."),
                                  index=0, horizontal=True)
         number = st.slider("🔍 Hãy chọn khoảng bạn muốn hỏi", 0, max_num)
 
-        if st.button("🕵️‍♂️ **Hỏi ngay!**"):
+        if st.button("🕵️‍♂️ Hỏi ngay!"):
             st.session_state.attempts += 1
             st.session_state.question_count += 1
-
-            response = ""
-            clue = ""
 
             secret = st.session_state.secret_number
             min_b = st.session_state.min_bound
             max_b = st.session_state.max_bound
 
-            # Trả lời & cập nhật giới hạn
             if question_type == "Số đó lớn hơn hoặc bằng...":
                 if secret >= number:
                     response = random.choice(correct_responses)
@@ -198,8 +140,7 @@ with tabs[0]:
                     response = random.choice(incorrect_responses)
                     clue = f"Số đó bé hơn {number}."
                     st.session_state.max_bound = min(max_b, number - 1)
-
-            elif question_type == "Số đó bé hơn hoặc bằng...":
+            else:
                 if secret <= number:
                     response = random.choice(correct_responses)
                     clue = f"Số đó bé hơn hoặc bằng {number}."
@@ -209,75 +150,68 @@ with tabs[0]:
                     clue = f"Số đó lớn hơn {number}."
                     st.session_state.min_bound = max(min_b, number + 1)
 
-            # Hiển thị
             st.write(f"**Câu hỏi:** {question_type} {number}?")
             st.write(f"**Trả lời:** {response}")
             st.success(f"🧩 {clue}")
 
-        # 🎯 Hiển thị các manh mối quan trọng nhất (không thừa)
-        st.subheader("🧠 **Manh mối bạn đã rút ra:**")
-        
+        # Manh mối
+        st.subheader("🧠 Manh mối bạn đã rút ra:")
         clues = []
-        
         if st.session_state.min_bound > 0:
             clues.append(f"Số đó lớn hơn hoặc bằng {st.session_state.min_bound}.")
-        
         if st.session_state.max_bound < max_num:
             clues.append(f"Số đó bé hơn hoặc bằng {st.session_state.max_bound}.")
-        
         if clues:
             for clue in clues:
                 st.write(f"- {clue}")
         else:
-            st.info("Bạn chưa có manh mối nào rõ ràng để đoán cả! Bắt đầu đặt câu hỏi thôi nào!")
+            st.info("Bạn chưa có manh mối nào rõ ràng để đoán cả!")
 
     else:
-        st.warning("🚨 **Hết lượt hỏi rồi má! Mau cho tôi câu trả lời đi.**")
+        st.warning("🚨 Hết lượt hỏi rồi má! Mau cho tôi câu trả lời đi.")
 
-    # 🔒 Đoán số
     if 0 < st.session_state.attempts <= 10:
-        st.subheader(f"🔒 **Chốt số** (Câu hỏi {st.session_state.question_count}/10)")
+        st.subheader(f"🔒 Chốt số (Câu hỏi {st.session_state.question_count}/10)")
         user_guess = st.number_input(f"Bạn nghĩ số bí mật là (0 - {max_num}):", min_value=0, max_value=max_num, step=1)
 
-        if st.button("🎯 **Chốt số ngay!**"):
+        if st.button("🎯 Chốt số ngay!"):
             secret = st.session_state.secret_number
             if user_guess == secret:
-                st.success(f"🎉 **Wao, thật đẹp trai!** Bạn đoán đúng số {secret}! Quá đỉnh luôn!")
+                st.success(f"🎉 Đỉnh cao! Bạn đoán đúng số {secret}!")
             else:
-                st.error(f"😞 **Rất tiếc!** Số bí mật là {secret}. Bạn đã thua! 😭")
+                st.error(f"😞 Rất tiếc! Số bí mật là {secret}. Bạn đã thua! 😭")
 
-            # Tính độ lệch giữa số dự đoán và số bí mật
             difference = abs(user_guess - st.session_state.secret_number)
-            
-            # Tính tỷ lệ lệch với phạm vi
-            max_diff = max_num  # Phạm vi tối đa tùy vào độ khó
+            max_diff = max_num
             score_percentage = max(0, 100 - (difference / max_diff) * 100)
-            
-            # Nếu đoán đúng thì cộng thêm điểm từ số lượt hỏi còn lại
+
             if user_guess == st.session_state.secret_number:
                 remaining_questions = 10 - st.session_state.attempts
-                score = int(score_percentage * ((11 + remaining_questions) / 9))  # Cộng điểm nếu đoán đúng
+                score = int(score_percentage * ((11 + remaining_questions) / 9))
             else:
-                score = int(score_percentage)  # Giảm điểm tùy theo độ lệch nếu đoán sai
-            
+                score = int(score_percentage)
+
             st.write(f"🎯 **Điểm của bạn**: {score}")
 
-            # Reset toàn bộ
+            # Reset
             st.session_state.secret_number = random.randint(0, max_num)
             st.session_state.min_bound = 0
             st.session_state.max_bound = max_num
             st.session_state.attempts = 0
             st.session_state.question_count = 0
             st.session_state.last_max_num = max_num
-    st.markdown('</div>', unsafe_allow_html=True)
-            
-# 🖐 Búa Kéo Bao
+
+    st.markdown('</div>', unsafe_allow_html=True)  # End centered block
+    st.markdown('</div>', unsafe_allow_html=True)  # End game-container
+
 with tabs[1]:
     st.markdown('<div class="game-container">', unsafe_allow_html=True)
-    st.header("🖐 **Búa Kéo Bao**")
-    col1, col2, col3 = st.columns(3)
+    st.header("🖐 Búa Kéo Bao")
 
-    # Initialize player choice and computer's last move
+    # Căn giữa toàn bộ nút và kết quả
+    st.markdown('<div class="centered-block">', unsafe_allow_html=True)
+
+    # Khởi tạo trạng thái
     if 'player_choice' not in st.session_state:
         st.session_state.player_choice = None
     if 'computer_choice' not in st.session_state:
@@ -286,7 +220,7 @@ with tabs[1]:
         st.session_state.previous_result = None
 
     try:
-        # Player choices
+        col1, col2, col3 = st.columns(3)
         with col1:
             if st.button("✊ Búa", key="bua", help="Búa thắng Kéo", on_click=lambda: setattr(st.session_state, 'player_choice', "Búa")):
                 pass
@@ -299,7 +233,7 @@ with tabs[1]:
     except Exception as e:
         st.error(f"⚠️ Lỗi khi chọn Búa, Bao, Kéo: {e}")
 
-    # Máy tính chọn ngẫu nhiên Búa, Bao hoặc Kéo
+    # Máy chọn
     if st.session_state.previous_result == 'win':
         computer_choice = st.session_state.computer_choice
     elif st.session_state.previous_result == 'lose':
@@ -314,7 +248,7 @@ with tabs[1]:
 
     st.session_state.computer_choice = computer_choice
 
-    if st.button("💥 **Kết quả**"):
+    if st.button("💥 Kết quả"):
         try:
             with st.spinner("Kết quả chính là... 🕹️"):
                 time.sleep(1)
@@ -322,77 +256,102 @@ with tabs[1]:
             if st.session_state.player_choice:
                 if st.session_state.player_choice == computer_choice:
                     st.session_state.previous_result = 'draw'
-                    st.write(f"Máy chọn {computer_choice}. **Hòa rồi!** 😎 Thử lại xem!")
+                    st.info(f"Máy chọn {computer_choice}. **Hòa rồi!** 😎 Thử lại xem!")
                 elif (st.session_state.player_choice == "Búa" and computer_choice == "Kéo") or \
                      (st.session_state.player_choice == "Kéo" and computer_choice == "Bao") or \
                      (st.session_state.player_choice == "Bao" and computer_choice == "Búa"):
                     st.session_state.previous_result = 'win'
-                    st.write(f"Máy chọn {computer_choice}. **Bạn thắng rồi!** 🎉 Chúc mừng bạn!")
+                    st.success(f"Máy chọn {computer_choice}. **Bạn thắng rồi!** 🎉 Chúc mừng bạn!")
                 else:
                     st.session_state.previous_result = 'lose'
-                    st.write(f"Máy chọn {computer_choice}. **Bạn thua rồi!** 😭 Cố lên lần sau!")
+                    st.error(f"Máy chọn {computer_choice}. **Bạn thua rồi!** 😭 Cố lên lần sau!")
             else:
-                st.error("⚠️ Bạn chưa chọn Búa, Bao hoặc Kéo! Vui lòng chọn trước khi xem kết quả.")
+                st.warning("⚠️ Bạn chưa chọn Búa, Bao hoặc Kéo! Vui lòng chọn trước khi xem kết quả.")
         except Exception as e:
             st.error(f"⚠️ Lỗi khi tính kết quả: {e}")
-    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)  # End centered-block
+    st.markdown('</div>', unsafe_allow_html=True)  # End game-container
 
 with tabs[2]:
+    # --------- Wrapper ngoài giữ layout tổng ----------
     st.markdown('<div class="game-container">', unsafe_allow_html=True)
-    st.header("🎲💰 **Tung Xúc Xắc & Đồng Xu**")
+    st.header("🎲💰 Tung Xúc Xắc & Đồng Xu")
 
+    # --------- Khối cần căn giữa ----------
+    st.markdown('<div class="centered-block">', unsafe_allow_html=True)
+
+    # Người chơi chọn trò
     action = st.selectbox("🔀 Chọn hành động", ["Tung Xúc Xắc", "Tung Đồng Xu"])
 
+    # ===== 🎲 Xúc Xắc =====
     if action == "Tung Xúc Xắc":
-        st.markdown("### 🎲 **Tung Xúc Xắc**")
-        num_dice = st.slider("🔢 Chọn số lượng xúc xắc", min_value=1, max_value=4, value=1)
-        dice_type = st.selectbox("🎲 Chọn loại xúc xắc", ["4 mặt", "6 mặt", "8 mặt", "10 mặt", "12 mặt", "20 mặt", "100 mặt"])
+        st.subheader("🎲 Tung Xúc Xắc")
+        num_dice = st.slider("🔢 Chọn số lượng xúc xắc", 1, 4, 1)
+        dice_type = st.selectbox(
+            "🎲 Chọn loại xúc xắc",
+            ["4 mặt", "6 mặt", "8 mặt", "10 mặt", "12 mặt", "20 mặt", "100 mặt"]
+        )
 
-        dice_faces = {"4 mặt": 4, "6 mặt": 6, "8 mặt": 8, "10 mặt": 10, "12 mặt": 12, "20 mặt": 20, "100 mặt": 100}
+        dice_faces = {"4 mặt": 4, "6 mặt": 6, "8 mặt": 8, "10 mặt": 10,
+                      "12 mặt": 12, "20 mặt": 20, "100 mặt": 100}
         sides = dice_faces[dice_type]
 
-        if st.button("🎲 **Tung Xúc Xắc**"):
+        if st.button("🎲 Tung Xúc Xắc"):
             try:
                 with st.spinner("Đang tung xúc xắc... 🎰"):
                     time.sleep(2)
+
                 results = [random.randint(1, sides) for _ in range(num_dice)]
-                
-                st.success("🎲 **Kết quả:**")
+
+                st.success("🎲 Kết quả:")
                 for i, result in enumerate(results, 1):
-                    st.write(f"🎲 **Xúc xắc {i}:** {result} điểm")
+                    st.write(f"🎲 Xúc xắc {i}: **{result}** điểm")
                 st.write(f"🎯 **Tổng điểm:** {sum(results)}")
                 st.write(f"🎯 **Điểm trung bình:** {sum(results)/num_dice:.2f}")
             except Exception as e:
                 st.error(f"⚠️ Lỗi khi tung xúc xắc: {e}")
 
+    # ===== 💰 Đồng Xu =====
     else:
-        st.markdown("### 💰 **Tung Đồng Xu**")
+        st.subheader("💰 Tung Đồng Xu")
         num_coins = st.selectbox("🪙 Chọn số lượng đồng xu", [1, 2, 4])
 
-        if st.button("💰 **Tung Đồng Xu**"):
+        if st.button("💰 Tung Đồng Xu"):
             try:
                 with st.spinner("Đang tung đồng xu..."):
                     time.sleep(1)
-                results = ["Mặt Sấp" if random.choice([True, False]) else "Mặt Ngửa" for _ in range(num_coins)]
-                
-                st.success("💰 **Kết quả:**")
-                for i, result in enumerate(results, 1):
-                    st.write(f"🔹 **Đồng xu {i}:** {result}")
 
+                results = [
+                    "Mặt Sấp" if random.choice([True, False]) else "Mặt Ngửa"
+                    for _ in range(num_coins)
+                ]
+
+                st.success("💰 Kết quả:")
+                for i, result in enumerate(results, 1):
+                    st.write(f"🔹 Đồng xu {i}: **{result}**")
+
+                # Lưu & hiển thị lịch sử
                 if 'coin_history' not in st.session_state:
                     st.session_state.coin_history = []
                 st.session_state.coin_history.append(results)
 
-                st.subheader("📜 **Lịch sử Tung Đồng Xu**")
+                st.subheader("📜 Lịch sử Tung Đồng Xu")
                 for i, history in enumerate(st.session_state.coin_history, 1):
-                    st.write(f"🔸 **Lần {i}:** {history}")
+                    st.write(f"🔸 Lần {i}: {history}")
             except Exception as e:
                 st.error(f"⚠️ Lỗi khi tung đồng xu: {e}")
-    st.markdown('</div>', unsafe_allow_html=True)
+
+    # --------- Đóng khối căn giữa & wrapper ----------
+    st.markdown('</div>', unsafe_allow_html=True)  # end .centered-block
+    st.markdown('</div>', unsafe_allow_html=True)  # end .game-container
 
 with tabs[3]:
     st.markdown('<div class="game-container">', unsafe_allow_html=True)
-    st.header("💣 **Nối Từ** 🤘🔥")
+    st.header("💣 Nối Từ 🤘🔥")
+
+    # 🌐 Căn giữa nội dung game
+    st.markdown('<div class="centered-block">', unsafe_allow_html=True)
 
     def load_word_list():
         file_paths = [
@@ -433,7 +392,7 @@ with tabs[3]:
         matches = difflib.get_close_matches(word, candidates, n=1, cutoff=0.6)
         return matches[0] if matches else None
 
-    # Khởi tạo session state
+    # ✅ Khởi tạo session state
     if 'word_dict' not in st.session_state:
         st.session_state.word_dict = load_word_list()
     if 'used_words' not in st.session_state:
@@ -458,13 +417,14 @@ with tabs[3]:
         st.stop()
 
     if not st.session_state.game_over:
-        user_input = st.text_input("💬 **Gõ từ đi idol (nhưng đừng bịa!):**", "").strip().lower()
+        user_input = st.text_input("💬 Gõ từ đi idol (nhưng đừng bịa!):", "").strip().lower()
         if user_input != st.session_state.last_input:
             st.session_state.invalid_consecutive_in_turn = 0
         st.session_state.last_input = user_input
     else:
         user_input = ""
 
+    # 🔄 Nút điều khiển
     col1, col2 = st.columns([1, 3])
     with col1:
         if st.button("🔁 Chơi lại luôn nè"):
@@ -572,18 +532,22 @@ with tabs[3]:
                     f"💥 Bot khởi động với: **{bot_word}**. Tới bạn rồi đó!"
                 ]))
 
+    # 📜 Lịch sử đấu khẩu
     if history:
-        st.subheader("📜 **Lịch sử đấu khẩu cực gắt:**")
+        st.subheader("📜 Lịch sử đấu khẩu cực gắt:")
         for i, word in enumerate(history):
             speaker = "🧑‍💻 Bạn" if i % 2 == 0 else "🤖 Bot"
             st.write(f"{i+1}. {speaker}: **{word}**")
 
     st.caption("📌 *Luật chơi:* Từ mới phải bắt đầu bằng **từ cuối** của từ trước. 3 lần sai là rớt đài, 2 lần sai liên tiếp là auto thua. Bot không tha ai đâu 😈")
-    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)  # end .centered-block
+    st.markdown('</div>', unsafe_allow_html=True)  # end .game-container
 
 with tabs[4]:
     st.markdown('<div class="game-container">', unsafe_allow_html=True)
-    st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
+    st.header("🎓 Đố Vui Siêu Tốc ⏱️")
+    st.markdown('<div class="centered-block">', unsafe_allow_html=True)
 
     # ---------------- INIT STATE ----------------
     for key, default in {
@@ -637,6 +601,7 @@ with tabs[4]:
         if st.button("🚀 Bắt đầu ngay"):
             reset_quiz()
             st.rerun()
+        st.markdown('</div></div>', unsafe_allow_html=True)
         st.stop()
 
     # ---------------- KIỂM TRA HẾT GIỜ ----------------
@@ -652,6 +617,7 @@ with tabs[4]:
         if st.button("🔁 Chơi lại"):
             reset_quiz()
             st.rerun()
+        st.markdown('</div></div>', unsafe_allow_html=True)
         st.stop()
 
     # ---------------- CÂU HỎI HIỆN TẠI ----------------
@@ -672,6 +638,7 @@ with tabs[4]:
             if st.button("🔁 Chơi lại"):
                 reset_quiz()
                 st.rerun()
+            st.markdown('</div></div>', unsafe_allow_html=True)
             st.stop()
 
     st.session_state.quiz_index = index
@@ -690,7 +657,7 @@ with tabs[4]:
         options=["a", "b", "c", "d"],
         format_func=lambda opt: f"{opt.upper()}. {q['options'][opt]}",
         index=None,
-        key=f"quiz_radio_{index}"
+        key=f"quiz_radio_{index}
     )
 
     # ---------------- GỬI ĐÁP ÁN VÀ BỎ QUA ----------------
@@ -705,7 +672,6 @@ with tabs[4]:
                     st.success("✅ Chính xác! +5 điểm và +2s")
                     st.session_state.quiz_score += 5
                     st.session_state.correct_answers += 1
-                    # Thưởng thêm 2s
                     st.session_state.quiz_start_time -= 2
                 else:
                     st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
@@ -722,4 +688,5 @@ with tabs[4]:
                 st.session_state.quiz_skipped.append(index)
             st.session_state.quiz_index += 1
             st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('</div></div>', unsafe_allow_html=True)
