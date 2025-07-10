@@ -760,7 +760,7 @@ with tabs[6]:
             st.rerun()  # Chạy lại để hiển thị câu hỏi
     else:
         # ---------------- TÍNH THỜI GIAN ----------------
-        time_per_question = 15  # Thời gian cho mỗi câu hỏi
+        time_per_question = 60  # Thời gian cho mỗi câu hỏi là 60 giây
         elapsed = time.time() - st.session_state.question_start_time
         remaining = max(0, int(time_per_question - elapsed))
 
