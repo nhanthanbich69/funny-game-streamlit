@@ -720,10 +720,10 @@ with tabs[6]:
 
     # ---------------- BẮT ĐẦU ----------------
     if not st.session_state.quiz_data:
-        reset_quiz()
+        reset_quiz()  # Nạp dữ liệu quiz nếu chưa có
 
     if st.button("🔁 Chơi lại"):
-        reset_quiz()
+        reset_quiz()  # Reset game và nạp lại dữ liệu
         st.rerun()
 
     # ---------------- TIMER ----------------
