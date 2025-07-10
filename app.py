@@ -675,7 +675,7 @@ with tabs[6]:
 
     # ---------------- INIT STATE ----------------
     if 'quiz_data' not in st.session_state:
-        st.session_state.quiz_data = []
+        st.session_state.quiz_data = []  # Khởi tạo quiz_data nếu chưa có
     if 'quiz_index' not in st.session_state:
         st.session_state.quiz_index = 0
     if 'quiz_score' not in st.session_state:
@@ -710,7 +710,7 @@ with tabs[6]:
 
     # ---------------- RESET GAME ----------------
     def reset_quiz():
-        st.session_state.quiz_data = load_quiz_data()
+        st.session_state.quiz_data = load_quiz_data()  # Đảm bảo quiz_data được load
         st.session_state.quiz_index = 0
         st.session_state.quiz_score = 0
         st.session_state.quiz_skipped = []
