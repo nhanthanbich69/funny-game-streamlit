@@ -705,6 +705,8 @@ with tabs[6]:
         st.session_state.correct_answers = 0  # Dùng để đếm số câu đúng
     if 'quiz_started' not in st.session_state:
         st.session_state.quiz_started = False  # Trạng thái bắt đầu game
+    if 'question_start_time' not in st.session_state:
+        st.session_state.question_start_time = time.time()  # Lưu thời gian bắt đầu câu hỏi
 
     # ---------------- LOAD QUESTIONS ----------------
     def load_quiz_data():
@@ -736,10 +738,43 @@ with tabs[6]:
         st.session_state.answered = set()
         st.session_state.correct_answers = 0  # Reset số câu đúng
         st.session_state.quiz_started = False  # Reset trạng thái bắt đầu
+        st.session_state.question_start_time = time.time()  # Reset thời gian bắt đầu câu hỏi
 
     # ---------------- BẮT ĐẦU ----------------
-    if st.session_state.quiz_started:
-        # Chỉ hiển thị câu hỏi nếu game đã bắt đầu
+    if not st.session_state.quiz_started:
+        if st.button("🚀 Bắt đầu ngay"):
+            st.session_state.quiz_started = True
+            st.session_state.quiz_data = load_quiz_data()  # Nạp dữ liệu quiz khi bắt đầu
+            st.session_state.quiz_index = 0  # Bắt đầu lại từ câu 0
+            st.session_state.quiz_score = 0  # Điểm bắt đầu là 0
+            st.session_state.correct_answers = 0  # Số câu đúng bắt đầu từ 0
+            st.session_state.answered = set()  # Xóa các câu trả lời đã trả lời
+            st.session_state.quiz_skipped = []  # Xóa các câu đã bỏ qua
+            st.session_state.question_start_time = time.time()  # Cập nhật thời gian bắt đầu câu hỏi
+            st.rerun()  # Chạy lại để hiển thị câu hỏi
+    else:
+        # ---------------- TÍNH THỜI GIAN ----------------
+        time_per_question = 15  # Thời gian cho mỗi câu hỏi
+        elapsed = time.time() - st.session_state.question_start_time
+        remaining = max(0, int(time_per_question - elapsed))
+
+        # Hiển thị thời gian đếm ngược
+        components.html(f"""
+        <script>
+        let seconds = {remaining};
+        const countdown = setInterval(function() {{
+            if (seconds <= 0) {{
+                clearInterval(countdown);
+            }}
+            let clock = document.getElementById("clock");
+            if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
+            seconds -= 1;
+        }}, 1000);
+        </script>
+        <h2 id="clock">⏳ Còn {remaining} giây!</h2>
+        """, height=70)
+
+        # ---------------- CÂU HỎI HIỆN TẠI ----------------
         questions = st.session_state.quiz_data
         index = st.session_state.quiz_index
 
@@ -756,32 +791,8 @@ with tabs[6]:
         st.session_state.quiz_index = index
         q = questions[index]
 
-        # ---------------- TÍNH THỜI GIAN ----------------
-        time_per_question = 15  # Thời gian cho mỗi câu hỏi
-        if 'question_start_time' not in st.session_state:
-            st.session_state.question_start_time = time.time()
-
-        elapsed = time.time() - st.session_state.question_start_time
-        remaining = max(0, int(time_per_question - elapsed))
-
-        # Thời gian đếm ngược bằng JavaScript
-        components.html(f"""
-        <script>
-        let seconds = {remaining};
-        const countdown = setInterval(function() {{
-            if (seconds <= 0) {{
-                clearInterval(countdown);
-            }}
-            let clock = document.getElementById("clock");
-            if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
-            seconds -= 1;
-        }}, 1000);
-        </script>
-        <h2 id="clock">⏳ Còn {remaining} giây!</h2>
-        """, height=70)
-
-        # Hiển thị câu hỏi và đáp án
         st.subheader(f"❓ Câu {index + 1}: {q['question']}")
+
         selected = st.radio(
             "Chọn đáp án:",
             options=["a", "b", "c", "d"],
@@ -820,15 +831,3 @@ with tabs[6]:
         # Hiển thị số câu đúng và điểm
         st.metric("✅ Số câu đúng", st.session_state.correct_answers)
         st.metric("🏆 Tổng điểm", st.session_state.quiz_score)
-
-    else:
-        if st.button("🚀 Bắt đầu ngay"):
-            st.session_state.quiz_started = True
-            st.session_state.quiz_data = load_quiz_data()  # Nạp dữ liệu quiz khi bắt đầu
-            st.session_state.quiz_index = 0  # Bắt đầu lại từ câu 0
-            st.session_state.quiz_score = 0  # Điểm bắt đầu là 0
-            st.session_state.correct_answers = 0  # Số câu đúng bắt đầu từ 0
-            st.session_state.answered = set()  # Xóa các câu trả lời đã trả lời
-            st.session_state.quiz_skipped = []  # Xóa các câu đã bỏ qua
-            st.session_state.question_start_time = time.time()  # Cập nhật thời gian bắt đầu câu hỏi
-            st.rerun()  # Chạy lại để hiển thị câu hỏi
