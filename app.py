@@ -556,7 +556,6 @@ with tabs[4]:
     
 with tabs[5]:
     st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
-
     # ---------------- INIT STATE ----------------
     if 'quiz_data' not in st.session_state:
         st.session_state.quiz_data = []  # Khởi tạo quiz_data nếu chưa có
@@ -572,8 +571,6 @@ with tabs[5]:
         st.session_state.quiz_finished = False
     if 'answered' not in st.session_state:
         st.session_state.answered = set()
-    if 'quiz_started' not in st.session_state:
-        st.session_state.quiz_started = False  # Trạng thái bắt đầu game
 
     # ---------------- LOAD QUESTIONS ----------------
     def load_quiz_data():
@@ -604,51 +601,54 @@ with tabs[5]:
         st.session_state.quiz_finished = False
         st.session_state.answered = set()
 
-    # ---------------- START BUTTON ----------------
-    if not st.session_state.quiz_started:
-        if st.button("🚀 Bắt đầu trò chơi!"):
-            st.session_state.quiz_started = True
-            reset_quiz()  # Nạp dữ liệu quiz khi bắt đầu
-        st.stop()
+    # ---------------- BẮT ĐẦU ----------------
+    if not st.session_state.quiz_data:
+        reset_quiz()  # Nạp dữ liệu quiz nếu chưa có
+
+    if st.button("🚀 Bắt đầu"):
+        reset_quiz()  # Bắt đầu lại trò chơi
+        st.session_state.quiz_finished = False
+        st.session_state.quiz_index = 0
+        st.session_state.quiz_score = 0
+        st.session_state.answered = set()
 
     # ---------------- TIMER ----------------
-    if st.session_state.quiz_started:
-        now = time.time()
-        elapsed = now - st.session_state.quiz_start_time if st.session_state.quiz_start_time else 0
-        remaining = int(60 - elapsed)
+    now = time.time()
+    elapsed = now - st.session_state.quiz_start_time if st.session_state.quiz_start_time else 0
+    remaining = int(60 - elapsed)
 
-        if remaining <= 0 and not st.session_state.quiz_finished:
-            st.session_state.quiz_finished = True
-            st.rerun()
+    if remaining <= 0 and not st.session_state.quiz_finished:
+        st.session_state.quiz_finished = True
+        st.rerun()
 
-        if st.session_state.quiz_finished:
-            st.error("💥 Hết giờ rồi!")
-            st.markdown(f"### ✅ Số câu đúng: **{st.session_state.quiz_score // 10} / 10**")
-            st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
-            st.stop()
+    if st.session_state.quiz_finished:
+        st.error("💥 Hết giờ rồi!")
+        st.markdown(f"### ✅ Số câu đúng: **{st.session_state.quiz_score // 10}**")
+        st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
+        st.stop()
 
-        if remaining <= 5:
-            st.warning(f"⚠️ Còn {remaining} giây! Nhanh tay nào!!!")
-        else:
-            st.info(f"⏳ Thời gian còn lại: **{remaining} giây**")
+    if remaining <= 5:
+        st.warning(f"⚠️ Còn {remaining} giây! Nhanh tay nào!!!")
+    else:
+        st.info(f"⏳ Thời gian còn lại: **{remaining} giây**")
 
-        components.html(f"""
-        <script>
-        let seconds = {remaining};
-        const countdown = setInterval(function() {{
-            if (seconds <= 0) {{
-                clearInterval(countdown);
-            }}
-            let clock = document.getElementById("clock");
-            if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
-            seconds -= 1;
-        }}, 1000);
-        </script>
-        <h2 id="clock">⏳ Còn {remaining} giây!</h2>
-        """, height=70)
+    components.html(f"""
+    <script>
+    let seconds = {remaining};
+    const countdown = setInterval(function() {{
+        if (seconds <= 0) {{
+            clearInterval(countdown);
+        }}
+        let clock = document.getElementById("clock");
+        if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
+        seconds -= 1;
+    }}, 1000);
+    </script>
+    <h2 id="clock">⏳ Còn {remaining} giây!</h2>
+    """, height=70)
 
     # ---------------- CÂU HỎI HIỆN TẠI ----------------
-    if st.session_state.quiz_started:
+    if not st.session_state.quiz_finished:
         questions = st.session_state.quiz_data
         index = st.session_state.quiz_index
 
@@ -701,10 +701,9 @@ with tabs[5]:
                 st.session_state.quiz_index += 1
                 st.rerun()
 
-    # Hiển thị điểm và số câu đúng
-    if st.session_state.quiz_started:
-        st.markdown(f"### ✅ **Số câu đúng: {st.session_state.quiz_score // 10} / 10**")
-        st.markdown(f"### 🏆 **Tổng điểm: {st.session_state.quiz_score} điểm**")
+    # Cập nhật số câu đúng và điểm
+    st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score}** điểm")
+    st.markdown(f"### ✅ Số câu đúng: **{len(st.session_state.answered)}/{len(st.session_state.quiz_data)}**")
 
 with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
