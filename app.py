@@ -15,44 +15,76 @@ st.set_page_config(
 # 🎨 Tuỳ chỉnh CSS để căn giữa đẹp
 st.markdown("""
     <style>
+        /* ======= TOÀN TRANG ======= */
         body {
             background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
         }
+
+        /* ======= CONTAINER CHÍNH ======= */
         .game-container {
             width: 90%;
             max-width: 1200px;
-            padding: 20px;
             margin: auto;
+            padding: 20px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Căn giữa ngang */
         }
+
+        /* ======= CĂN GIỮA TOÀN BỘ THÀNH PHẦN ======= */
+        .stButton > button,
+        .stSlider,
+        .stSelectbox,
+        .stTextInput,
+        .stRadio,
+        .stMarkdown,
+        .stSubheader,
+        .stHeader,
+        .stDataFrame {
+            text-align: center !important;
+            align-self: center !important;
+        }
+
+        .stMarkdown > div, .stTextInput > div, .stSlider > div, .stSelectbox > div {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* ======= BUTTON STYLE ======= */
+        .stButton > button {
+            background-color: #333;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+            padding: 10px 20px;
+            font-weight: bold;
+            width: auto;
+            min-width: 200px;
+            transition: 0.3s;
+        }
+
         .stButton > button:hover {
             background-color: #FFD700;
             color: white;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-        .stButton > button {
-            background-color: #333;
-            color: #FFD700;
-            border: 2px solid #FFD700;
-        }
-        .stSlider > div > div {
-            background-color: #fff;
-            color: #000;
-        }
-        .stTextInput > div {
-            background-color: #fff;
-            color: #000;
-        }
-        .stRadio > div {
-            display: flex;
-            justify-content: center;
-        }
+
+        /* ======= MOBILE RESPONSIVE ======= */
         @media (max-width: 768px) {
             .game-container {
-                width: 95%;
+                width: 98%;
                 padding: 10px;
+            }
+            .stButton > button {
+                font-size: 18px;
+                padding: 12px;
+            }
+            .stMarkdown, .stSelectbox, .stSlider, .stTextInput, .stRadio {
+                font-size: 18px !important;
             }
         }
     </style>
