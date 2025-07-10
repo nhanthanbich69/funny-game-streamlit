@@ -61,15 +61,75 @@ st.header("📖 Hướng Dẫn")
 
 st.markdown("""
 <div class="game-list">
-    <strong>🕹️ Danh sách trò chơi:</strong><br><br>
-    🎯 <u>Đoán Số</u> – Đoán số bí mật từ 1–100, có tối đa 10 lần đoán.<br>
-    🖐 <u>Búa Kéo Bao</u> – Chọn nhanh tay, thắng nhanh gọn.<br>
-    🎲💰 <u>Tung Xúc Xắc / Đồng Xu</u> – Đơn giản, vui là chính.<br>
-    🧩 <u>Nối Từ</u> – Từ sau phải bắt đầu bằng từ cuối trước đó.<br>
-    🎓 <u>Đố Vui</u> – Kiến thức tổng hợp, chạy đua với thời gian!<br><br>
-    👉 Chọn tab bên dưới để bắt đầu hành trình vui vẻ!
+    <h4>🕹️ <strong>Danh sách trò chơi & Hướng dẫn</strong></h4>
 </div>
 """, unsafe_allow_html=True)
+
+with st.expander("🎯 Đoán Số – Đoán số bí mật trong phạm vi 1–100"):
+    st.markdown("""
+    ▸ Một số bí mật từ **1 đến 100** được chọn ngẫu nhiên.<br>
+    ▸ Bạn có tối đa **10 lượt đoán** để tìm đúng số.<br>
+    ▸ Sau mỗi lượt đoán, bạn sẽ nhận phản hồi:
+    - ⬆️ "Số cần đoán lớn hơn"
+    - ⬇️ "Số cần đoán nhỏ hơn"<br>
+    ▸ Nếu đoán đúng: Thắng 🎉<br>
+    ▸ Nếu đoán sai 10 lần: Thua 🥲<br>
+    """)
+
+with st.expander("🖐 Búa Kéo Bao – Chọn 1 trong 3 để đấu bot"):
+    st.markdown("""
+    ▸ Bạn chọn **Búa**, **Kéo**, hoặc **Bao**.<br>
+    ▸ Máy cũng chọn ngẫu nhiên.<br>
+    ▸ Luật:
+    - Búa > Kéo
+    - Kéo > Bao
+    - Bao > Búa<br>
+    ▸ Nhấn **Kết quả** để xem ai thắng.<br>
+    ▸ Mỗi lượt là 1 trận solo siêu tốc ⚡<br>
+    """)
+
+with st.expander("🎲💰 Tung Xúc Xắc / Đồng Xu – Thử vận may"):
+    st.markdown("""
+    🔸 **Tung Xúc Xắc**:<br>
+    ▸ Chọn số xúc xắc (1–4) và loại mặt (4 đến 100).<br>
+    ▸ Xem từng kết quả, tổng điểm và trung bình.<br><br>
+
+    🔸 **Tung Đồng Xu**:<br>
+    ▸ Chọn số đồng xu (1–4), mỗi lần tung ra kết quả **Sấp** hoặc **Ngửa**.<br>
+    ▸ Có hiển thị lịch sử tung để xem lại chuỗi vận may 🍀<br>
+    """)
+
+with st.expander("🧩 Nối Từ – Mỗi từ mới bắt đầu bằng chữ cuối từ trước"):
+    st.markdown("""
+    ▸ Nhập 1 từ có thật, tiếng Việt chuẩn.<br>
+    ▸ Không được nhập từ:
+    - Đã dùng rồi
+    - Không có trong từ điển
+    - Khiến bot không phản đòn được (ở lượt đầu)<br>
+    ▸ Mỗi từ mới phải bắt đầu bằng **từ cuối** của từ trước. VD: `con mèo` → `mèo mun`.<br>
+    ▸ Nếu sai:
+    - 3 lần bất kỳ → thua
+    - 2 lần liên tiếp → cũng thua<br>
+    ▸ Bot sẽ đáp trả nếu còn từ. Nếu không? Bạn win 💯<br>
+    """)
+
+with st.expander("🎓 Đố Vui – Trắc nghiệm siêu tốc trong 60 giây"):
+    st.markdown("""
+    ▸ Mỗi câu có 4 đáp án: a/b/c/d<br>
+    ▸ Trả lời đúng:
+    - ✅ +5 điểm
+    - ⏱️ +2 giây<br>
+    ▸ Trả lời sai:
+    - ❌ -2 điểm
+    - Gợi ý đáp án đúng<br>
+    ▸ Có thể **bỏ qua** và quay lại nếu còn thời gian.<br>
+    ▸ Game kết thúc khi:
+    - Hết 60 giây
+    - Hết câu hỏi<br>
+    ▸ Kết quả: Số câu đúng + điểm số cuối cùng 🏆<br>
+    """)
+
+st.markdown("<br><strong>👉 Chọn tab tương ứng bên dưới để bắt đầu chơi!</strong>", unsafe_allow_html=True)
 
 # 🧩 Tabs game
 tab_names = [
