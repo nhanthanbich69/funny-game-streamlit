@@ -6,43 +6,28 @@ import json
 import streamlit.components.v1 as components
 
 # Tiêu đề ứng dụng
-st.title("🎮 **Game Tùy Chọn** (Đoán Số - Búa Kéo Bao - Tung Xúc Xắc - Tung Đồng Xu - Nối Từ - Tính Nhẩm - Đố Vui)")
+st.title("🎮 **Game Tùy Chọn** (7 trò chơi cực vui)")
 
-# Thêm CSS cho hiệu ứng đẹp
-st.markdown("""
-    <style>
-        body {
-            background-color: #fff;
-            color: #000;
-        }
-        .stButton > button:hover {
-            background-color: #FFD700;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-        .stButton > button {
-            background-color: #333;
-            color: #FFD700;
-            border: 2px solid #FFD700;
-        }
-        .stSlider > div > div {
-            background-color: #fff;
-            color: #000;
-        }
-        .stSelectbox > div {
-            background-color: #fff;
-            color: #000;
-        }
-        .stTextInput > div {
-            background-color: #fff;
-            color: #000;
-        }
-    </style>
-""", unsafe_allow_html=True)
+# 🧭 Hướng Dẫn bên sidebar
+with st.sidebar:
+    st.header("📖 Hướng Dẫn")
+    st.markdown("""
+#### 🎮 Game hiện có:
 
-# --- Danh sách tên tab ---
+- **🎯 Đoán Số** – Đoán số bí mật trong phạm vi 1–100, tối đa 10 lần.
+- **🖐 Búa Kéo Bao** – Chọn 1 trong 3 để đấu bot.
+- **🎲 Tung Xúc Xắc** – Chọn loại và số lượng, xem mặt nào ra.
+- **💰 Tung Đồng Xu** – 1, 2 hoặc 4 đồng xu, thử vận may.
+- **🧩 Nối Từ** – Mỗi từ mới bắt đầu bằng từ cuối trước đó.
+- **🧠 Tính Nhẩm** – Giải nhanh phép tính trong thời gian giới hạn.
+- **🎓 Đố Vui** – Câu hỏi về Việt Nam, mỗi câu 4 đáp án.
+
+---
+🎉 Chọn 1 tab bên trên để bắt đầu chơi!
+""")
+
+# Danh sách tab games
 tab_names = [
-    "📝 Hướng Dẫn",
     "🎯 Đoán Số",
     "🖐 Búa Kéo Bao",
     "🎲 Tung Xúc Xắc",
@@ -51,50 +36,10 @@ tab_names = [
     "🧠 Tính Nhẩm",
     "🎓 Đố Vui"
 ]
-
-# --- Sidebar để chọn tab ---
-selected_tab = st.sidebar.selectbox("🎮 Chọn trò chơi:", tab_names)
-
-# --- Tạo tất cả tabs (ẩn logic) ---
 tabs = st.tabs(tab_names)
 
-# --- Render tab tương ứng ---
-tab_index = tab_names.index(selected_tab)
-with tabs[tab_index]:
-    if selected_tab == "📝 Hướng Dẫn":
-        st.header("📖 Hướng Dẫn Chơi")
-        st.markdown("""
-### Danh sách mini game bạn có thể chọn:
-
-1. 🎯 **Đoán Số**  
-   → Đoán một số bí mật trong phạm vi cho trước. Có tối đa 10 lần hỏi để tìm ra.
-
-2. ✊ **Búa Kéo Bao**  
-   → Chọn "Bao", "Búa", hoặc "Kéo" và đấu với máy. Đoán sai là thua ngay!
-
-3. 🎲 **Tung Xúc Xắc**  
-   → Chọn số và loại xúc xắc rồi xem kết quả tung.
-
-4. 🪙 **Tung Đồng Xu**  
-   → Chọn số lượng đồng xu (1, 2 hoặc 4) và xem mặt ngửa/sấp.
-
-5. 🧩 **Nối Từ**  
-   → Nhập từ bắt đầu bằng **từ cuối** của từ trước. Sai 3 lần là out luôn.
-
-6. 🧮 **Tính Nhẩm Siêu Tốc**  
-   → Trả lời các phép tính toán nhanh với thời gian giới hạn. Càng về sau càng căng!
-
-7. 🎓 **Đố Vui**  
-   → Câu hỏi về Việt Nam: lịch sử, địa lý, động vật, thực vật, v.v. Mỗi câu 4 đáp án. Trả lời đúng thì vui, sai thì... học lại 🤪
-
----
-
-👉 Hãy chọn tab tương ứng từ **sidebar bên trái** để bắt đầu game!  
-🎉 Chúc bạn chơi vui, nhẹ tay với bàn phím và đừng rage quit 😎
-""")
-
 # 🎯 Đoán Số
-with tabs[1]:
+with tabs[0]:
     st.header("🎯 **Đoán Số Bí Mật (10 lượt hỏi)**")
 
     # 🎯 Các câu trả lời đúng & sai
@@ -243,7 +188,7 @@ with tabs[1]:
             st.session_state.last_max_num = max_num
             
 # 🖐 Búa Kéo Bao
-with tabs[2]:
+with tabs[1]:
     st.header("🖐 **Búa Kéo Bao**")
     col1, col2, col3 = st.columns(3)
 
@@ -307,7 +252,7 @@ with tabs[2]:
             st.error(f"⚠️ Lỗi khi tính kết quả: {e}")
 
 # 🎲 Tung Xúc Xắc
-with tabs[3]:
+with tabs[2]:
     st.header("🎲 **Tung Xúc Xắc**")
 
     num_dice = st.slider("🔢 Chọn số lượng xúc xắc", min_value=1, max_value=4, value=1)
@@ -335,7 +280,7 @@ with tabs[3]:
             st.error(f"⚠️ Lỗi khi tung xúc xắc: {e}")
 
 # 💰 Tung Đồng Xu
-with tabs[4]:
+with tabs[3]:
     st.header("💰 **Tung Đồng Xu**")
 
     num_coins = st.selectbox("🍀 **Chọn số lượng đồng xu**", [1, 2, 4])
@@ -362,7 +307,7 @@ with tabs[4]:
         except Exception as e:
             st.error(f"⚠️ Lỗi khi tung đồng xu: {e}")
 
-with tabs[5]:
+with tabs[4]:
     st.header("💣 **Nối Từ** 🤘🔥")
 
     def load_word_list():
@@ -551,7 +496,7 @@ with tabs[5]:
 
     st.caption("📌 *Luật chơi:* Từ mới phải bắt đầu bằng **từ cuối** của từ trước. 3 lần sai là rớt đài, 2 lần sai liên tiếp là auto thua. Bot không tha ai đâu 😈")
     
-with tabs[6]:
+with tabs[5]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
     # ---------------- INIT STATE ----------------
     default_state = {
@@ -728,7 +673,7 @@ with tabs[6]:
     st.metric("✅ Số câu đúng", st.session_state.math_correct)
     st.metric("🏆 Tổng điểm", st.session_state.score_math)
 
-with tabs[7]:
+with tabs[6]:
     st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
 
     # ---------------- INIT STATE ----------------
