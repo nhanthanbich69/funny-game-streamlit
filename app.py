@@ -67,70 +67,70 @@ st.markdown("""
 
 with st.expander("🎯 Đoán Số – Đoán số bí mật trong phạm vi 1–100"):
     st.markdown("""
-    ▸ Một số bí mật từ **1 đến 100** được chọn ngẫu nhiên.<br>
-    ▸ Bạn có tối đa **10 lượt đoán** để tìm đúng số.<br>
-    ▸ Sau mỗi lượt đoán, bạn sẽ nhận phản hồi:
-    - ⬆️ "Số cần đoán lớn hơn"
-    - ⬇️ "Số cần đoán nhỏ hơn"<br>
-    ▸ Nếu đoán đúng: Thắng 🎉<br>
-    ▸ Nếu đoán sai 10 lần: Thua 🥲<br>
-    """)
+▸ Một số bí mật từ **1 đến 100** được chọn ngẫu nhiên.  
+▸ Bạn có tối đa **10 lượt đoán** để tìm đúng số.  
+▸ Sau mỗi lượt đoán, bạn sẽ nhận phản hồi:  
+&nbsp;&nbsp;&nbsp;&nbsp;- ⬆️ "Số cần đoán lớn hơn"  
+&nbsp;&nbsp;&nbsp;&nbsp;- ⬇️ "Số cần đoán nhỏ hơn"  
+▸ Nếu đoán đúng: Thắng 🎉  
+▸ Nếu đoán sai 10 lần: Thua 🥲
+""")
 
 with st.expander("🖐 Búa Kéo Bao – Chọn 1 trong 3 để đấu bot"):
     st.markdown("""
-    ▸ Bạn chọn **Búa**, **Kéo**, hoặc **Bao**.<br>
-    ▸ Máy cũng chọn ngẫu nhiên.<br>
-    ▸ Luật:
-    - Búa > Kéo
-    - Kéo > Bao
-    - Bao > Búa<br>
-    ▸ Nhấn **Kết quả** để xem ai thắng.<br>
-    ▸ Mỗi lượt là 1 trận solo siêu tốc ⚡<br>
-    """)
+▸ Bạn chọn **Búa**, **Kéo**, hoặc **Bao**.  
+▸ Máy cũng chọn ngẫu nhiên.  
+▸ Luật:  
+&nbsp;&nbsp;&nbsp;&nbsp;- Búa > Kéo  
+&nbsp;&nbsp;&nbsp;&nbsp;- Kéo > Bao  
+&nbsp;&nbsp;&nbsp;&nbsp;- Bao > Búa  
+▸ Nhấn **Kết quả** để xem ai thắng.  
+▸ Mỗi lượt là 1 trận solo siêu tốc ⚡
+""")
 
 with st.expander("🎲💰 Tung Xúc Xắc / Đồng Xu – Thử vận may"):
     st.markdown("""
-    🔸 **Tung Xúc Xắc**:<br>
-    ▸ Chọn số xúc xắc (1–4) và loại mặt (4 đến 100).<br>
-    ▸ Xem từng kết quả, tổng điểm và trung bình.<br><br>
+🔸 **Tung Xúc Xắc**  
+▸ Chọn số xúc xắc (1–4) và loại mặt (4 đến 100).  
+▸ Xem từng kết quả, tổng điểm và trung bình.
 
-    🔸 **Tung Đồng Xu**:<br>
-    ▸ Chọn số đồng xu (1–4), mỗi lần tung ra kết quả **Sấp** hoặc **Ngửa**.<br>
-    ▸ Có hiển thị lịch sử tung để xem lại chuỗi vận may 🍀<br>
-    """)
+🔸 **Tung Đồng Xu**  
+▸ Chọn số đồng xu (1–4), mỗi lần tung ra kết quả **Sấp** hoặc **Ngửa**.  
+▸ Có hiển thị lịch sử tung để xem lại chuỗi vận may 🍀
+""")
 
 with st.expander("🧩 Nối Từ – Mỗi từ mới bắt đầu bằng chữ cuối từ trước"):
     st.markdown("""
-    ▸ Nhập 1 từ có thật, tiếng Việt chuẩn.<br>
-    ▸ Không được nhập từ:
-    - Đã dùng rồi
-    - Không có trong từ điển
-    - Khiến bot không phản đòn được (ở lượt đầu)<br>
-    ▸ Mỗi từ mới phải bắt đầu bằng **từ cuối** của từ trước. VD: `con mèo` → `mèo mun`.<br>
-    ▸ Nếu sai:
-    - 3 lần bất kỳ → thua
-    - 2 lần liên tiếp → cũng thua<br>
-    ▸ Bot sẽ đáp trả nếu còn từ. Nếu không? Bạn win 💯<br>
-    """)
+▸ Nhập 1 từ có thật, tiếng Việt chuẩn.  
+▸ Không được nhập từ:  
+&nbsp;&nbsp;&nbsp;&nbsp;- Đã dùng rồi  
+&nbsp;&nbsp;&nbsp;&nbsp;- Không có trong từ điển  
+&nbsp;&nbsp;&nbsp;&nbsp;- Khiến bot không phản đòn được (ở lượt đầu)  
+▸ Mỗi từ mới phải bắt đầu bằng **từ cuối** của từ trước.  
+&nbsp;&nbsp;&nbsp;&nbsp;Ví dụ: `con mèo` → `mèo mun`.  
+▸ Nếu sai:  
+&nbsp;&nbsp;&nbsp;&nbsp;- 3 lần bất kỳ → thua  
+&nbsp;&nbsp;&nbsp;&nbsp;- 2 lần liên tiếp → cũng thua  
+▸ Bot sẽ đáp trả nếu còn từ. Nếu không? Bạn win 💯
+""")
 
 with st.expander("🎓 Đố Vui – Trắc nghiệm siêu tốc trong 60 giây"):
     st.markdown("""
-    ▸ Mỗi câu có 4 đáp án: a/b/c/d<br>
-    ▸ Trả lời đúng:
-    - ✅ +5 điểm
-    - ⏱️ +2 giây<br>
-    ▸ Trả lời sai:
-    - ❌ -2 điểm
-    - Gợi ý đáp án đúng<br>
-    ▸ Có thể **bỏ qua** và quay lại nếu còn thời gian.<br>
-    ▸ Game kết thúc khi:
-    - Hết 60 giây
-    - Hết câu hỏi<br>
-    ▸ Kết quả: Số câu đúng + điểm số cuối cùng 🏆<br>
-    """)
+▸ Mỗi câu có 4 đáp án: a / b / c / d  
+▸ Trả lời đúng:  
+&nbsp;&nbsp;&nbsp;&nbsp;- ✅ +5 điểm  
+&nbsp;&nbsp;&nbsp;&nbsp;- ⏱️ +2 giây  
+▸ Trả lời sai:  
+&nbsp;&nbsp;&nbsp;&nbsp;- ❌ -2 điểm  
+&nbsp;&nbsp;&nbsp;&nbsp;- Gợi ý đáp án đúng  
+▸ Có thể **bỏ qua** và quay lại nếu còn thời gian.  
+▸ Game kết thúc khi:  
+&nbsp;&nbsp;&nbsp;&nbsp;- Hết 60 giây  
+&nbsp;&nbsp;&nbsp;&nbsp;- Hết câu hỏi  
+▸ Kết quả: Số câu đúng + điểm số cuối cùng 🏆
+""")
 
-st.markdown("<br><strong>👉 Chọn tab tương ứng bên dưới để bắt đầu chơi!</strong>", unsafe_allow_html=True)
-
+st.markdown("**👉 Chọn tab tương ứng bên dưới để bắt đầu chơi!**")
 # 🧩 Tabs game
 tab_names = [
     "🎯 Đoán Số",
