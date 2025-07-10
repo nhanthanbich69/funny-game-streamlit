@@ -684,7 +684,7 @@ with tabs[4]:
     st.markdown(f"""
         <h5>❓ <strong>Câu {index + 1}:</strong> {q['question']}</h5>
         <p>⏳ <strong>Thời gian còn lại:</strong> {remaining} giây</p>
-        <p>✅ <strong>Đúng / Đã trả lời:</strong> {correct_cnt} / {answered_cnt}</p>
+        <p>✅ <strong>Đúng:</strong> {correct_cnt} / {answered_cnt}</p>
         <p>🏆 <strong>Tổng điểm:</strong> {st.session_state.quiz_score}</p>
     """, unsafe_allow_html=True)
 
