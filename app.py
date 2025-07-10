@@ -8,8 +8,8 @@ import streamlit.components.v1 as components
 # ⛳ Cấu hình page
 st.set_page_config(
     page_title="Game Tùy Chọn",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide",  # Hiển thị full màn hình
+    initial_sidebar_state="collapsed"  # Sidebar bị ẩn
 )
 
 # 🌟 Tiêu đề chính
@@ -39,10 +39,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 📚 Hướng dẫn chuyển sang SIDEBAR
-with st.sidebar:
-    st.header("📖 Hướng Dẫn")
-    st.markdown("""
+# 🌟 Hướng dẫn chuyển sang Main Layout (Không dùng Sidebar)
+st.header("📖 **Hướng Dẫn**")
+st.markdown("""
 #### 🎮 Game hiện có:
 
 - **🎯 Đoán Số** – Đoán số bí mật trong phạm vi 1–100, tối đa 10 lần.
@@ -53,7 +52,7 @@ with st.sidebar:
 - **🧠 Tính Nhẩm** – Giải nhanh phép tính trong thời gian giới hạn.
 - **🎓 Đố Vui** – Câu hỏi về Việt Nam, mỗi câu 4 đáp án.
 
----
+--- 
 👉 Chọn 1 tab bên trên để bắt đầu chơi!
 """)
 
