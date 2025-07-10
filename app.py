@@ -728,11 +728,10 @@ with tabs[6]:
         for filename in filenames:
             try:
                 with open(filename, "r", encoding="utf-8") as f:
-                    content = f.read()
-                    questions = json.loads(f"[{content.strip().replace('}\n{', '},\n{')}]")
+                    questions = json.load(f)  # ✔ dùng json.load thay vì json.loads
                     all_questions.extend(questions)
             except Exception as e:
-                st.warning(f"Không thể đọc file {filename}: {e}")
+                st.warning(f"⚠️ Không thể đọc {filename}: {e}")
         random.shuffle(all_questions)
         return all_questions
 
