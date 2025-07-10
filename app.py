@@ -554,7 +554,7 @@ with tabs[4]:
 
     st.caption("📌 *Luật chơi:* Từ mới phải bắt đầu bằng **từ cuối** của từ trước. 3 lần sai là rớt đài, 2 lần sai liên tiếp là auto thua. Bot không tha ai đâu 😈")
     
-with tabs[5]:
+with tabs[6]:
     st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
 
     # ---------------- INIT STATE ----------------
@@ -572,6 +572,8 @@ with tabs[5]:
         st.session_state.quiz_finished = False
     if 'answered' not in st.session_state:
         st.session_state.answered = set()
+    if 'quiz_started' not in st.session_state:
+        st.session_state.quiz_started = False  # Trạng thái bắt đầu game
 
     # ---------------- LOAD QUESTIONS ----------------
     def load_quiz_data():
@@ -602,100 +604,107 @@ with tabs[5]:
         st.session_state.quiz_finished = False
         st.session_state.answered = set()
 
-    # ---------------- BẮT ĐẦU ----------------
-    if not st.session_state.quiz_data:
-        reset_quiz()  # Nạp dữ liệu quiz nếu chưa có
-
-    if st.button("🔁 Chơi lại"):
-        reset_quiz()  # Reset game và nạp lại dữ liệu
-        st.rerun()
-
-    # ---------------- TIMER ----------------
-    now = time.time()
-    elapsed = now - st.session_state.quiz_start_time if st.session_state.quiz_start_time else 0
-    remaining = int(60 - elapsed)
-
-    if remaining <= 0 and not st.session_state.quiz_finished:
-        st.session_state.quiz_finished = True
-        st.rerun()
-
-    if st.session_state.quiz_finished:
-        st.error("💥 Hết giờ rồi!")
-        st.markdown(f"### ✅ Số câu đúng: **{st.session_state.quiz_score // 10}**")
-        st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
+    # ---------------- START BUTTON ----------------
+    if not st.session_state.quiz_started:
+        if st.button("🚀 Bắt đầu trò chơi!"):
+            st.session_state.quiz_started = True
+            reset_quiz()  # Nạp dữ liệu quiz khi bắt đầu
         st.stop()
 
-    if remaining <= 5:
-        st.warning(f"⚠️ Còn {remaining} giây! Nhanh tay nào!!!")
-    else:
-        st.info(f"⏳ Thời gian còn lại: **{remaining} giây**")
+    # ---------------- TIMER ----------------
+    if st.session_state.quiz_started:
+        now = time.time()
+        elapsed = now - st.session_state.quiz_start_time if st.session_state.quiz_start_time else 0
+        remaining = int(60 - elapsed)
 
-    components.html(f"""
-    <script>
-    let seconds = {remaining};
-    const countdown = setInterval(function() {{
-        if (seconds <= 0) {{
-            clearInterval(countdown);
-        }}
-        let clock = document.getElementById("clock");
-        if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
-        seconds -= 1;
-    }}, 1000);
-    </script>
-    <h2 id="clock">⏳ Còn {remaining} giây!</h2>
-    """, height=70)
-
-    # ---------------- CÂU HỎI HIỆN TẠI ----------------
-    questions = st.session_state.quiz_data
-    index = st.session_state.quiz_index
-
-    while index in st.session_state.answered and index < len(questions):
-        index += 1
-
-    if index >= len(questions):
-        if st.session_state.quiz_skipped:
-            index = st.session_state.quiz_skipped.pop(0)
-        else:
+        if remaining <= 0 and not st.session_state.quiz_finished:
             st.session_state.quiz_finished = True
             st.rerun()
 
-    st.session_state.quiz_index = index
-    q = questions[index]
+        if st.session_state.quiz_finished:
+            st.error("💥 Hết giờ rồi!")
+            st.markdown(f"### ✅ Số câu đúng: **{st.session_state.quiz_score // 10} / 10**")
+            st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
+            st.stop()
 
-    st.subheader(f"❓ Câu {index + 1}: {q['question']}")
+        if remaining <= 5:
+            st.warning(f"⚠️ Còn {remaining} giây! Nhanh tay nào!!!")
+        else:
+            st.info(f"⏳ Thời gian còn lại: **{remaining} giây**")
 
-    selected = st.radio(
-        "Chọn đáp án:",
-        options=["a", "b", "c", "d"],
-        format_func=lambda opt: f"{opt.upper()}. {q['options'][opt]}",
-        index=None,
-        key=f"quiz_radio_{index}"
-    )
+        components.html(f"""
+        <script>
+        let seconds = {remaining};
+        const countdown = setInterval(function() {{
+            if (seconds <= 0) {{
+                clearInterval(countdown);
+            }}
+            let clock = document.getElementById("clock");
+            if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
+            seconds -= 1;
+        }}, 1000);
+        </script>
+        <h2 id="clock">⏳ Còn {remaining} giây!</h2>
+        """, height=70)
 
-    # ---------------- GỬI ĐÁP ÁN VÀ BỎ QUA ----------------
-    col1, col2 = st.columns(2)
+    # ---------------- CÂU HỎI HIỆN TẠI ----------------
+    if st.session_state.quiz_started:
+        questions = st.session_state.quiz_data
+        index = st.session_state.quiz_index
 
-    with col1:
-        if st.button("📨 Gửi đáp án", key=f"submit_{index}"):
-            if selected is None:
-                st.warning("🤔 Chưa chọn đáp án mà bạn!")
+        while index in st.session_state.answered and index < len(questions):
+            index += 1
+
+        if index >= len(questions):
+            if st.session_state.quiz_skipped:
+                index = st.session_state.quiz_skipped.pop(0)
             else:
-                correct = q["answer"]
-                if selected == correct:
-                    st.success("✅ Chính xác! +10 điểm")
-                    st.session_state.quiz_score += 10
+                st.session_state.quiz_finished = True
+                st.rerun()
+
+        st.session_state.quiz_index = index
+        q = questions[index]
+
+        st.subheader(f"❓ Câu {index + 1}: {q['question']}")
+
+        selected = st.radio(
+            "Chọn đáp án:",
+            options=["a", "b", "c", "d"],
+            format_func=lambda opt: f"{opt.upper()}. {q['options'][opt]}",
+            index=None,
+            key=f"quiz_radio_{index}"
+        )
+
+        # ---------------- GỬI ĐÁP ÁN VÀ BỎ QUA ----------------
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("📨 Gửi đáp án", key=f"submit_{index}"):
+                if selected is None:
+                    st.warning("🤔 Chưa chọn đáp án mà bạn!")
                 else:
-                    st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
-                st.session_state.answered.add(index)
+                    correct = q["answer"]
+                    if selected == correct:
+                        st.success("✅ Chính xác! +5 điểm")
+                        st.session_state.quiz_score += 5
+                    else:
+                        st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
+                        st.session_state.quiz_score -= 2  # Trừ điểm nếu sai
+                    st.session_state.answered.add(index)
+                    st.session_state.quiz_index += 1
+                    st.rerun()
+
+        with col2:
+            if st.button("⏭️ Bỏ qua", key=f"skip_{index}"):
+                if index not in st.session_state.quiz_skipped:
+                    st.session_state.quiz_skipped.append(index)
                 st.session_state.quiz_index += 1
                 st.rerun()
 
-    with col2:
-        if st.button("⏭️ Bỏ qua", key=f"skip_{index}"):
-            if index not in st.session_state.quiz_skipped:
-                st.session_state.quiz_skipped.append(index)
-            st.session_state.quiz_index += 1
-            st.rerun()
+    # Hiển thị điểm và số câu đúng
+    if st.session_state.quiz_started:
+        st.markdown(f"### ✅ **Số câu đúng: {st.session_state.quiz_score // 10} / 10**")
+        st.markdown(f"### 🏆 **Tổng điểm: {st.session_state.quiz_score} điểm**")
 
 with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
