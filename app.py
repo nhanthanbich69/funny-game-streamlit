@@ -3,6 +3,7 @@ import time
 import streamlit as st
 import difflib
 import json
+from streamlit_autorefresh import st_autorefresh
 import streamlit.components.v1 as components
 
 # ⛳ Cấu hình page
@@ -116,7 +117,7 @@ with st.expander("🧩 Nối Từ – Mỗi từ mới bắt đầu bằng chữ
 
 with st.expander("🎓 Đố Vui – Trắc nghiệm siêu tốc trong 60 giây"):
     st.markdown("""
-▸ Mỗi câu có 4 đáp án: a / b / c / d  
+▸ Mỗi câu có 4 đáp án: A / B / C / D  
 ▸ Trả lời đúng:  
 &nbsp;&nbsp;&nbsp;&nbsp;- ✅ +5 điểm  
 &nbsp;&nbsp;&nbsp;&nbsp;- ⏱️ +2 giây  
@@ -578,6 +579,7 @@ with tabs[3]:
     st.markdown('</div></div>', unsafe_allow_html=True)
 
 with tabs[4]:
+    st_autorefresh(interval=1000, key="quiz_autorefresh")
     st.markdown('<div class="game-container"><div class="responsive-tab">', unsafe_allow_html=True)
     st.header("🎓 Đố Vui Siêu Tốc ⏱️")
     st.markdown('<div class="centered-block">', unsafe_allow_html=True)
