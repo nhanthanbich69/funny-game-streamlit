@@ -715,7 +715,7 @@ with tabs[4]:
                     st.success("✅ Chính xác! +5 điểm và +2s")
                     st.session_state.quiz_score += 5
                     st.session_state.correct_answers += 1
-                    st.session_state.quiz_start_time -= 2
+                    st.session_state.quiz_start_time += 2
                 else:
                     st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
                     st.session_state.quiz_score -= 2
