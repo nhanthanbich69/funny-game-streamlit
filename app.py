@@ -5,10 +5,41 @@ import difflib
 import json
 import streamlit.components.v1 as components
 
-# Tiêu đề ứng dụng
+# ⛳ Cấu hình page
+st.set_page_config(
+    page_title="Game Tùy Chọn",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# 🌟 Tiêu đề chính
 st.title("🎮 **Game Tùy Chọn** (7 trò chơi cực vui)")
 
-# 🧭 Hướng Dẫn bên sidebar
+# 🎨 Tuỳ chỉnh CSS nhẹ nhàng cho đẹp
+st.markdown("""
+    <style>
+        .stButton > button:hover {
+            background-color: #FFD700;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .stButton > button {
+            background-color: #333;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+        }
+        .stSlider > div > div {
+            background-color: #fff;
+            color: #000;
+        }
+        .stTextInput > div {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# 📚 Hướng dẫn chuyển sang SIDEBAR
 with st.sidebar:
     st.header("📖 Hướng Dẫn")
     st.markdown("""
@@ -23,10 +54,10 @@ with st.sidebar:
 - **🎓 Đố Vui** – Câu hỏi về Việt Nam, mỗi câu 4 đáp án.
 
 ---
-🎉 Chọn 1 tab bên trên để bắt đầu chơi!
+👉 Chọn 1 tab bên trên để bắt đầu chơi!
 """)
 
-# Danh sách tab games
+# 🧩 Tabs game
 tab_names = [
     "🎯 Đoán Số",
     "🖐 Búa Kéo Bao",
