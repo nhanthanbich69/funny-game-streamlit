@@ -706,6 +706,7 @@ with tabs[5]:
     st.metric("✅ Số câu đúng", st.session_state.correct_answers)
     st.metric("🏆 Tổng điểm", st.session_state.quiz_score)
 
+with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
 
     # ---------------- INIT STATE ----------------
