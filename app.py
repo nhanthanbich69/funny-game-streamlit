@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # 🌟 Tiêu đề chính
-st.title("🎮 **Game Tùy Chọn** (7 trò chơi cực vui)")
+st.title("🎮 **Game Tùy Chọn**")
 
 # 🎨 Tuỳ chỉnh CSS nhẹ nhàng cho đẹp
 st.markdown("""
@@ -724,7 +724,7 @@ with tabs[6]:
     # ---------------- LOAD QUESTIONS ----------------
     def load_quiz_data():
         all_questions = []
-        filenames = ["dongvat.txt", "lichsudialy.txt", "thucpham.txt", "thucvat.txt"]
+        filenames = ["data/dongvat.txt", "data/lichsudialy.txt", "data/thucpham.txt", "data/thucvat.txt"]
         for filename in filenames:
             try:
                 with open(filename, "r", encoding="utf-8") as f:
