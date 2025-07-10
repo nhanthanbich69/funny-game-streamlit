@@ -554,7 +554,7 @@ with tabs[4]:
 
     st.caption("📌 *Luật chơi:* Từ mới phải bắt đầu bằng **từ cuối** của từ trước. 3 lần sai là rớt đài, 2 lần sai liên tiếp là auto thua. Bot không tha ai đâu 😈")
     
-with tabs[6]:
+with tabs[5]:
     st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
 
     # ---------------- INIT STATE ----------------
