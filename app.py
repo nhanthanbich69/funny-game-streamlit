@@ -756,8 +756,32 @@ with tabs[6]:
         st.session_state.quiz_index = index
         q = questions[index]
 
-        st.subheader(f"❓ Câu {index + 1}: {q['question']}")
+        # ---------------- TÍNH THỜI GIAN ----------------
+        time_per_question = 15  # Thời gian cho mỗi câu hỏi
+        if 'question_start_time' not in st.session_state:
+            st.session_state.question_start_time = time.time()
 
+        elapsed = time.time() - st.session_state.question_start_time
+        remaining = max(0, int(time_per_question - elapsed))
+
+        # Thời gian đếm ngược bằng JavaScript
+        components.html(f"""
+        <script>
+        let seconds = {remaining};
+        const countdown = setInterval(function() {{
+            if (seconds <= 0) {{
+                clearInterval(countdown);
+            }}
+            let clock = document.getElementById("clock");
+            if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
+            seconds -= 1;
+        }}, 1000);
+        </script>
+        <h2 id="clock">⏳ Còn {remaining} giây!</h2>
+        """, height=70)
+
+        # Hiển thị câu hỏi và đáp án
+        st.subheader(f"❓ Câu {index + 1}: {q['question']}")
         selected = st.radio(
             "Chọn đáp án:",
             options=["a", "b", "c", "d"],
@@ -806,4 +830,5 @@ with tabs[6]:
             st.session_state.correct_answers = 0  # Số câu đúng bắt đầu từ 0
             st.session_state.answered = set()  # Xóa các câu trả lời đã trả lời
             st.session_state.quiz_skipped = []  # Xóa các câu đã bỏ qua
+            st.session_state.question_start_time = time.time()  # Cập nhật thời gian bắt đầu câu hỏi
             st.rerun()  # Chạy lại để hiển thị câu hỏi
