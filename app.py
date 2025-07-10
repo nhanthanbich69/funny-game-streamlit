@@ -736,17 +736,16 @@ with tabs[6]:
     st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
 
     # ---------------- INIT STATE ----------------
-    default_state = {
+    default_state_quiz = {
         "quiz_data": [],
         "quiz_index": 0,
         "quiz_score": 0,
         "quiz_skipped": [],
-        "quiz_start_time": None,
         "quiz_finished": False,
         "answered": set()
     }
-    # Sử dụng tiền tố quiz_ để phân biệt trạng thái của tab 6 với các tab khác
-    for k, v in default_state.items():
+
+    for k, v in default_state_quiz.items():
         st.session_state.setdefault(f"quiz_{k}", v)
 
     # ---------------- LOAD QUESTIONS ----------------
@@ -774,7 +773,6 @@ with tabs[6]:
         st.session_state.quiz_index = 0
         st.session_state.quiz_score = 0
         st.session_state.quiz_skipped = []
-        st.session_state.quiz_start_time = time.time()
         st.session_state.quiz_finished = False
         st.session_state.answered = set()
 
@@ -786,41 +784,6 @@ with tabs[6]:
     if st.button("🔁 Chơi lại"):
         reset_quiz()
         st.rerun()
-
-    # ---------------- TIMER ----------------
-    now = time.time()
-    elapsed = now - st.session_state.quiz_start_time if st.session_state.quiz_start_time else 0
-    remaining = int(60 - elapsed)
-
-    if remaining <= 0 and not st.session_state.quiz_finished:
-        st.session_state.quiz_finished = True
-        st.rerun()
-
-    if st.session_state.quiz_finished:
-        st.error("💥 Hết giờ rồi!")
-        st.markdown(f"### ✅ Số câu đúng: **{st.session_state.quiz_score // 10}**")
-        st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
-        st.stop()
-
-    if remaining <= 5:
-        st.warning(f"⚠️ Còn {remaining} giây! Nhanh tay nào!!!")
-    else:
-        st.info(f"⏳ Thời gian còn lại: **{remaining} giây**")
-
-    components.html(f"""
-    <script>
-    let seconds = {remaining};
-    const countdown = setInterval(function() {{
-        if (seconds <= 0) {{
-            clearInterval(countdown);
-        }}
-        let clock = document.getElementById("clock");
-        if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
-        seconds -= 1;
-    }}, 1000);
-    </script>
-    <h2 id="clock">⏳ Còn {remaining} giây!</h2>
-    """, height=70)
 
     # ---------------- CÂU HỎI HIỆN TẠI ----------------
     questions = st.session_state.quiz_data
@@ -873,3 +836,14 @@ with tabs[6]:
                 st.session_state.quiz_skipped.append(index)
             st.session_state.quiz_index += 1
             st.rerun()
+
+    # ---------------- GAME OVER ----------------
+    if st.session_state.quiz_finished:
+        st.error("💥 Hết thời gian!")
+        st.markdown(f"### ✅ Số câu đúng: **{st.session_state.quiz_score // 10}**")
+        st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
+        st.stop()
+        
+    # Hiển thị kết quả số câu đúng và điểm
+    st.metric("✅ Số câu đúng", st.session_state.quiz_score // 10)
+    st.metric("🏆 Tổng điểm", st.session_state.quiz_score)
