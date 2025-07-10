@@ -707,6 +707,10 @@ with tabs[6]:
         st.session_state.quiz_started = False  # Trạng thái bắt đầu game
     if 'question_start_time' not in st.session_state:
         st.session_state.question_start_time = time.time()  # Lưu thời gian bắt đầu câu hỏi
+    if 'level' not in st.session_state:
+        st.session_state.level = 1  # Khởi tạo cấp độ
+    if 'wrong_streak' not in st.session_state:
+        st.session_state.wrong_streak = 0  # Khởi tạo số lần sai liên tiếp
 
     # ---------------- LOAD QUESTIONS ----------------
     def load_quiz_data():
@@ -738,7 +742,9 @@ with tabs[6]:
         st.session_state.answered = set()
         st.session_state.correct_answers = 0  # Reset số câu đúng
         st.session_state.quiz_started = False  # Reset trạng thái bắt đầu
-        st.session_state.question_start_time = time.time()  # Reset thời gian bắt đầu câu hỏi
+        st.session_state.question_start_time = time.time()  # Cập nhật thời gian bắt đầu câu hỏi
+        st.session_state.level = 1  # Reset level về 1
+        st.session_state.wrong_streak = 0  # Reset streak sai liên tiếp
 
     # ---------------- BẮT ĐẦU ----------------
     if not st.session_state.quiz_started:
@@ -757,6 +763,16 @@ with tabs[6]:
         time_per_question = 15  # Thời gian cho mỗi câu hỏi
         elapsed = time.time() - st.session_state.question_start_time
         remaining = max(0, int(time_per_question - elapsed))
+
+        # Nếu hết thời gian, kết thúc game
+        if remaining == 0:
+            st.session_state.quiz_finished = True
+            st.warning("❌ Hết thời gian! Game over!")
+            st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.correct_answers}**")
+            st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
+            if st.button("🔁 Chơi lại từ đầu"):
+                reset_quiz()
+            st.stop()
 
         # Hiển thị thời gian đếm ngược
         components.html(f"""
@@ -814,9 +830,37 @@ with tabs[6]:
                         st.success("✅ Chính xác! +5 điểm")
                         st.session_state.quiz_score += 5  # Thêm điểm
                         st.session_state.correct_answers += 1  # Thêm 1 câu đúng
+                        st.session_state.question_start_time = time.time()  # Reset thời gian cho câu tiếp theo
+
+                        # Cập nhật level mỗi khi đúng 5 câu
+                        if st.session_state.correct_answers % 5 == 0:
+                            st.session_state.level += 1
+                            st.toast(f"🔥 Chúc mừng! Bạn đã lên Level {st.session_state.level}!")
+
                     else:
                         st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
                         st.session_state.quiz_score -= 2  # Trừ điểm
+                        st.session_state.wrong_streak += 1  # Tăng số lần sai liên tiếp
+
+                        # Kiểm tra thua game nếu sai 2 câu liên tiếp hoặc 3 câu sai không liên tiếp
+                        if st.session_state.wrong_streak >= 2:
+                            st.session_state.quiz_finished = True
+                            st.warning("❌ Bạn đã sai 2 câu liên tiếp. Game Over!")
+                            st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.correct_answers}**")
+                            st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
+                            if st.button("🔁 Chơi lại từ đầu"):
+                                reset_quiz()
+                            st.stop()
+
+                        if st.session_state.wrong_streak >= 3:
+                            st.session_state.quiz_finished = True
+                            st.warning("❌ Bạn đã sai 3 câu tổng cộng. Game Over!")
+                            st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.correct_answers}**")
+                            st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
+                            if st.button("🔁 Chơi lại từ đầu"):
+                                reset_quiz()
+                            st.stop()
+
                     st.session_state.answered.add(index)
                     st.session_state.quiz_index += 1
                     st.rerun()
@@ -831,3 +875,4 @@ with tabs[6]:
         # Hiển thị số câu đúng và điểm
         st.metric("✅ Số câu đúng", st.session_state.correct_answers)
         st.metric("🏆 Tổng điểm", st.session_state.quiz_score)
+        st.metric("🎯 Level", st.session_state.level)  # Hiển thị level
