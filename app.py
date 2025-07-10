@@ -15,76 +15,73 @@ st.set_page_config(
 # 🎨 Tuỳ chỉnh CSS để căn giữa đẹp
 st.markdown("""
     <style>
-        /* ======= TOÀN TRANG ======= */
+        /* ==== RESET & TOÀN TRANG ==== */
+        html, body, .block-container {
+            margin: 0 auto;
+            padding: 0;
+            max-width: 100%;
+        }
+
         body {
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
         }
 
-        /* ======= CONTAINER CHÍNH ======= */
-        .game-container {
-            width: 90%;
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        /* ==== CĂN GIỮA HEADER & TABS ==== */
+        .block-container {
             display: flex;
             flex-direction: column;
-            align-items: center; /* Căn giữa ngang */
+            align-items: center;
+            text-align: center;
         }
 
-        /* ======= CĂN GIỮA TOÀN BỘ THÀNH PHẦN ======= */
-        .stButton > button,
-        .stSlider,
-        .stSelectbox,
-        .stTextInput,
-        .stRadio,
-        .stMarkdown,
-        .stSubheader,
-        .stHeader,
-        .stDataFrame {
-            text-align: center !important;
-            align-self: center !important;
+        /* ==== CĂN GIỮA TOÀN BỘ NỘI DUNG ==== */
+        .game-container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
         }
 
-        .stMarkdown > div, .stTextInput > div, .stSlider > div, .stSelectbox > div {
-            display: flex;
+        /* ==== TAB CĂN GIỮA ==== */
+        .stTabs [data-baseweb="tab-list"] {
             justify-content: center;
         }
 
-        /* ======= BUTTON STYLE ======= */
+        /* ==== BUTTONS ==== */
         .stButton > button {
             background-color: #333;
             color: #FFD700;
             border: 2px solid #FFD700;
-            padding: 10px 20px;
             font-weight: bold;
-            width: auto;
-            min-width: 200px;
+            padding: 10px 24px;
             transition: 0.3s;
+            margin-top: 10px;
         }
 
         .stButton > button:hover {
             background-color: #FFD700;
             color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
         }
 
-        /* ======= MOBILE RESPONSIVE ======= */
+        /* ==== WIDGET CĂN GIỮA ==== */
+        .stSelectbox > div, .stSlider > div, .stRadio > div {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* ==== MOBILE ==== */
         @media (max-width: 768px) {
             .game-container {
-                width: 98%;
-                padding: 10px;
+                padding: 15px;
+                width: 95%;
             }
             .stButton > button {
+                width: 100%;
                 font-size: 18px;
-                padding: 12px;
-            }
-            .stMarkdown, .stSelectbox, .stSlider, .stTextInput, .stRadio {
-                font-size: 18px !important;
             }
         }
     </style>
@@ -95,19 +92,23 @@ st.title("🎮 **Game Tùy Chọn**")
 
 # 🌟 Hướng dẫn
 with st.container():
-    st.header("📖 **Hướng Dẫn**")
+    st.markdown('<div class="game-container">', unsafe_allow_html=True)
+
+    st.title("🎮 Game Tùy Chọn")
+    st.header("📖 Hướng Dẫn")
     st.markdown("""
     #### 🎮 Game hiện có:
 
     - **🎯 Đoán Số** – Đoán số bí mật trong phạm vi 1–100, tối đa 10 lần.
     - **🖐 Búa Kéo Bao** – Chọn 1 trong 3 để đấu bot.
-    - **🎲 Tung Xúc Xắc / Đồng Xu** – Chọn kiểu chơi rồi thử vận may.
+    - **🎲💰 Tung Xúc Xắc / Đồng Xu** – Chọn kiểu chơi rồi thử vận may.
     - **🧩 Nối Từ** – Mỗi từ mới bắt đầu bằng chữ cái cuối của từ trước.
     - **🎓 Đố Vui** – Câu hỏi kiến thức tổng hợp với 4 lựa chọn.
-    
     ---
     👉 Chọn 1 tab bên dưới để bắt đầu chơi!
     """)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # 🧩 Tabs game — Gộp Xúc Xắc và Đồng Xu thành 1 tab
 tab_names = [
@@ -121,6 +122,7 @@ tabs = st.tabs(tab_names)
 
 # 🎯 Đoán Số
 with tabs[0]:
+    st.markdown('<div class="game-container">', unsafe_allow_html=True)
     st.header("🎯 **Đoán Số Bí Mật (10 lượt hỏi)**")
 
     # 🎯 Các câu trả lời đúng & sai
@@ -267,9 +269,11 @@ with tabs[0]:
             st.session_state.attempts = 0
             st.session_state.question_count = 0
             st.session_state.last_max_num = max_num
+    st.markdown('</div>', unsafe_allow_html=True)
             
 # 🖐 Búa Kéo Bao
 with tabs[1]:
+    st.markdown('<div class="game-container">', unsafe_allow_html=True)
     st.header("🖐 **Búa Kéo Bao**")
     col1, col2, col3 = st.columns(3)
 
@@ -331,8 +335,10 @@ with tabs[1]:
                 st.error("⚠️ Bạn chưa chọn Búa, Bao hoặc Kéo! Vui lòng chọn trước khi xem kết quả.")
         except Exception as e:
             st.error(f"⚠️ Lỗi khi tính kết quả: {e}")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with tabs[2]:
+    st.markdown('<div class="game-container">', unsafe_allow_html=True)
     st.header("🎲💰 **Tung Xúc Xắc & Đồng Xu**")
 
     action = st.selectbox("🔀 Chọn hành động", ["Tung Xúc Xắc", "Tung Đồng Xu"])
@@ -382,8 +388,10 @@ with tabs[2]:
                     st.write(f"🔸 **Lần {i}:** {history}")
             except Exception as e:
                 st.error(f"⚠️ Lỗi khi tung đồng xu: {e}")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with tabs[3]:
+    st.markdown('<div class="game-container">', unsafe_allow_html=True)
     st.header("💣 **Nối Từ** 🤘🔥")
 
     def load_word_list():
@@ -571,8 +579,10 @@ with tabs[3]:
             st.write(f"{i+1}. {speaker}: **{word}**")
 
     st.caption("📌 *Luật chơi:* Từ mới phải bắt đầu bằng **từ cuối** của từ trước. 3 lần sai là rớt đài, 2 lần sai liên tiếp là auto thua. Bot không tha ai đâu 😈")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with tabs[4]:
+    st.markdown('<div class="game-container">', unsafe_allow_html=True)
     st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
 
     # ---------------- INIT STATE ----------------
@@ -712,3 +722,4 @@ with tabs[4]:
                 st.session_state.quiz_skipped.append(index)
             st.session_state.quiz_index += 1
             st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
