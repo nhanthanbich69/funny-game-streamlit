@@ -553,160 +553,8 @@ with tabs[4]:
             st.write(f"{i+1}. {speaker}: **{word}**")
 
     st.caption("📌 *Luật chơi:* Từ mới phải bắt đầu bằng **từ cuối** của từ trước. 3 lần sai là rớt đài, 2 lần sai liên tiếp là auto thua. Bot không tha ai đâu 😈")
-    
+
 with tabs[5]:
-    st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
-
-    # ---------------- INIT STATE ----------------
-    if 'quiz_data' not in st.session_state:
-        st.session_state.quiz_data = []  # Khởi tạo quiz_data nếu chưa có
-    if 'quiz_index' not in st.session_state:
-        st.session_state.quiz_index = 0
-    if 'quiz_score' not in st.session_state:
-        st.session_state.quiz_score = 0
-    if 'quiz_skipped' not in st.session_state:
-        st.session_state.quiz_skipped = []
-    if 'quiz_start_time' not in st.session_state:
-        st.session_state.quiz_start_time = None
-    if 'quiz_finished' not in st.session_state:
-        st.session_state.quiz_finished = False
-    if 'answered' not in st.session_state:
-        st.session_state.answered = set()
-    if 'correct_answers' not in st.session_state:
-        st.session_state.correct_answers = 0  # Dùng để đếm số câu đúng
-
-    # ---------------- LOAD QUESTIONS ----------------
-    def load_quiz_data():
-        all_questions = []
-        filenames = [
-            "data/dongvat.txt",
-            "data/lichsudialy.txt",
-            "data/thucpham.txt",
-            "data/thucvat.txt"
-        ]
-        for filename in filenames:
-            try:
-                with open(filename, "r", encoding="utf-8") as f:
-                    questions = json.load(f)
-                    all_questions.extend(questions)
-            except Exception as e:
-                st.warning(f"⚠️ Không thể đọc {filename}: {e}")
-        random.shuffle(all_questions)
-        return all_questions
-
-    # ---------------- RESET GAME ----------------
-    def reset_quiz():
-        st.session_state.quiz_data = load_quiz_data()
-        st.session_state.quiz_index = 0
-        st.session_state.quiz_score = 0
-        st.session_state.quiz_skipped = []
-        st.session_state.quiz_start_time = time.time()
-        st.session_state.quiz_finished = False
-        st.session_state.answered = set()
-        st.session_state.correct_answers = 0  # Reset số câu đúng
-
-    # ---------------- BẮT ĐẦU ----------------
-    if not st.session_state.quiz_data:
-        reset_quiz()  # Nạp dữ liệu quiz nếu chưa có
-
-    if st.button("🔁 Chơi lại"):
-        reset_quiz()  # Reset game và nạp lại dữ liệu
-        st.rerun()
-
-    # ---------------- TIMER ----------------
-    now = time.time()
-    elapsed = now - st.session_state.quiz_start_time if st.session_state.quiz_start_time else 0
-    remaining = int(60 - elapsed)
-
-    if remaining <= 0 and not st.session_state.quiz_finished:
-        st.session_state.quiz_finished = True
-        st.rerun()
-
-    if st.session_state.quiz_finished:
-        st.error("💥 Hết giờ rồi!")
-        st.markdown(f"### ✅ Số câu đúng: **{st.session_state.correct_answers}**")
-        st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.quiz_score} điểm**")
-        st.stop()
-
-    if remaining <= 5:
-        st.warning(f"⚠️ Còn {remaining} giây! Nhanh tay nào!!!")
-    else:
-        st.info(f"⏳ Thời gian còn lại: **{remaining} giây**")
-
-    components.html(f"""
-    <script>
-    let seconds = {remaining};
-    const countdown = setInterval(function() {{
-        if (seconds <= 0) {{
-            clearInterval(countdown);
-        }}
-        let clock = document.getElementById("clock");
-        if(clock) clock.innerText = "⏳ Còn " + seconds + " giây!";
-        seconds -= 1;
-    }}, 1000);
-    </script>
-    <h2 id="clock">⏳ Còn {remaining} giây!</h2>
-    """, height=70)
-
-    # ---------------- CÂU HỎI HIỆN TẠI ----------------
-    questions = st.session_state.quiz_data
-    index = st.session_state.quiz_index
-
-    while index in st.session_state.answered and index < len(questions):
-        index += 1
-
-    if index >= len(questions):
-        if st.session_state.quiz_skipped:
-            index = st.session_state.quiz_skipped.pop(0)
-        else:
-            st.session_state.quiz_finished = True
-            st.rerun()
-
-    st.session_state.quiz_index = index
-    q = questions[index]
-
-    st.subheader(f"❓ Câu {index + 1}: {q['question']}")
-
-    selected = st.radio(
-        "Chọn đáp án:",
-        options=["a", "b", "c", "d"],
-        format_func=lambda opt: f"{opt.upper()}. {q['options'][opt]}",
-        index=None,
-        key=f"quiz_radio_{index}"
-    )
-
-    # ---------------- GỬI ĐÁP ÁN VÀ BỎ QUA ----------------
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button("📨 Gửi đáp án", key=f"submit_{index}"):
-            if selected is None:
-                st.warning("🤔 Chưa chọn đáp án mà bạn!")
-            else:
-                correct = q["answer"]
-                if selected == correct:
-                    st.success("✅ Chính xác! +5 điểm")
-                    st.session_state.quiz_score += 5  # Thêm điểm
-                    st.session_state.correct_answers += 1  # Thêm 1 câu đúng
-                else:
-                    st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
-                    st.session_state.quiz_score -= 2  # Trừ điểm
-                st.session_state.answered.add(index)
-                st.session_state.quiz_index += 1
-                st.rerun()
-
-    with col2:
-        if st.button("⏭️ Bỏ qua", key=f"skip_{index}"):
-            if index not in st.session_state.quiz_skipped:
-                st.session_state.quiz_skipped.append(index)
-            st.session_state.quiz_index += 1
-            st.rerun()
-
-    # Hiển thị số câu đúng và điểm
-    st.metric("✅ Số câu đúng", st.session_state.correct_answers)
-    st.metric("🏆 Tổng điểm", st.session_state.quiz_score)
-
-with tabs[6]:
     st.header("🧠 **Tính Nhẩm Siêu Tốc** 😤")
 
     # ---------------- INIT STATE ----------------
@@ -720,14 +568,16 @@ with tabs[6]:
         'score_math': 0,
         'math_game_over': False,
         'math_wrong_this_question': 0,
-        'level': 1  # Thêm Level
+        'wrong_streak': 0,  # Thêm biến để theo dõi sai liên tiếp
+        'wrong_count': 0,  # Thêm biến đếm số sai tổng cộng
+        'level': 1  # Level bắt đầu từ 1
     }
     for k, v in default_state.items():
         st.session_state.setdefault(k, v)
 
     # ---------------- GEN QUESTION ----------------
     def generate_question(index):
-        level = st.session_state.level  # Lấy level từ session_state
+        level = st.session_state.level
 
         def digit_range(d):
             return 10**(d - 1), 10**d - 1
@@ -741,21 +591,11 @@ with tabs[6]:
                 min_val, max_val = base_min, base_max
             return random.randint(min_val, max_val)
 
-        def get_add_digits(level):
-            if level == 1:
-                return 1, 1
-            elif level == 2:
-                return 1, 2
-            elif level == 3:
-                return 2, 2
-            else:
-                return min(3, 1 + level), min(3, 1 + level)
-
         op_pool = ["+"] * 35 + ["-"] * 25 + (["*"] * 25 + ["/"] * 15 if level >= 1 else [])
         op = random.choice(op_pool)
 
         if op in ["+", "-"]:
-            d1, d2 = get_add_digits(level)
+            d1, d2 = 1, 1
             a, b = increasing_rand_digit(d1), increasing_rand_digit(d2)
             if op == "+":
                 return f"{a} + {b}", a + b
@@ -763,12 +603,12 @@ with tabs[6]:
                 return f"{max(a, b)} - {min(a, b)}", abs(a - b)
 
         elif op == "*":
-            d1, d2 = get_mul_digits(level)
+            d1, d2 = 1, 1
             a, b = increasing_rand_digit(d1), increasing_rand_digit(d2)
             return f"{a} x {b}", a * b
 
         elif op == "/":
-            d1, d2 = get_mul_digits(level)
+            d1, d2 = 1, 1
             b = increasing_rand_digit(d2)
             result = increasing_rand_digit(d1)
             a = b * result
@@ -810,13 +650,160 @@ with tabs[6]:
 
                 # Tạo câu hỏi mới sau khi trả lời đúng
                 st.session_state.math_question, st.session_state.math_answer = generate_question(st.session_state.question_index + 1)
+                st.session_state.wrong_streak = 0  # Reset streak sai khi đúng
             else:
                 st.session_state.math_wrong_this_question += 1
                 st.session_state.score_math = max(0, st.session_state.score_math - 2)  # Trừ 2 điểm cho câu sai
+                st.session_state.wrong_streak += 1  # Tăng số lần sai liên tiếp
+                st.session_state.wrong_count += 1  # Tổng số lần sai
+
+                # Kiểm tra thua game nếu sai 2 câu liên tiếp hoặc 3 câu sai không liên tiếp
+                if st.session_state.wrong_streak >= 2:
+                    st.session_state.math_game_over = True
+                    st.warning("❌ Bạn đã sai 2 câu liên tiếp. Game Over!")
+                    st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.math_correct}**")
+                    st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.score_math} điểm**")
+                    if st.button("🔁 Chơi lại từ đầu"):
+                        reset_game()
+                    st.stop()
+
+                if st.session_state.wrong_count >= 3:
+                    st.session_state.math_game_over = True
+                    st.warning("❌ Bạn đã sai 3 câu tổng cộng. Game Over!")
+                    st.markdown(f"### 🎯 Số câu đúng: **{st.session_state.math_correct}**")
+                    st.markdown(f"### 🏆 Tổng điểm: **{st.session_state.score_math} điểm**")
+                    if st.button("🔁 Chơi lại từ đầu"):
+                        reset_game()
+                    st.stop()
 
             st.session_state.question_index += 1
             st.rerun()
 
     st.metric("✅ Số câu đúng", st.session_state.math_correct)
     st.metric("🏆 Tổng điểm", st.session_state.score_math)
-    st.metric("🎯 Level", st.session_state.level)
+    st.metric("🎯 Level", st.session_state.level)  # Hiển thị level
+
+with tabs[6]:
+    st.header("🎓 **Đố Vui Siêu Tốc** ⏱️")
+
+    # ---------------- INIT STATE ----------------
+    if 'quiz_data' not in st.session_state:
+        st.session_state.quiz_data = []  # Khởi tạo quiz_data nếu chưa có
+    if 'quiz_index' not in st.session_state:
+        st.session_state.quiz_index = 0
+    if 'quiz_score' not in st.session_state:
+        st.session_state.quiz_score = 0
+    if 'quiz_skipped' not in st.session_state:
+        st.session_state.quiz_skipped = []
+    if 'quiz_start_time' not in st.session_state:
+        st.session_state.quiz_start_time = None
+    if 'quiz_finished' not in st.session_state:
+        st.session_state.quiz_finished = False
+    if 'answered' not in st.session_state:
+        st.session_state.answered = set()
+    if 'correct_answers' not in st.session_state:
+        st.session_state.correct_answers = 0  # Dùng để đếm số câu đúng
+    if 'quiz_started' not in st.session_state:
+        st.session_state.quiz_started = False  # Trạng thái bắt đầu game
+
+    # ---------------- LOAD QUESTIONS ----------------
+    def load_quiz_data():
+        all_questions = []
+        filenames = [
+            "data/dongvat.txt",
+            "data/lichsudialy.txt",
+            "data/thucpham.txt",
+            "data/thucvat.txt"
+        ]
+        for filename in filenames:
+            try:
+                with open(filename, "r", encoding="utf-8") as f:
+                    questions = json.load(f)
+                    all_questions.extend(questions)
+            except Exception as e:
+                st.warning(f"⚠️ Không thể đọc {filename}: {e}")
+        random.shuffle(all_questions)
+        return all_questions
+
+    # ---------------- RESET GAME ----------------
+    def reset_quiz():
+        st.session_state.quiz_data = load_quiz_data()
+        st.session_state.quiz_index = 0
+        st.session_state.quiz_score = 0
+        st.session_state.quiz_skipped = []
+        st.session_state.quiz_start_time = time.time()
+        st.session_state.quiz_finished = False
+        st.session_state.answered = set()
+        st.session_state.correct_answers = 0  # Reset số câu đúng
+        st.session_state.quiz_started = False  # Reset trạng thái bắt đầu
+
+    # ---------------- BẮT ĐẦU ----------------
+    if st.session_state.quiz_started:
+        # Chỉ hiển thị câu hỏi nếu game đã bắt đầu
+        questions = st.session_state.quiz_data
+        index = st.session_state.quiz_index
+
+        while index in st.session_state.answered and index < len(questions):
+            index += 1
+
+        if index >= len(questions):
+            if st.session_state.quiz_skipped:
+                index = st.session_state.quiz_skipped.pop(0)
+            else:
+                st.session_state.quiz_finished = True
+                st.rerun()
+
+        st.session_state.quiz_index = index
+        q = questions[index]
+
+        st.subheader(f"❓ Câu {index + 1}: {q['question']}")
+
+        selected = st.radio(
+            "Chọn đáp án:",
+            options=["a", "b", "c", "d"],
+            format_func=lambda opt: f"{opt.upper()}. {q['options'][opt]}",
+            index=None,
+            key=f"quiz_radio_{index}"
+        )
+
+        # ---------------- GỬI ĐÁP ÁN VÀ BỎ QUA ----------------
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("📨 Gửi đáp án", key=f"submit_{index}"):
+                if selected is None:
+                    st.warning("🤔 Chưa chọn đáp án mà bạn!")
+                else:
+                    correct = q["answer"]
+                    if selected == correct:
+                        st.success("✅ Chính xác! +5 điểm")
+                        st.session_state.quiz_score += 5  # Thêm điểm
+                        st.session_state.correct_answers += 1  # Thêm 1 câu đúng
+                    else:
+                        st.error(f"❌ Sai rồi! Đáp án đúng là **{correct.upper()}. {q['options'][correct]}**")
+                        st.session_state.quiz_score -= 2  # Trừ điểm
+                    st.session_state.answered.add(index)
+                    st.session_state.quiz_index += 1
+                    st.rerun()
+
+        with col2:
+            if st.button("⏭️ Bỏ qua", key=f"skip_{index}"):
+                if index not in st.session_state.quiz_skipped:
+                    st.session_state.quiz_skipped.append(index)
+                st.session_state.quiz_index += 1
+                st.rerun()
+
+        # Hiển thị số câu đúng và điểm
+        st.metric("✅ Số câu đúng", st.session_state.correct_answers)
+        st.metric("🏆 Tổng điểm", st.session_state.quiz_score)
+
+    else:
+        if st.button("🚀 Bắt đầu ngay"):
+            st.session_state.quiz_started = True
+            st.session_state.quiz_data = load_quiz_data()  # Nạp dữ liệu quiz khi bắt đầu
+            st.session_state.quiz_index = 0  # Bắt đầu lại từ câu 0
+            st.session_state.quiz_score = 0  # Điểm bắt đầu là 0
+            st.session_state.correct_answers = 0  # Số câu đúng bắt đầu từ 0
+            st.session_state.answered = set()  # Xóa các câu trả lời đã trả lời
+            st.session_state.quiz_skipped = []  # Xóa các câu đã bỏ qua
+            st.rerun()  # Chạy lại để hiển thị câu hỏi
