@@ -604,10 +604,10 @@ with tabs[5]:
 
     # ---------------- BẮT ĐẦU ----------------
     if not st.session_state.quiz_data:
-        reset_quiz()  # Nạp dữ liệu quiz nếu chưa có
+        reset_quiz()
 
     if st.button("🔁 Chơi lại"):
-        reset_quiz()  # Reset game và nạp lại dữ liệu
+        reset_quiz()
         st.rerun()
 
     # ---------------- TIMER ----------------
